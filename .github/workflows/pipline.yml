@@ -26,6 +26,6 @@ jobs:
       run: |
         # make sure code has been formated with black
         black --check PHASE_1/API_SourceCode/
-    - name: Test with pytest
+    - name: Run all tests
       run: |
         ./PHASE_1/run-all-tests.sh
