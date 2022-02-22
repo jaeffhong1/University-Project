@@ -2,7 +2,6 @@ import scrapy
 import re
 
 class PostsSpider(scrapy.Spider):
-    global monthToNum
     name = "posts"
 
     start_urls = [
@@ -32,13 +31,12 @@ class PostsSpider(scrapy.Spider):
             date = date_published.css('span.date-display-single::text').get()
 
             month = date[0:3]
-            month = monthToNum(month)
+            month = self.monthToNum(month)
             day = date[4:6]
             year = date[8:]
 
             date = str(year) + "-" + str(month) + "-" + str(day) + " xx:xx:xx"
 
-#"Feb 17, 2022"
             for post in date_published.css('div.fieldlayout-region-body.fieldlayout-region-body-teaser'):
                 url = post.css('h3 a::attr(href)').get()
                 headline = post.css('h3 a::text').get()
@@ -106,7 +104,7 @@ class PostsSpider(scrapy.Spider):
             # Convert date into year-month-day hr:min:sec format
             for date in dates:
                 month = date[0:3].title()
-                month = monthToNum(month)
+                month = self.monthToNum(month)
                 day = date[4:6]
                 year = article_info['date_of_publication']
                 year = year[0:4]
