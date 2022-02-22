@@ -20,8 +20,9 @@ Regardless, if you want to run black manually, you can do:
     
 Install scrapy:
 
-'''
+```
 pip install scrapy
-'''
+```
+
 To run the scrapy, go into the projscrape/projscrape directory and run the command "scrapy crawl posts -o posts.json".
 The scraped data will go into the projscrape/post.json file.
