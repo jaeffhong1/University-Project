@@ -1,11 +1,21 @@
 from flask import Flask
+import mysql.connector
+from mysql.connector import errorcode
 
 app = Flask(__name__)
+mydb = None
+mydb = mysql.connector.connect(
+    host="172.105.183.203",
+    user="seng3011",
+    password="@piFethi3011",
+    port=5231,
+    auth_plugin="mysql_native_password",
+)
 
 
 @app.route("/alive", methods=["GET"])
 def alive():
-    return {}
+    return {"sql_connected": mydb is not None, "scrapy_online": False}
 
 
 @app.route("/article/filter", methods=["GET"])
