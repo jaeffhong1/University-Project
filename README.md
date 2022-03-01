@@ -32,3 +32,6 @@ scrapy crawl posts -o posts.json
 The scraped data will go into the projscrape/post.json file.
 =======
     black PHASE_1/API_SourceCode
+
+## References
+- https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04
