@@ -6,13 +6,12 @@
     Tables:
         - Disease           (id[PK], name)
         - Syndrome          (id[PK], name)
-        - Location          (id[PK], geonames_id)
         - ReportDisease     (id[PK], disease_id[FK], report_id[FK])
         - ReportSyndrome
-        - ReportLocation    (id[PK], location_id[FK], report_id[FK])
-        - Date              (id[PK], date, hour, minute)
-        - Article           (id[PK], url, headline, date[FK])
-        - Report            (id[PK], article_id[FK], location_id[FK], date_start_id[FK], date_finish_id[FK], report_disease_id[FK], report_syndrome_id[FK])
+        - ReportLocation    (id[PK], geonames_id, report_id[FK])
+        - EventDate         (id[PK], event_date, hour, minute)
+        - Article           (id[PK], url, headline, eventdate[FK])
+        - Report            (id[PK], article_id[FK], eventdate_start_id[FK], eventdate_finish_id[FK])
 */
 
 -- unique disease table
@@ -31,24 +30,13 @@ CREATE TABLE Syndrome ( -- do we need this?
     name UNIQUE VARCHAR(128) -- ensure the name is unique, so no duplicate diseases
 );
 
--- UNIQUE location lookup table
--- create a new location when necessary
-CREATE TABLE Location ( -- contains nullable values eg city, we may not be able to specify an exact city from the text?
-    id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    --country VARCHAR(128) NOT NULL,
-    --state VARCHAR(128), -- or province, region, etc
-    --city VARCHAR(128), -- or town, village, etc
-    geonames_id VARCHAR(255) -- reference to geonames ID public database, NOT a foreign key
-)
-
 -- Stores one of the locations of a particular report
 -- There can be multiple ReportLocations of the same location (e.g. Sydney), but refer to a different report that coincidentally occured at the same place
 CREATE TABLE ReportLocation ( 
     id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    location_id INTEGER, 
+    geonames_id VARCHAR(255) -- reference to geonames ID public database, NOT a foreign key
     report_id INTEGER FOREIGN KEY REFERENCES Report(id),
 );
-
 
 CREATE TABLE ReportDisease (
     id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -61,9 +49,9 @@ CREATE TABLE ReportSyndrome (
 );
 
 -- not unique, duplicate times may exist
-CREATE TABLE Date (
+CREATE TABLE EventDate (
     id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    date DATE NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
+    event_date date NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
 
     -- however, hour and minute might not be set so define these separately 
     hour INTEGER, -- Nullable
@@ -76,20 +64,20 @@ CREATE TABLE Article (
     url VARCHAR(512),
     headline VARCHAR(255),
     -- main_text VARCHAR(100000), -- 100 kb is a very large text file
-    date_id INTEGER FOREIGN KEY REFERENCES Date(id)
+    eventdate_id INTEGER FOREIGN KEY REFERENCES EventDate(id)
 );
 
 CREATE TABLE Report ( 
     id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
 
     article_id INTEGER FOREIGN KEY REFERENCES Article(id)
-    report_location_id INTEGER FOREIGN KEY REFERENCES ReportLocation(id),
+    --report_location_id INTEGER FOREIGN KEY REFERENCES ReportLocation(id),
 
-    date_start_id INTEGER NOT NULL FOREIGN KEY REFERENCES Date(id),
-    date_finish_id INTEGER FOREIGN KEY REFERENCES Date(id) -- Nullable, incase report starts and finishes at the same time
+    eventdate_start_id INTEGER NOT NULL FOREIGN KEY REFERENCES EventDate(id),
+    eventdate_finish_id INTEGER FOREIGN KEY REFERENCES EventDate(id) -- Nullable, incase report starts and finishes at the same time
     
-    report_disease_id INTEGER FOREIGN KEY REFERENCES ReportDisease(id),
-    report_syndrome_id INTEGER FOREIGN KEY REFERENCES ReportSyndrome(id)
+    --report_disease_id INTEGER FOREIGN KEY REFERENCES ReportDisease(id),
+    --report_syndrome_id INTEGER FOREIGN KEY REFERENCES ReportSyndrome(id)
 );
 
 -- Add each disease manually
