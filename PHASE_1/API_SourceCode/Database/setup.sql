@@ -9,10 +9,28 @@
         - ReportDisease     (id[PK], disease_id[FK], report_id[FK])
         - ReportSyndrome
         - ReportLocation    (id[PK], geonames_id, report_id[FK])
-        - EventDate         (id[PK], event_date, hour, minute)
-        - Article           (id[PK], url, headline, eventdate[FK])
+        - EventDate         (id[PK], daydate, hour, minute)
+        - Article           (id[PK], url, headline, edate[FK])
         - Report            (id[PK], article_id[FK], eventdate_start_id[FK], eventdate_finish_id[FK])
 */
+
+-- delete pre-existing tables & views
+DROP TABLE IF EXISTS Disease;
+DROP TABLE IF EXISTS Syndrome;
+DROP TABLE IF EXISTS ReportDisease;
+DROP TABLE IF EXISTS ReportSyndrome;
+DROP TABLE IF EXISTS ReportLocation;
+DROP TABLE IF EXISTS EventDate;
+DROP TABLE IF EXISTS Article;
+DROP TABLE IF EXISTS Report;
+
+DROP VIEW IF EXISTS ViewReportDisease;
+DROP VIEW IF EXISTS ViewReportSyndrome;
+DROP VIEW IF EXISTS ViewArticle;
+DROP VIEW IF EXISTS ViewReportArticle;
+DROP VIEW IF EXISTS ViewReportStartEventDate;
+DROP VIEW IF EXISTS ViewReportFinishEventDate;
+DROP VIEW IF EXISTS ViewReport;
 
 -- unique disease table
 -- no duplicates
@@ -30,14 +48,6 @@ CREATE TABLE Syndrome ( -- do we need this?
     name UNIQUE VARCHAR(128) -- ensure the name is unique, so no duplicate diseases
 );
 
--- Stores one of the locations of a particular report
--- There can be multiple ReportLocations of the same location (e.g. Sydney), but refer to a different report that coincidentally occured at the same place
-CREATE TABLE ReportLocation ( 
-    id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    geonames_id VARCHAR(255) -- reference to geonames ID public database, NOT a foreign key
-    report_id INTEGER FOREIGN KEY REFERENCES Report(id),
-);
-
 CREATE TABLE ReportDisease (
     id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
     disease_id INTEGER FOREIGN KEY REFERENCES Disease(id)
@@ -48,10 +58,18 @@ CREATE TABLE ReportSyndrome (
     syndrome_id INTEGER FOREIGN KEY REFERENCES Syndrome(id)
 );
 
+-- Stores one of the locations of a particular report
+-- There can be multiple ReportLocations of the same location (e.g. Sydney), but refer to a different report that coincidentally occured at the same place
+CREATE TABLE ReportLocation ( 
+    id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    geonames_id VARCHAR(255) -- reference to geonames ID public database, NOT a foreign key
+    report_id INTEGER FOREIGN KEY REFERENCES Report(id),
+);
+
 -- not unique, duplicate times may exist
 CREATE TABLE EventDate (
     id INTEGER UNIQUE AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    event_date date NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
+    daydate date NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
 
     -- however, hour and minute might not be set so define these separately 
     hour INTEGER, -- Nullable
@@ -73,12 +91,96 @@ CREATE TABLE Report (
     article_id INTEGER FOREIGN KEY REFERENCES Article(id)
     --report_location_id INTEGER FOREIGN KEY REFERENCES ReportLocation(id),
 
-    eventdate_start_id INTEGER NOT NULL FOREIGN KEY REFERENCES EventDate(id),
-    eventdate_finish_id INTEGER FOREIGN KEY REFERENCES EventDate(id) -- Nullable, incase report starts and finishes at the same time
+    start_eventdate_id INTEGER NOT NULL FOREIGN KEY REFERENCES EventDate(id),
+    finish_eventdate_id INTEGER FOREIGN KEY REFERENCES EventDate(id) -- Nullable, incase report starts and finishes at the same time
     
     --report_disease_id INTEGER FOREIGN KEY REFERENCES ReportDisease(id),
     --report_syndrome_id INTEGER FOREIGN KEY REFERENCES ReportSyndrome(id)
 );
+
+-- Create some views for easy querying
+-- Retrieve the name of the disease from a ReportDisease instead of the Disease id
+CREATE VIEW ViewReportDisease AS
+    SELECT ReportDisease.id, Disease.name
+    FROM ReportDisease
+    INNER JOIN Disease ON ReportDisease.disease_id = Disease.id;
+
+CREATE VIEW ViewReportSyndrome AS
+    SELECT ReportSyndrome.id, Syndrome.name
+    FROM ReportSyndrome
+    INNER JOIN Syndrome ON ReportSyndrome.syndrome_id = Syndrome.id;
+
+CREATE VIEW ViewArticle AS
+    SELECT Article.id, 
+           Article.url, 
+           Article.headline, 
+           EventDate.daydate AS daydate_published, 
+           EventDate.hour AS hour_published, 
+           EventDate.minute AS minute_published
+    FROM Article
+    INNER JOIN EventDate ON Article.eventdate_id = EventDate.id;
+
+-- extract report id and article data
+CREATE VIEW ViewReportArticle AS
+    SELECT Report.id AS report_id, 
+           ViewArticle.url AS article_url, 
+           ViewArticle.headline AS article_headline, 
+           ViewArticle.daydate_published AS article_daydate_published, 
+           ViewArticle.hour_published AS article_hour_published, 
+           ViewArticle.minute_published AS article_minute_published
+    FROM Report
+    INNER JOIN ViewArticle ON Report.article_id = ViewArticle.id;
+
+-- extract report id and start time data
+CREATE VIEW ViewReportStartEventDate AS
+    SELECT Report.id AS report_id, 
+           EventDate.edate AS start_edate_edate, 
+           EventDate.hour AS start_edate_hour, 
+           EventDate.minute AS start_edate_minute
+    FROM Report
+    INNER JOIN EventDate ON Report.start_eventdate_id = EventDate.id;
+
+-- extract report id and finish time data
+CREATE VIEW ViewReportFinishEventDate AS
+    SELECT Report.id AS report_id, 
+           EventDate.edate AS finish_edate_edate, 
+           EventDate.hour AS finish_edate_hour, 
+           EventDate.minute AS finish_edate_minute
+    FROM Report
+    INNER JOIN EventDate ON Report.finish_eventdate_id = EventDate.id;
+
+CREATE VIEW ViewReport AS
+    SELECT Report.id AS report_id,
+
+           -- article content
+           ViewReportArticle.article_url, 
+           ViewReportArticle.article_headline, 
+           ViewReportArticle.article_daydate_published, 
+           ViewReportArticle.article_hour_published, 
+           ViewReportArticle.article_minute_published,
+
+           -- start date
+           ViewReportStartEventDate.start_edate_edate, 
+           ViewReportStartEventDate.start_edate_hour, 
+           ViewReportStartEventDate.start_edate_minute
+
+           -- finish date
+           ViewReportFinishEventDate.finish_edate_edate, 
+           ViewReportFinishEventDate.finish_edate_hour, 
+           ViewReportFinishEventDate.finish_edate_minute
+    FROM Report
+    INNER JOIN ViewReportArticle ON Report.id = ViewReportArticle.report_id
+    INNER JOIN ViewReportStartEventDate ON Report.id = ViewReportStartEventDate.report_id
+    INNER JOIN ViewReportFinishEventDate ON Report.id = ViewReportFinishEventDate.report_id;
+
+
+
+
+-- create some views for quick reference
+--CREATE VIEW ViewReport AS
+--    SELECT Article.url, Article.headline, 
+--    FROM table_name
+--    WHERE condition;
 
 -- Add each disease manually
 INSERT INTO Disease (id, name) VALUES (0, "unknown");
