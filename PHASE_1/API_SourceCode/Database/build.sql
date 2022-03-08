@@ -20,7 +20,7 @@ CREATE TABLE Time (
     minute INTEGER
 );
 
-CREATE TABLE Article ( -- "cluster"
+CREATE TABLE Article (
     id INTEGER PRIMARY KEY,
     url VARCHAR(512),
     headline VARCHAR(255),
