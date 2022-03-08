@@ -1,8 +1,11 @@
-from flask import Flask
+from flask import Flask, jsonify
 import mysql.connector
 from mysql.connector import errorcode
+import subprocess
+
 
 app = Flask(__name__)
+
 mydb = None
 mydb = mysql.connector.connect(
     host="172.105.183.203",
@@ -32,6 +35,11 @@ def report_filter():
 def report_from_article_url():
     return {}
 
+@app.route("/test/scrape")
+def test_scrape():
+    subprocess.check_output(['scrapy', 'crawl', 'posts', "-o", "posts.json"])
+    with open("posts.json") as items_file:
+        return items_file.read()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=36042)
