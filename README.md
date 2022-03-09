@@ -1,5 +1,11 @@
 # SENG3011\_f0b5
 
+## To install python package you need
+
+    cd PHASE_1
+    pip install -r requirements.txt
+    python -m spacy download en_core_web_sm
+
 Install black:
 
 ```
