@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import mysql.connector
 from mysql.connector import errorcode
+from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 
 
@@ -36,11 +37,12 @@ def report_from_article_url():
     return {}
 
 
-@app.route("/test/scrape")
 def test_scrape():
     subprocess.check_output(["scrapy", "crawl", "posts", "-o", "posts.json"])
-    return {"status": "done"}
 
 
 if __name__ == "__main__":
+    scheduler = BackgroundScheduler()
+    scrape_job = scheduler.add_job(test_scrape, 'interval', hours=24)
+    scheduler.start()
     app.run(host="0.0.0.0", port=36042)
