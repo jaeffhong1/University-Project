@@ -58,9 +58,11 @@ class Model:
         self.connection = connection
         
     def InsertArticle(self, url, headline, year, month, day, hour, minute=None):
-        
+        daydate = f"{year}-{"
+        self.conection.cmd_query(f"INSERT INTO EventDate (daydate, hour, minute)")
+        self.connection.cmd_query(f"INSERT INTO Article (url, headline")
     
-    
+
 # test the connector
 if __name__ == '__main__':
     with DBConnection() as dbc:
