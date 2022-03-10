@@ -3,3 +3,5 @@ PHASE_1/projscrape/posts.json
 PHASE_1/API_SourceCode/__pycache__/
 PHASE_1/API_SourceCode/myprojectenv/
 PHASE_1/API_SourceCode/seng3011env/
+**/__pycache__
+**/posts.json
