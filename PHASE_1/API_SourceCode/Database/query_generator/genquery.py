@@ -26,12 +26,12 @@ with open('./generated_queries.txt', 'a') as outf:
     # generate disease queries
     for did, disease in enumerate(read_name_json('./disease_list.json')):
         # append the query
-        outf.write(f"INSERT INTO Disease (id, name) VALUES ({did}, \"{disease}\");\n")
+        outf.write(f"INSERT INTO Disease (id, name) VALUES ({did+1}, \"{disease}\");\n")
         
     # generate syndrome queries
-    for sid, syndrome in enumerate(read_name_json('./disease_list.json')):
+    for sid, syndrome in enumerate(read_name_json('./syndrome_list.json')):
         # append the query
-        outf.write(f"INSERT INTO Syndrome (id, name) VALUES ({sid}, \"{syndrome}\");\n")
+        outf.write(f"INSERT INTO Syndrome (id, name) VALUES ({sid+1}, \"{syndrome}\");\n")
 
 
     
