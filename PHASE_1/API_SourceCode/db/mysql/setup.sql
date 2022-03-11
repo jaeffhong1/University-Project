@@ -61,7 +61,7 @@ CREATE TABLE Syndromes ( -- do we need this?
 );
 
 -- not unique, duplicate times may exist
-CREATE TABLE EventDate (
+CREATE TABLE EventDates (
     id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
     daydate date NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
 
