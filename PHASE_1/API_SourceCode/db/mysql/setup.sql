@@ -23,7 +23,7 @@
 
 DROP TABLE IF EXISTS ReportDiseases;
 DROP TABLE IF EXISTS ReportSyndromes;
-DROP TABLE IF EXISTS ReportLocation;
+DROP TABLE IF EXISTS ReportLocations;
 DROP TABLE IF EXISTS Reports;
 DROP TABLE IF EXISTS Articles;
 DROP TABLE IF EXISTS EventDates; -- must drop after dropping Article with fk 
