@@ -125,8 +125,8 @@ CREATE TABLE ReportLocations (
 
 CREATE VIEW ViewReportLocations AS
     SELECT Reports.id AS report_id, ReportLocations.geonames_id
-    FROM ReportLocation
-    INNER JOIN Reports ON ReportLocation.id = Reports.id;
+    FROM ReportLocations
+    INNER JOIN Reports ON ReportLocations.id = Reports.id;
 
 CREATE VIEW ViewReportDiseases AS
     SELECT Reports.id AS report_id, Diseases.name AS disease_name
