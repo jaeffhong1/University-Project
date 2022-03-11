@@ -212,8 +212,8 @@ CREATE VIEW ViewReports AS
     LEFT JOIN ViewReportArticles ON Reports.id = ViewReportArticles.report_id
     LEFT JOIN ViewReportStartEventDates ON Reports.id = ViewReportStartEventDates.report_id
     LEFT JOIN ViewReportFinishEventDates ON Reports.id = ViewReportFinishEventDates.report_id
-    LEFT JOIN ViewReportReportDiseases ON Reports.id = ViewReportReportDiseasess.report_id
-    LEFT JOIN ViewReportReportSyndromes ON Reports.id = ViewReportReportSyndromess.report_id;
+    LEFT JOIN ViewReportReportDiseases ON Reports.id = ViewReportReportDiseases.report_id
+    LEFT JOIN ViewReportReportSyndromes ON Reports.id = ViewReportReportSyndromes.report_id;
 
 -- derivative views
 CREATE VIEW ViewCountReportDiseases AS
