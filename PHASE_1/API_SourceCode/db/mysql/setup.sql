@@ -124,7 +124,7 @@ CREATE TABLE ReportLocations (
 -- Create some views for easy querying
 
 CREATE VIEW ViewReportLocations AS
-    SELECT Reports.id AS report_id, ReportLocation.geonames_id
+    SELECT Reports.id AS report_id, ReportLocations.geonames_id
     FROM ReportLocation
     INNER JOIN Reports ON ReportLocation.id = Reports.id;
 
@@ -153,25 +153,25 @@ CREATE VIEW ViewArticles AS
 -- extract report id and article data
 CREATE VIEW ViewReportArticles AS
     SELECT Reports.id AS report_id, 
-           ViewArticle.url AS article_url, 
-           ViewArticle.headline AS article_headline, 
-           ViewArticle.daydate AS article_daydate, 
-           ViewArticle.hour AS article_hour, 
-           ViewArticle.minute AS article_minute
+           ViewArticles.url AS article_url, 
+           ViewArticles.headline AS article_headline, 
+           ViewArticles.daydate AS article_daydate, 
+           ViewArticles.hour AS article_hour, 
+           ViewArticles.minute AS article_minute
     FROM Reports
-    INNER JOIN ViewArticle ON Reports.article_id = ViewArticle.id;
+    INNER JOIN ViewArticles ON Reports.article_id = ViewArticles.id;
 
 -- extract report id and start time data
-CREATE VIEW ViewReportStartEventDate AS
+CREATE VIEW ViewReportStartEventDates AS
     SELECT Reports.id AS report_id, 
-           EventDate.daydate AS start_daydate, 
-           EventDate.hour AS start_hour, 
-           EventDate.minute AS start_minute
+           EventDates.daydate AS start_daydate, 
+           EventDates.hour AS start_hour, 
+           EventDates.minute AS start_minute
     FROM Reports
-    INNER JOIN EventDate ON Reports.start_eventdate_id = EventDate.id;
+    INNER JOIN EventDates ON Reports.start_eventdate_id = EventDates.id;
 
 -- extract report id and finish time data
-CREATE VIEW ViewReportFinishEventDate AS
+CREATE VIEW ViewReportFinishEventDates AS
     SELECT Reports.id AS report_id, 
            EventDates.daydate AS finish_daydate, 
            EventDates.hour AS finish_hour, 
