@@ -106,7 +106,7 @@ class Report(Base):
     #diseases = relationship('Disease', secondary=ReportDisease, back_populates='reports')
     #syndromes = relationship('Syndrome', secondary=ReportSyndrome, back_populates='reports')
     
-    def __init__(self, article=None, article_id=None, start_eventdate=None, finish_eventdate=None, reportlocations=None, diseases=[], syndromes=[]):
+    def __init__(self, __id=-1, article=None, article_id=None, start_eventdate=None, finish_eventdate=None, reportlocations=None, diseases=[], syndromes=[]):
         """_summary_
 
         Args:
@@ -118,6 +118,12 @@ class Report(Base):
             diseases (List[Disease], optional): List of Disease objects. Defaults to empty list.
             syndromes (List[Syndrome], optional): List of Syndrome objects. Defaults to empty list.
         """
+        
+        # set id if provided
+        # this is only for utils ViewReports manual returning of Report object
+        if __id != -1:
+            self.id = __id
+        
         # ensure either article or article_id params were provided
         if article == None and article_id == None:
             raise ValueError('Either \'article\' or \'article_id\' must have a value.')

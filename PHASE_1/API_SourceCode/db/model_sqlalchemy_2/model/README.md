@@ -17,7 +17,7 @@ Create a new row of a particular table like so:
 ```python
 from model import schemas 
 
-my_new_disease_row = schemas.Disease(name = 'A new disease!!!!')
+my_new_disease_row = schemas.Disease(name='A new disease!!!!')
 ```
 
 If you want to insert it into the database, you must be in a session:
@@ -30,7 +30,7 @@ with session.Connection() as dbs:
 
 # done!
 ```
-Exiting the session automatically commits your additions. Disable this with: `session.Connection(commit_on_exit=False)`. Then, within the session use `dbs.commit()` to manually commit your changes.
+Exiting the session automatically commits your changes. Disable this with: `session.Connection(commit_on_exit=False)`. Then, within the session use `dbs.commit()` to manually commit your changes.
 
 ### More complicated writing/inserting of rows with relationships
 Often you will need to add an Article, which stores an id to an EventDate. Instead of manually creating an EventDate, then fetching its ID, you can set it by creating the EventDate object inside the article object. When the changes are committed, the EventDate will also be added.
@@ -94,3 +94,49 @@ with session.Connection() as dbs:
     
     dbs.add(report)
 ```
+
+## Reading/selecting data from the database
+
+### Example 1: Using ViewReports to get all report data
+```python
+from model import session
+
+all_reports = []
+
+with session.Connection() as dbs:
+    all_reports = dbs.ViewReports()
+```
+ViewReports returns a dictionary with keys: 
+* id
+* geonames_id
+* article_url
+* article_headling
+* article_daydate
+* article_hour
+* article_minute
+* report_start_daydate
+* report_start_hour
+* report_start_minute
+* report_finish_daydate
+* report_finish_hour
+* report_finish_minute
+* diseases
+* syndromes
+
+This should be all the data you need. But for more control:
+
+### Example 2: Fetching data in the form of Schemas
+You can get data in the form of the Schemas which are pre-built (e.g. Article, Report, etc)
+```python
+from sqlalchemy import select
+from model import session, schemas
+
+with session.Connection() as dbs:
+    # SELECT Reports.id, Reports.start_eventdate_id FROM Reports WHERE Reports.id = 2;
+    query = select([schemas.Report.id, schemas.Report.start_eventdate_id]).where(schemas.Report.id == 2)
+
+    result = dbs.execute(query)
+```
+
+From here you can actually change the values of reports and when you commit, these changes will be made on the db.
+

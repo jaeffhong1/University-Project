@@ -1,8 +1,10 @@
-from re import S
+import json # for parsing syndromes and diseases json list from ViewReports
+from datetime import datetime as dt
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
-from .schemas import Disease, Syndrome
+from .schemas import *
+
 class UtilitySession(Session):
     """Overrides the default sqlalchemy Session, but adds some extra utility methods."""
     
@@ -68,5 +70,47 @@ class UtilitySession(Session):
         
     def get_syndromes(self, *args):
         return [self.get_syndrome(name) for name in args]
+        
+    def __parseDatetime(self, datetime_daydate: dt.date):
+        # format the daydates as strings
+        # retrieve each datetime.date objects year, month and day values
+        # pad correct zeroes out (4 for year, 2 for month day)
+        return f"{datetime_daydate.year:04}-{datetime_daydate.month:02}-{datetime_daydate.day:02}"
+            
+    # returns dictionary not Models Objects
+    # so cant be used to fetch modifiable objects, use inbuilt orm tools for that
+    def __parseViewReport(self, vr: tuple):
+        return {
+            'id': vr[0],
+            'geonames_id': vr[1],
+            'article_url': vr[2],
+            'article_headling': vr[3],
+            'article_daydate': self.__parseDatetime(vr[4]),
+            'article_hour': vr[5],
+            'article_minute': vr[6],
+            'report_start_daydate': self.__parseDatetime(vr[7]),
+            'report_start_hour': vr[8],
+            'report_start_minute': vr[9],
+            'report_finish_daydate': self.__parseDatetime(vr[10]),
+            'report_finish_hour': vr[11],
+            'report_finish_minute': vr[12],
+            'diseases': json.loads(vr[13]), # parse the json string to list of strings
+            'syndromes': json.loads(vr[14])
+        }
+        
+        # convert vrc back to a tuple
+        return tuple(vrc)
+        
+    def ViewReports(self):
+        result = self.execute(text('SELECT * FROM ViewReports;'))
+        
+        view_reports = [self.__parseViewReport(res) for res in result]
+        
+        for v in view_reports:
+            print(type(v))
+            
+        print('DONE')
+        
+        return view_reports
         
         
