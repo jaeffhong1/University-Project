@@ -1,1 +1,0 @@
-scrapy", "crawl", "posts", "-a", "num_pages=10", "-a", "file_to_output=testposts.json", "-o", "testposts.json"
