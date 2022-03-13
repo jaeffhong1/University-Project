@@ -29,7 +29,7 @@ class PostsSpider(scrapy.Spider):
             "Dec": 12,
         }[month]
 
-    def __init__(self, num_pages='', file_to_output='', **kwargs): 
+    def __init__(self, num_pages="", file_to_output="", **kwargs):
         self.pages = int(num_pages)
         self.file_to_output = file_to_output
         self.i = 0
@@ -48,8 +48,8 @@ class PostsSpider(scrapy.Spider):
 
     def parse(self, response):
         # If i reaches the page number then return.
-        if (self.i == self.pages):
-                return
+        if self.i == self.pages:
+            return
         # For each date, loop through each article that was published on that date.
         for date_published in response.css("div.views-set"):
             date = date_published.css("span.date-display-single::text").get()
@@ -97,7 +97,6 @@ class PostsSpider(scrapy.Spider):
             next_page = response.urljoin(next_page)
             # Call the parse method again for the next page.
             yield scrapy.Request(next_page, callback=self.parse)
-            
 
     # Retrieves the raw html of a given article.
     def parseArticle(self, response):
