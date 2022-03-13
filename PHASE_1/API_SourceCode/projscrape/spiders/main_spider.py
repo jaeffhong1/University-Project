@@ -7,7 +7,7 @@ from json.decoder import JSONDecodeError
 
 class PostsSpider(scrapy.Spider):
     name = "posts"
-    # The list that will hold the contents of posts.json
+    # The list that will hold the contents of the file to output.
     current_posts = []
     path_to_json = ""
 
@@ -29,12 +29,13 @@ class PostsSpider(scrapy.Spider):
             "Dec": 12,
         }[month]
 
-    def parse(self, response):
-        # For each date, loop through each article that was published on that date.
-
-        # Open up posts.json and copy its contents into current_posts.
+    def __init__(self, num_pages='', file_to_output='', **kwargs): 
+        self.pages = int(num_pages)
+        self.file_to_output = file_to_output
+        self.i = 0
+        # Opens up the file to output to and copy its contents into current_posts.
         self.path_to_json = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "..", "..", "posts.json"
+            os.path.dirname(os.path.abspath(__file__)), "..", "..", self.file_to_output
         )
         with open(self.path_to_json) as news_posts:
             try:
@@ -43,6 +44,13 @@ class PostsSpider(scrapy.Spider):
             except JSONDecodeError:
                 pass
 
+        super().__init__(**kwargs)
+
+    def parse(self, response):
+        # If i reaches the page number then return.
+        if (self.i == self.pages):
+                return
+        # For each date, loop through each article that was published on that date.
         for date_published in response.css("div.views-set"):
             date = date_published.css("span.date-display-single::text").get()
 
@@ -66,12 +74,11 @@ class PostsSpider(scrapy.Spider):
                     "headline": headline,
                 }
 
-                # Check first 10 articles and see if the article that we are trying to scrape is not already in there by its date.
-                # If it finds the articles date is already in posts.json then it should just return.
-                if self.current_posts != []:
-                    for i in range(len(self.current_posts) - 1):
-                        if url == self.current_posts[i]["url"]:
-                            return
+                # If it finds the article is already in the file to output then it should just return.
+                for posts in self.current_posts:
+                    if url == posts["url"]:
+                        return
+
                 # Else we should keep parsing articles.
                 # Goes into the article url and calls the parseArticle method on that article page.
                 next_news = response.urljoin(url)
@@ -79,6 +86,8 @@ class PostsSpider(scrapy.Spider):
                 request.meta["item"] = article_info
 
                 yield request
+
+        self.i += 1
 
         # Get the next pages url.
         next_page = response.css("li.pager-next a::attr(href)").get()
@@ -88,13 +97,14 @@ class PostsSpider(scrapy.Spider):
             next_page = response.urljoin(next_page)
             # Call the parse method again for the next page.
             yield scrapy.Request(next_page, callback=self.parse)
+            
 
     # Retrieves the raw html of a given article.
     def parseArticle(self, response):
         article_info = response.meta["item"]
         article_text = response.css("div.clearfix").get()
         article_info["article_text"] = article_text
-        # If there were already news entries in posts.json then we should append to it.
+        # If there were already news entries in the file to output then we should append to it.
         if self.current_posts != []:
             self.current_posts.insert(0, article_info)
             with open(self.path_to_json, "w") as news_posts:
