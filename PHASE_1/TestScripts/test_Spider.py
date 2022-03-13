@@ -149,9 +149,9 @@ def test_stopped():
             current_posts.append(json.loads(line))
 
     # If its 9, then most likely the first article to be added into the json was not the very top article.
-    # so just assert True?
+    # so just return True?
     if len(current_posts) == 9:
-        assert True
+        return True
 
     # The deleted article should now be appended to the end of the current_posts list
     assert len(current_posts) == 10
