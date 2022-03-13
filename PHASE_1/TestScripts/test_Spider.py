@@ -8,7 +8,8 @@ import re
 def test_format():
     # Clear contents of test_posts first
     open('testposts.json', 'w').close()
-    subprocess.check_output(["scrapy", "crawl", "posts", "-a", "num_pages=10", "-a", "file_to_output=testposts.json", "-o", "testposts.json"])
+    path_to_run = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode")
+    subprocess.Popen(["scrapy", "crawl", "posts", "-a", "num_pages=10", "-a", "file_to_output=testposts.json", "-o", "testposts.json"], cwd=path_to_run)
 
     path_to_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testposts.json")
     current_posts = []
@@ -51,7 +52,8 @@ def test_format():
 def test_stopped():
     # Clear contents of test_posts first
     open('testposts.json', 'w').close()
-    subprocess.check_output(["scrapy", "crawl", "posts", "-a", "num_pages=1", "-a", "file_to_output=testposts.json", "-o", "testposts.json"])
+    path_to_run = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode")
+    subprocess.Popen(["scrapy", "crawl", "posts", "-a", "num_pages=1", "-a", "file_to_output=testposts.json", "-o", "testposts.json"], cwd=path_to_run)
 
     path_to_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testposts.json")
     current_posts = []
@@ -77,7 +79,7 @@ def test_stopped():
         return False
 
     # Calling the process again should only add the first removed article.
-    subprocess.check_output(["scrapy", "crawl", "posts", "-a", "num_pages=1", "-a", "file_to_output=testposts.json", "-o", "testposts.json"])
+    subprocess.Popen(["scrapy", "crawl", "posts", "-a", "num_pages=1", "-a", "file_to_output=testposts.json", "-o", "testposts.json"], cwd=path_to_run)
     with open(path_to_json) as news_posts:
         try:
             current_posts = json.load(news_posts)
