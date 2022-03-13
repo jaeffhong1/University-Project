@@ -106,7 +106,35 @@ class Report(Base):
     #diseases = relationship('Disease', secondary=ReportDisease, back_populates='reports')
     #syndromes = relationship('Syndrome', secondary=ReportSyndrome, back_populates='reports')
     
-    def __init__(self, article, start_eventdate, finish_eventdate, reportlocations, diseases, syndromes):
+    def __init__(self, article=None, article_id=None, start_eventdate=None, finish_eventdate=None, reportlocations=None, diseases=[], syndromes=[]):
+        """_summary_
+
+        Args:
+            article (Article, optional): NOT optional if 'article_id' isn't provided. article is the Article object which this Report.article_id refers to. Defaults to None.
+            article_id (int, optional):  NOT optional if 'article' isn't provided. article_id is the id of the Article this Report belongs to. Defaults to None.
+            start_eventdate (EventDate): The time this report started.
+            finish_eventdate (EventDate): The time this report finished.
+            reportlocations (List[ReportLocation]): List of all report locations.
+            diseases (List[Disease], optional): List of Disease objects. Defaults to empty list.
+            syndromes (List[Syndrome], optional): List of Syndrome objects. Defaults to empty list.
+        """
+        # ensure either article or article_id params were provided
+        if article == None and article_id == None:
+            raise ValueError('Either \'article\' or \'article_id\' must have a value.')
+        elif article != None:
+            self.article = article # this will automatically set the id on commit
+        elif article_id != None:
+            self.article_id = article_id
+            self.article = Article(id=article_id) # get the event date with the id
+        
+        # check all other values were provided
+        if start_eventdate == None: raise ValueError('Parameter \'start_eventdate\' must have a value.')
+        if finish_eventdate == None: raise ValueError('Parameter \'finish_eventdate\' must have a value.')
+        if reportlocations == None: raise ValueError('Parameter \'reportlocations\' must have a value.')
+        if diseases == None: raise ValueError('Parameter \'diseases\' must have a value.')
+        if syndromes == None: raise ValueError('Parameter \'syndromes\' must have a value.')
+        
+        # assign variables
         self.article = article
         self.start_eventdate = start_eventdate # this should automatically set self.start_eventdate_id
         self.finish_eventdate = finish_eventdate # this should automatically set self.finish_eventdate_id
