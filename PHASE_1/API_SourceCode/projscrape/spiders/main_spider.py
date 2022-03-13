@@ -41,7 +41,7 @@ class PostsSpider(scrapy.Spider):
         with open(self.path_to_json) as news_posts:
             for line in news_posts:
                 self.current_posts.append(json.loads(line))
-                
+
         super().__init__(**kwargs)
 
     def parse(self, response):

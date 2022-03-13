@@ -50,7 +50,7 @@ def test_scrape():
             "-o",
             "posts.json",
             "-t",
-            "jsonlines"
+            "jsonlines",
         ]
     )
 

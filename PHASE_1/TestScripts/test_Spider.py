@@ -8,7 +8,10 @@ import re
 def test_format():
 
     path_to_testFile = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode", "testposts.json"
+        os.path.dirname(os.path.abspath(__file__)),
+        "..",
+        "API_SourceCode",
+        "testposts.json",
     )
     # Clear contents of test_posts first
     open(path_to_testFile, "w").close()
@@ -58,13 +61,7 @@ def test_format():
             month = "0" + str(month)
 
         # url must be /news-perspective/ followed by the date. /news-perspective/2022/03/
-        url_regex = (
-            r"^/news-perspective/"
-            + str(year)
-            + r"/"
-            + str(month)
-            + r"/"
-        )
+        url_regex = r"^/news-perspective/" + str(year) + r"/" + str(month) + r"/"
 
         assert re.search(url_regex, url) is not None
         # date must be in format 2022-3-11 xx:xx:xx
@@ -74,12 +71,15 @@ def test_format():
 
 # Test if an article is not present in the file, it will be added and only the file not present will be added.
 # This test will fail if the very first article to be put into testposts.json is not the very top article.
-# Thats because for this test, we will first run scraper, produce a json and then remove the very top 
+# Thats because for this test, we will first run scraper, produce a json and then remove the very top
 # article, then call the scraper again and since the scraper will run and add to testposts.json until it hits a duplicate
 # ,if the very top article was not the first article to be put into the json file then the scraper will immediately stop.
-def test_stopped(): 
+def test_stopped():
     path_to_testFile = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode", "testposts.json"
+        os.path.dirname(os.path.abspath(__file__)),
+        "..",
+        "API_SourceCode",
+        "testposts.json",
     )
     # Clear contents of test_posts first
     open(path_to_testFile, "w").close()
@@ -114,13 +114,13 @@ def test_stopped():
 
     # Remove the first article
     current_posts.pop(0)
-    # Clear contents of test_posts 
+    # Clear contents of test_posts
     open(path_to_testFile, "w").close()
 
     # Fill the testposts.json file with the contents of current_posts
-    with open(path_to_testFile, 'a') as news_posts:
-        for i in range (0, 9):
-            news_posts.write(json.dumps(current_posts[i]) + '\n')
+    with open(path_to_testFile, "a") as news_posts:
+        for i in range(0, 9):
+            news_posts.write(json.dumps(current_posts[i]) + "\n")
 
     # Removed the first article so there should only be nine
     assert len(current_posts) == 9
@@ -150,7 +150,7 @@ def test_stopped():
 
     # If its 9, then most likely the first article to be added into the json was not the very top article.
     # so just assert True?
-    if (len(current_posts) == 9):
+    if len(current_posts) == 9:
         assert True
 
     # The deleted article should now be appended to the end of the current_posts list
@@ -161,6 +161,6 @@ def test_stopped():
     for post in current_posts:
         assert post["url"] == all_current_urls[i]
         i += 1
-        i = i%10
+        i = i % 10
 
     return True
