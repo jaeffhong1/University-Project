@@ -49,6 +49,8 @@ def test_scrape():
             "file_to_output=posts.json",
             "-o",
             "posts.json",
+            "-t",
+            "jsonlines"
         ]
     )
 

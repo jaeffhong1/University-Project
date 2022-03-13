@@ -6,11 +6,16 @@ import re
 
 # Test the overall structure of the json file and check each articles url and date are in the correct format.
 def test_format():
+
+    path_to_testFile = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode", "testposts.json"
+    )
     # Clear contents of test_posts first
-    open("testposts.json", "w").close()
+    open(path_to_testFile, "w").close()
     path_to_run = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode"
     )
+
     subprocess.Popen(
         [
             "scrapy",
@@ -22,35 +27,29 @@ def test_format():
             "file_to_output=testposts.json",
             "-o",
             "testposts.json",
+            "-t",
+            "jsonlines",
         ],
         cwd=path_to_run,
-    )
+    ).communicate()
+    # .communicate makes the program wait until the process is completely finished before moving on.
 
-    path_to_json = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "testposts.json"
-    )
     current_posts = []
-    with open(path_to_json) as news_posts:
-        try:
-            current_posts = json.load(news_posts)
-            news_posts.close()
-        except ValueError as e:
-            return False
-
     amount_of_posts = 0
+    with open(path_to_testFile) as news_posts:
+        for line in news_posts:
+            amount_of_posts += 1
+            current_posts.append(json.loads(line))
+    # Since each page has 10 articles, going through 10 pages, there must be 100 articles.
+    assert amount_of_posts == 100
+
     # Check each articles url and date.
     for post in current_posts:
         amount_of_posts += 1
-        url, date, headline, text = (
+        url, date = (
             post["url"],
             post["date_of_publication"],
-            post["headline"],
-            post["article_text"],
         )
-        headline_in_url = headline.lower()
-        headline_in_url = headline_in_url.replace(" ", "-")
-        headline_in_url = headline_in_url.replace(",", "")
-        headline_in_url = headline_in_url.replace("'", "")
 
         date_in_url = (date.split(" "))[0]
         date_in_url = date_in_url.split("-")
@@ -58,30 +57,32 @@ def test_format():
         if len(month) == 1:
             month = "0" + str(month)
 
-        # url must be /news-perspective/ followed by the date and headline. /news-perspective/2022/03/global-covid-19-deaths-may-be-3-times-higher-recorded
+        # url must be /news-perspective/ followed by the date. /news-perspective/2022/03/
         url_regex = (
             r"^/news-perspective/"
             + str(year)
             + r"/"
             + str(month)
             + r"/"
-            + headline_in_url
         )
-        if not re.search(url_regex, url):
-            return False
-        # date must be in format 2022-3-11 xx:xx:xx
-        date_regex = r"^\d{4}-([1-9]|1[0-2])-([1-9]|[12][0-9]|3[01])$"
-        if not re.search(date_regex, date):
-            return False
 
-    # Since each page has 10 articles, going through 10 pages, there must be 100 articles.
-    assert amount_of_posts == 100
+        assert re.search(url_regex, url) is not None
+        # date must be in format 2022-3-11 xx:xx:xx
+        date_regex = r"^\d{4}-([1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\sxx:xx:xx$"
+        assert re.search(date_regex, date) is not None
 
 
 # Test if an article is not present in the file, it will be added and only the file not present will be added.
-def test_stopped():
+# This test will fail if the very first article to be put into testposts.json is not the very top article.
+# Thats because for this test, we will first run scraper, produce a json and then remove the very top 
+# article, then call the scraper again and since the scraper will run and add to testposts.json until it hits a duplicate
+# ,if the very top article was not the first article to be put into the json file then the scraper will immediately stop.
+def test_stopped(): 
+    path_to_testFile = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode", "testposts.json"
+    )
     # Clear contents of test_posts first
-    open("testposts.json", "w").close()
+    open(path_to_testFile, "w").close()
     path_to_run = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "..", "API_SourceCode"
     )
@@ -96,20 +97,16 @@ def test_stopped():
             "file_to_output=testposts.json",
             "-o",
             "testposts.json",
+            "-t",
+            "jsonlines",
         ],
         cwd=path_to_run,
-    )
+    ).communicate()
 
-    path_to_json = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "testposts.json"
-    )
     current_posts = []
-    with open(path_to_json) as news_posts:
-        try:
-            current_posts = json.load(news_posts)
-            news_posts.close()
-        except ValueError as e:
-            return False
+    with open(path_to_testFile) as news_posts:
+        for line in news_posts:
+            current_posts.append(json.loads(line))
 
     all_current_urls = []
     for post in current_posts:
@@ -117,13 +114,16 @@ def test_stopped():
 
     # Remove the first article
     current_posts.pop(0)
-    with open(path_to_json, "w") as news_posts:
-        json.dump(current_posts, news_posts)
-        news_posts.close()
+    # Clear contents of test_posts 
+    open(path_to_testFile, "w").close()
+
+    # Fill the testposts.json file with the contents of current_posts
+    with open(path_to_testFile, 'a') as news_posts:
+        for i in range (0, 9):
+            news_posts.write(json.dumps(current_posts[i]) + '\n')
 
     # Removed the first article so there should only be nine
-    if not len(current_posts) == 9:
-        return False
+    assert len(current_posts) == 9
 
     # Calling the process again should only add the first removed article.
     subprocess.Popen(
@@ -137,23 +137,30 @@ def test_stopped():
             "file_to_output=testposts.json",
             "-o",
             "testposts.json",
+            "-t",
+            "jsonlines",
         ],
         cwd=path_to_run,
-    )
-    with open(path_to_json) as news_posts:
-        try:
-            current_posts = json.load(news_posts)
-            news_posts.close()
-        except ValueError as e:
-            return False
+    ).communicate()
 
-    if not len(current_posts) == 10:
-        return False
+    current_posts = []
+    with open(path_to_testFile) as news_posts:
+        for line in news_posts:
+            current_posts.append(json.loads(line))
 
-    i = 0
+    # If its 9, then most likely the first article to be added into the json was not the very top article.
+    # so just assert True?
+    if (len(current_posts) == 9):
+        assert True
+
+    # The deleted article should now be appended to the end of the current_posts list
+    assert len(current_posts) == 10
+
+    # This means all_current_urls[0] should equal the last post["url"]
+    i = 1
     for post in current_posts:
-        if post["url"] != all_current_urls[i]:
-            return False
+        assert post["url"] == all_current_urls[i]
         i += 1
+        i = i%10
 
     return True

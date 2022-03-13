@@ -9,6 +9,7 @@ class PostsSpider(scrapy.Spider):
     name = "posts"
     # The list that will hold the contents of the file to output.
     current_posts = []
+    new_articles = []
     path_to_json = ""
 
     start_urls = ["https://www.cidrap.umn.edu/news-perspective"]
@@ -38,12 +39,9 @@ class PostsSpider(scrapy.Spider):
             os.path.dirname(os.path.abspath(__file__)), "..", "..", self.file_to_output
         )
         with open(self.path_to_json) as news_posts:
-            try:
-                self.current_posts = json.load(news_posts)
-                news_posts.close()
-            except JSONDecodeError:
-                pass
-
+            for line in news_posts:
+                self.current_posts.append(json.loads(line))
+                
         super().__init__(**kwargs)
 
     def parse(self, response):
@@ -104,10 +102,4 @@ class PostsSpider(scrapy.Spider):
         article_text = response.css("div.clearfix").get()
         article_info["article_text"] = article_text
         # If there were already news entries in the file to output then we should append to it.
-        if self.current_posts != []:
-            self.current_posts.insert(0, article_info)
-            with open(self.path_to_json, "w") as news_posts:
-                json.dump(self.current_posts, news_posts)
-                news_posts.close()
-        else:
-            yield article_info
+        yield article_info
