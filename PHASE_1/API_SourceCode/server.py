@@ -36,8 +36,22 @@ def report_filter():
 def report_from_article_url():
     return {}
 
+
 def test_scrape():
-    subprocess.Popen(["scrapy", "crawl", "posts", "-a", "num_pages=-1", "-a", "file_to_output=posts.json", "-o", "posts.json"])
+    subprocess.Popen(
+        [
+            "scrapy",
+            "crawl",
+            "posts",
+            "-a",
+            "num_pages=-1",
+            "-a",
+            "file_to_output=posts.json",
+            "-o",
+            "posts.json",
+        ]
+    )
+
 
 if __name__ == "__main__":
     test_scrape()
