@@ -42,6 +42,7 @@ def test_scrape():
 
 
 if __name__ == "__main__":
+    test_scrape()
     scheduler = BackgroundScheduler()
     scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
     scheduler.start()
