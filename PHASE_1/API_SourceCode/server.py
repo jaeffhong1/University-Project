@@ -38,10 +38,25 @@ def report_from_article_url():
 
 
 def test_scrape():
-    subprocess.check_output(["scrapy", "crawl", "posts", "-o", "posts.json"])
+    subprocess.Popen(
+        [
+            "scrapy",
+            "crawl",
+            "posts",
+            "-a",
+            "num_pages=-1",
+            "-a",
+            "file_to_output=posts.json",
+            "-o",
+            "posts.json",
+            "-t",
+            "jsonlines",
+        ]
+    )
 
 
 if __name__ == "__main__":
+    test_scrape()
     scheduler = BackgroundScheduler()
     scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
     scheduler.start()

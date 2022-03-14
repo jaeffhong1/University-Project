@@ -24,10 +24,12 @@ Install scrapy:
 pip install scrapy
 ```
 
-To run the scrapy, go into the projscrape/projscrape directory and run the command 
+To run the scrapy, go into the API_SourceCode directory and run the command 
 ```
-scrapy crawl posts -o posts.json
+scrapy crawl posts -a num_pages=1 -a file_to_output=posts.json -o posts.json -t jsonlines
 ```
+Replace num_pages with the amount of pages you want to scrape, if you want to scrape every page then set it as -1
+Set the file_to_output to a json file you want to output the scraped data to
 
 The scraped data will go into the projscrape/post.json file.
 =======
