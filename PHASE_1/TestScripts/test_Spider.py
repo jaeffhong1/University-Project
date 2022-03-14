@@ -6,12 +6,8 @@ import re
 
 # Test the overall structure of the json file and check each articles url and date are in the correct format.
 def test_format():
-
     path_to_testFile = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "API_SourceCode",
-        "testposts.json",
+        os.path.dirname(os.path.abspath(__file__)), "testposts.json",
     )
     # Clear contents of test_posts first
     open(path_to_testFile, "w").close()
@@ -27,9 +23,9 @@ def test_format():
             "-a",
             "num_pages=10",
             "-a",
-            "file_to_output=testposts.json",
+            "file_to_output=..\\TestScripts\\testposts.json",
             "-o",
-            "testposts.json",
+            "../TestScripts/testposts.json",
             "-t",
             "jsonlines",
         ],
@@ -49,6 +45,11 @@ def test_format():
     # Check each articles url and date.
     for post in current_posts:
         amount_of_posts += 1
+        assert 'url' in post
+        assert 'date_of_publication' in post
+        assert 'headline' in post
+        assert 'article_text' in post
+
         url, date = (
             post["url"],
             post["date_of_publication"],
@@ -76,10 +77,7 @@ def test_format():
 # ,if the very top article was not the first article to be put into the json file then the scraper will immediately stop.
 def test_stopped():
     path_to_testFile = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "API_SourceCode",
-        "testposts.json",
+        os.path.dirname(os.path.abspath(__file__)), "testposts.json",
     )
     # Clear contents of test_posts first
     open(path_to_testFile, "w").close()
@@ -94,9 +92,9 @@ def test_stopped():
             "-a",
             "num_pages=1",
             "-a",
-            "file_to_output=testposts.json",
+            "file_to_output=..\\TestScripts\\testposts.json",
             "-o",
-            "testposts.json",
+            "../TestScripts/testposts.json",
             "-t",
             "jsonlines",
         ],
@@ -134,9 +132,9 @@ def test_stopped():
             "-a",
             "num_pages=1",
             "-a",
-            "file_to_output=testposts.json",
+            "file_to_output=..\\TestScripts\\testposts.json",
             "-o",
-            "testposts.json",
+            "../TestScripts/testposts.json",
             "-t",
             "jsonlines",
         ],
@@ -147,11 +145,6 @@ def test_stopped():
     with open(path_to_testFile) as news_posts:
         for line in news_posts:
             current_posts.append(json.loads(line))
-
-    # If its 9, then most likely the first article to be added into the json was not the very top article.
-    # so just assert True?
-    if len(current_posts) == 9:
-        assert True
 
     # The deleted article should now be appended to the end of the current_posts list
     assert len(current_posts) == 10

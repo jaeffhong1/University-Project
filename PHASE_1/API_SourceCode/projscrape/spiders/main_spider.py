@@ -73,9 +73,16 @@ class PostsSpider(scrapy.Spider):
                 }
 
                 # If it finds the article is already in the file to output then it should just return.
+                found_duplicate = 0
                 for posts in self.current_posts:
                     if url == posts["url"]:
-                        return
+                        found_duplicate = 1
+                        break
+
+                if (self.pages == -1 and found_duplicate):
+                    return
+                elif (self.pages != -1 and found_duplicate):
+                    continue
 
                 # Else we should keep parsing articles.
                 # Goes into the article url and calls the parseArticle method on that article page.
