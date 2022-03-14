@@ -8,3 +8,5 @@ PHASE_1/API_SourceCode/db/model_sql_alchemy/db.env
 **/__pycache__
 **/posts.json
 **/.venv
+**/.pytest_cache
+**/.hypothesis
