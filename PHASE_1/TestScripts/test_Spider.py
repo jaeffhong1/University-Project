@@ -7,7 +7,8 @@ import re
 # Test the overall structure of the json file and check each articles url and date are in the correct format.
 def test_format():
     path_to_testFile = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "testposts.json",
+        os.path.dirname(os.path.abspath(__file__)),
+        "testposts.json",
     )
     # Clear contents of test_posts first
     open(path_to_testFile, "w").close()
@@ -45,10 +46,10 @@ def test_format():
     # Check each articles url and date.
     for post in current_posts:
         amount_of_posts += 1
-        assert 'url' in post
-        assert 'date_of_publication' in post
-        assert 'headline' in post
-        assert 'article_text' in post
+        assert "url" in post
+        assert "date_of_publication" in post
+        assert "headline" in post
+        assert "article_text" in post
 
         url, date = (
             post["url"],
@@ -77,7 +78,8 @@ def test_format():
 # ,if the very top article was not the first article to be put into the json file then the scraper will immediately stop.
 def test_stopped():
     path_to_testFile = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "testposts.json",
+        os.path.dirname(os.path.abspath(__file__)),
+        "testposts.json",
     )
     # Clear contents of test_posts first
     open(path_to_testFile, "w").close()

@@ -79,9 +79,9 @@ class PostsSpider(scrapy.Spider):
                         found_duplicate = 1
                         break
 
-                if (self.pages == -1 and found_duplicate):
+                if self.pages == -1 and found_duplicate:
                     return
-                elif (self.pages != -1 and found_duplicate):
+                elif self.pages != -1 and found_duplicate:
                     continue
 
                 # Else we should keep parsing articles.
