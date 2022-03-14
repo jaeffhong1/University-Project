@@ -59,7 +59,10 @@ def format_date(dates):
         datetimes = list(datefinder.find_dates(d))
         if len(datetimes) != 0:
             datetime = datetimes[0]
-            break
+            if datetime and datetimes[0].date() <= datetime.today().date():
+                break
+            else:
+                datetime = None
 
     if not datetime:
         return "xxxx-xx-xx xx:xx:xx"
