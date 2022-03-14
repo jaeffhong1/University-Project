@@ -110,7 +110,7 @@ def parse_article_text(article):
             for ent in doc.ents
             if ent.label_ == "DATE" and ent.text != "covid-19"
         ]
-        locations = [ent.text for ent in doc.ents if ent.label_ == "GPE"]
+        locations = list(set([ent.text for ent in doc.ents if ent.label_ == "GPE"]))
         log(f"sen: {sen} locations={locations} dates={dates} ents={doc.ents}")
 
         if len(dates) == 0:
