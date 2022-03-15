@@ -1,0 +1,34 @@
+name: Deploy Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    uses: ./.github/workflows/common.yml
+
+  deploy:
+    needs: test               # run the test before deploying
+    concurrency: deployment   # makes sure only one deployment happens at a time
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          script: |
+            # this server has read-only access to our GitHub repository, using its SSH key
+            [ ! -d SENG3011_f0b5 ] && git clone git@github.com:f0b5-org/SENG3011_f0b5.git || echo "git repo already cloned, keep going"
+
+            cd SENG3011_f0b5
+            git fetch origin main               # get latest version
+            git checkout origin/main            # go on the latest version
+
+            # need to run as sudo because systemctl
+            echo ${{ secrets.ACCOUNT_PASSWORD }} | sudo -S bash ./PHASE_1/deploy.sh
