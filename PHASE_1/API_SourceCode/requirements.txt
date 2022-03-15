@@ -1,4 +1,5 @@
 mysql-connector-python
+dateparser
 pytest
 Flask
 uwsgi
