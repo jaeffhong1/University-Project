@@ -14,6 +14,7 @@ import warnings
 import json
 import dateparser
 from spacy import displacy
+import os
 from scrapy.selector import Selector
 
 # dateparser.parse triggers some warnings that we don't care about
@@ -22,11 +23,13 @@ warnings.filterwarnings(
     message="The localize method is no longer necessary, as this time zone supports the fold attribute",
 )
 
-with open('./disease_list.json') as fp:
+
+with open(os.path.normpath(os.path.join(__file__, '../disease_list.json'))) as fp:
     DISEASES = [d['name'].lower() for d in json.load(fp)]
     
-with open("syndrome_list.json") as fp:
+with open(os.path.normpath(os.path.join(__file__, "../syndrome_list.json"))) as fp:
     SYNDROMES = [d['name'].lower() for d in json.load(fp)]
+
 
 nlp = spacy.load('en_core_web_sm')
 
