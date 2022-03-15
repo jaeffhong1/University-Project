@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.getcwd(), 'API_SourceCode'))
 from report_parser import parse_article
 
 
-def test_parser():
+def test_parser_simple_report():
     article = {
         'url': '/foo/bar',
         "date_of_publication": "2022-2-21 xx:xx:xx",

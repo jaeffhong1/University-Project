@@ -58,7 +58,16 @@ def get_valid_dates(dates_as_strings, relative_base):
 
 
 def seng3011_date_format(date):
-    return date # TODO
+    attributes = ['second', 'minute', 'hour', 'day', 'month']
+    year = date.year
+
+    month = date.month if date.month != 0 else 'xx'
+    day = date.day if date.day != 0 else 'xx'
+    hour = date.hour if date.hour != 0 else 'xx'
+    minute = date.minute if date.minute != 0 else 'xx'
+    second = date.second if date.second != 0 else 'xx'
+
+    return f'{year}-{month:>02}-{day:>02} {hour:>02}:{minute:>02}:{second:>02}'
 
 def get_reports_from_paragraphs(paragraphs, date_of_article, article_url):
     docs = nlp.pipe(paragraphs)
@@ -84,7 +93,7 @@ def get_reports_from_paragraphs(paragraphs, date_of_article, article_url):
                     'event_date': seng3011_date_format(date)
                 }
             if num_dates > 1:
-                print("[warning] more than one date for the article", article_url)
+                print("[warning] more than one date for the article", article_url, repr(doc.text))
 
 def parse_article(article):
     paragraphs = get_paragraphs_from_article(article['article_text'])
