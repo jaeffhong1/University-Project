@@ -17,6 +17,8 @@ from spacy import displacy
 import os
 from scrapy.selector import Selector
 
+displacy = None # don't import unless we need to
+
 # dateparser.parse triggers some warnings that we don't care about
 warnings.filterwarnings(
     "ignore",
@@ -40,6 +42,14 @@ ruler = nlp.add_pipe("entity_ruler", config={
 
 ruler.add_patterns([{"label": "DISEASE", "pattern": d} for d in DISEASES])
 ruler.add_patterns([{"label": "SYNDROME", "pattern": s} for s in SYNDROMES])
+
+
+def render_document(doc):
+    global displacy
+    if displacy is None:
+        from spacy import displacy
+    displacy.render(doc, style='ent')
+    displacy.render(doc, style='dep')
 
 def get_paragraphs_from_article(article_html):
    
@@ -69,36 +79,46 @@ def seng3011_date_format(date):
 
     return f'{year}-{month:>02}-{day:>02} {hour:>02}:{minute:>02}:{second:>02}'
 
-def get_reports_from_paragraphs(paragraphs, date_of_article, article_url):
-    docs = nlp.pipe(paragraphs)
-    for doc in docs:
-        with_ent = lambda x: [ent for ent in doc.ents if ent.label_ == x]
+def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=False):
+    """ one doc per paragraph (this is the terminology of spacy)
+    This parsing technique isn't great, it'll only ever yield on report per paragraph.
+    """
+    with_ent = lambda x: [ent for ent in doc.ents if ent.label_ == x]
 
-        diseases = with_ent("DISEASE")
-        syndromes = with_ent("SYNDROME")
-        dates = with_ent("DATE")
-        locations = with_ent("GPE") # countries, cities and states
+    diseases = with_ent("DISEASE")
+    syndromes = with_ent("SYNDROME")
+    dates = with_ent("DATE")
+    locations = with_ent("GPE") # countries, cities and states
 
-        if (any(diseases) or any(syndromes)) and any(dates) and any(locations):
-            # if there is more than one date, we create a report for each one
-            # (I don't have any better ideas right now. We'd rather have false
-            # positives than false negatives for this project)
-            num_dates = 0
-            for date in get_valid_dates((ent.text for ent in dates), date_of_article):
-                num_dates += 1
-                yield {
-                    'diseases': [ent.text for ent in diseases],
-                    'syndromes': [ent.text for ent in syndromes],
-                    'locations': [ent.text for ent in locations],
-                    'event_date': seng3011_date_format(date)
-                }
-            if num_dates > 1:
-                print("[warning] more than one date for the article", article_url, repr(doc.text))
+    if not ((any(diseases) or any(syndromes)) and any(dates) and any(locations)):
+        return
 
-def parse_article(article):
+
+    if notebook_debugging:
+        for date in dates:
+            print(repr(date.text).ljust(15), dateparser.parse(date.text, settings={"RELATIVE_BASE": date_of_article}))
+        render_document(doc)
+
+    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
+
+    # if there is more than one date, we create a report for each one
+    # (I don't have any better ideas right now. We'd rather have false
+    # positives than false negatives for this project)
+    for date in dates:
+        yield {
+            'diseases': [ent.text for ent in diseases],
+            'syndromes': [ent.text for ent in syndromes],
+            'locations': [ent.text for ent in locations],
+            'event_date': seng3011_date_format(date)
+        }
+    if len(dates) > 1:
+        print("[warning] more than one date for the report", article_url, repr(doc.text))
+
+def parse_article(article, notebook_debugging=False):
     paragraphs = get_paragraphs_from_article(article['article_text'])
     article_date = dateparser.parse(article['date_of_publication'].replace(' xx:xx:xx', ''))
-    yield from get_reports_from_paragraphs(paragraphs, article_date, article['url'])
+    for doc in nlp.pipe(paragraphs):
+        yield from get_reports_from_doc(doc, article_date, article['url'], notebook_debugging)
 
 
 def main(posts_file):
@@ -111,4 +131,4 @@ def main(posts_file):
                 print("insert into db:", report)
             
 if __name__ == "__main__":
-    main('/home/math2001/good-posts.json')
+    main('../posts.json')
