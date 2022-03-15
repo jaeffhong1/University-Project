@@ -120,11 +120,16 @@ def parse_article_text(article):
         if len(dates) != 1:
             log(f"[warning] found more than one date in {repr(sen)}, {dates}")
 
+        event_date = format_date(dates)
+        if event_date == "xxxx-xx-xx xx:xx:xx" and len(locations) == 0:
+            # not a new disease case
+            continue
+
         reports.append(
             {
                 "diseases": diseases_present,
                 "syndromes": syndromes_present,
-                "event_date": format_date(dates),
+                "event_date": event_date,
                 "locations": locations,
             }
         )
