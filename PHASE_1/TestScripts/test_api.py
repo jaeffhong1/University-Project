@@ -1,135 +1,158 @@
-import requests
+import sys
+import os
+import json
+import pytest
+
+sys.path.append(os.path.join(os.getcwd(), "../API_SourceCode"))
+
+import server
 
 
-def test_article_filter_missing_param():
+@pytest.fixture()
+def app():
+    app = server.app
+    app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
+    yield app
+
+
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
+def test_article_filter_missing_param(client):
     expected_response = {"message": "Missing required query parameter(s)"}
     # test missing location
-    url = "http://seng3011.duckdns.org/article/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak"
-    response = requests.get(url)
+    url = "/article/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing key_terms
-    url = "http://seng3011.duckdns.org/article/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&location=california"
-    response = requests.get(url)
+    url = "/article/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing end_date
-    url = "http://seng3011.duckdns.org/article/filter?start_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/article/filter?start_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing start_date
-    url = "http://seng3011.duckdns.org/article/filter?end_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/article/filter?end_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing two or more parameters
-    url = "http://seng3011.duckdns.org/article/filter?key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/article/filter?key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
-    url = "http://seng3011.duckdns.org/article/filter?location=california"
-    response = requests.get(url)
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
+    url = "/article/filter?location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test without any parameters
-    url = "http://seng3011.duckdns.org/article/filter"
-    response = requests.get(url)
+    url = "/article/filter"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_report_filter_missing_param():
+def test_report_filter_missing_param(client):
     expected_response = {"message": "Missing required query parameter(s)"}
     # test missing location
-    url = "http://seng3011.duckdns.org/report/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak"
-    response = requests.get(url)
+    url = "/report/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing key_terms
-    url = "http://seng3011.duckdns.org/report/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&location=california"
-    response = requests.get(url)
+    url = "/report/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing end_date
-    url = "http://seng3011.duckdns.org/report/filter?start_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/report/filter?start_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing start_date
-    url = "http://seng3011.duckdns.org/report/filter?end_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/report/filter?end_date=2019-10-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test missing two or more parameters
-    url = "http://seng3011.duckdns.org/report/filter?key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/report/filter?key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
-    url = "http://seng3011.duckdns.org/report/filter?location=california"
-    response = requests.get(url)
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
+    url = "/report/filter?location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test without any parameters
-    url = "http://seng3011.duckdns.org/report/filter"
-    response = requests.get(url)
+    url = "/report/filter"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_article_invalid_start_date():
+def test_article_invalid_start_date(client):
     expected_response = {"message": "start_date cannot be later than today"}
-    url = "http://seng3011.duckdns.org/article/filter?start_date=2023-03-01Txx:xx:xx&end_date=2023-03-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/article/filter?start_date=2023-03-01Txx:xx:xx&end_date=2023-03-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_report_invalid_start_date():
+def test_report_invalid_start_date(client):
     expected_response = {"message": "start_date cannot be later than today"}
-    url = "http://seng3011.duckdns.org/report/filter?start_date=2023-03-01Txx:xx:xx&end_date=2023-03-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/report/filter?start_date=2023-03-01Txx:xx:xx&end_date=2023-03-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_article_invalid_date_range():
+def test_article_invalid_date_range(client):
     expected_response = {"message": "start_date cannot be later than end_date"}
-    url = "http://seng3011.duckdns.org/article/filter?start_date=2022-03-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/article/filter?start_date=2022-03-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_report_invalid_date_range():
+def test_report_invalid_date_range(client):
     expected_response = {"message": "start_date cannot be later than end_date"}
-    url = "http://seng3011.duckdns.org/report/filter?start_date=2022-03-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california"
-    response = requests.get(url)
+    url = "/report/filter?start_date=2022-03-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_missing_url():
+def test_missing_url(client):
     expected_response = {"message": "Missing required query parameter(s)"}
-    url = "http://seng3011.duckdns.org/report/from_article_url"
-    response = requests.get(url)
+    url = "/report/from_article_url"
+    response = client.get(url)
     assert response.status_code == 400
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
 
 
-def test_malformed_url():
+def test_malformed_url(client):
     expected_response = {"message": "Malformed url"}
-    # test non-CIDRAP urls
-    url = "http://seng3011.duckdns.org/report/from_article_url?url=www.example.com"
-    response = requests.get(url)
+    # test non-CIDRAP url
+    url = "/report/from_article_url?url=www.example.com"
+    response = client.get(url)
     assert response.status_code == 404
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
     # test invalid urls
-    url = "http://seng3011.duckdns.org/report/from_article_url?url=abcdefg"
-    response = requests.get(url)
+    url = "/report/from_article_url?url=abcdefg"
+    response = client.get(url)
     assert response.status_code == 404
-    assert response.json() == expected_response
-    url = "http://seng3011.duckdns.org/report/from_article_url?url=http://non-existing.com/"
-    response = requests.get(url)
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
+    url = "/report/from_article_url?url=http://non-existing.com/"
+    response = client.get(url)
     assert response.status_code == 404
-    assert response.json() == expected_response
+    assert json.loads(str(response.get_data(), "utf-8")) == expected_response
