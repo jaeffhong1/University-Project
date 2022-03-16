@@ -49,6 +49,13 @@ def server_error_handler(err):
     return response
 
 
+def get_description(self, environ=None, scope=None):
+    return self.description
+
+
+HTTPException.get_description = get_description
+
+
 @app.errorhandler(HTTPException)
 def default_handler(err):
     """default exception handler"""
@@ -58,7 +65,6 @@ def default_handler(err):
             "message": err.get_description(),
         }
     )
-    response.content_type = "application/json"
     return response
 
 
