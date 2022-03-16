@@ -1,5 +1,14 @@
+mysql-connector-python==8.0.28
+python-dotenv==0.19.2
+SQLAlchemy==1.4.32
 black
 scrapy
 datefinder
 spacy
 pytest
+mysql-connector-python
+dateparser
+pytest
+Flask
+uwsgi
+black
