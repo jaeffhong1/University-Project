@@ -103,6 +103,8 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
     dates = with_ent("DATE")
     locations = with_ent("GPE")  # countries, cities and states
 
+    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
+
     if not ((any(diseases) or any(syndromes)) and any(dates) and any(locations)):
         return
 
@@ -115,8 +117,6 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
                 ),
             )
         render_document(doc)
-
-    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
 
     # if there is more than one date, we create a report for each one
     # (I don't have any better ideas right now. We'd rather have false

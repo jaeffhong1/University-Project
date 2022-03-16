@@ -27,6 +27,7 @@ def test_parser_simple_report():
         }
     ]
 
+
 def test_parser_ignores_dates_after_article_date():
     article = {
         "url": "/foo/bar",
@@ -39,6 +40,7 @@ def test_parser_ignores_dates_after_article_date():
             """,
     }
     assert list(parse_article(article)) == []
+
 
 def test_parser_selects_only_valid_dates():
     article = {
@@ -59,7 +61,6 @@ def test_parser_selects_only_valid_dates():
             "locations": ["Sydney"],
         }
     ]
-
 
 
 def test_parser_removes_duplicate_locations():
