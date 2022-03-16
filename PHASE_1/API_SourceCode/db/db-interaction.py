@@ -116,6 +116,26 @@ def insert_reports(article_id: int, reports: list) -> None:
         reports (List[Dict[str]]): A list of report dictionaries. Each dictionary represents the report to be inserted into the database. Must have keys "diseases", "syndromes", "event_date", "locations".
     """
 
+    with session.Connection() as dbs:
+        for report in reports:
+
+            # dict['date_of_publication'] needs to be separated into daydate, hour minute values for db insertion
+            daydate, hour, minute = format_date_for_db(article["event_date"])
+
+            r = schemas.Report(
+                article_id=article_id,
+                start_eventdate=schemas.EventDate(
+                    daydate=daydate, hour=hour, minute=minute
+                ),
+                finish_eventdate=schemas.EventDate(
+                    daydate=daydate, hour=hour, minute=minute
+                ),  # for now assume same end date
+                diseases=dbs.get_diseases(*report.diseases),  # split list into args
+                syndromes=dbs.get_syndromes(*report.syndromes),  # split list into args
+            )
+
+            dbs.add(r)
+
 
 if __name__ == "__main__":
     # remove_all_articles_and_reports() # just re-insert everything every time?
