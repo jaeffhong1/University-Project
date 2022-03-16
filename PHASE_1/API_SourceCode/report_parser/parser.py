@@ -64,12 +64,19 @@ def get_paragraphs_from_article(article_html):
         yield " ".join(item.css("*::text").getall())
 
 
-def get_valid_dates(dates_as_strings, relative_base):
+def get_valid_dates(dates_as_strings, date_of_article):
     for s in dates_as_strings:
         # dateparser.parse returns None if it can't parse a date out of the string
-        result = dateparser.parse(s, settings={"RELATIVE_BASE": relative_base})
-        if result:
-            yield result
+        date = dateparser.parse(s, settings={"RELATIVE_BASE": date_of_article})
+        if not date:
+            continue
+
+        # if the date is after the date the article is published on,
+        # then it's definitely not the date of a report
+        if date > date_of_article:
+            continue
+
+        yield date
 
 
 def seng3011_date_format(date):
@@ -96,6 +103,8 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
     dates = with_ent("DATE")
     locations = with_ent("GPE")  # countries, cities and states
 
+    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
+
     if not ((any(diseases) or any(syndromes)) and any(dates) and any(locations)):
         return
 
@@ -109,8 +118,6 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
             )
         render_document(doc)
 
-    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
-
     # if there is more than one date, we create a report for each one
     # (I don't have any better ideas right now. We'd rather have false
     # positives than false negatives for this project)
@@ -118,7 +125,7 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
         yield {
             "diseases": [ent.text for ent in diseases],
             "syndromes": [ent.text for ent in syndromes],
-            "locations": [ent.text for ent in locations],
+            "locations": list(set([ent.text for ent in locations])),
             "event_date": seng3011_date_format(date),
         }
     if len(dates) > 1:
