@@ -40,3 +40,24 @@ def test_parser_ignores_dates_after_article_date():
     }
     assert list(parse_article(article)) == []
 
+
+def test_parser_removes_duplicate_locations():
+    article = {
+        "url": "/foo/bar",
+        "date_of_publication": "2022-2-21 xx:xx:xx",
+        "headline": "This is test number 1",
+        "main_text": "read the whole thing",
+        "article_text": """
+            Around 10 cases of sars, located in Sydney, have been reported on November 14 2021.
+            Sydney has been heavely impacted by this diseases.
+            """,
+    }
+    assert list(parse_article(article)) == [
+        {
+            "diseases": ["sars"],
+            "syndromes": [],
+            "event_date": "2021-11-14 xx:xx:xx",
+            "locations": ["Sydney"],
+        }
+    ]
+

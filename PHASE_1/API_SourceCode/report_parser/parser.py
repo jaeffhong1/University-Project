@@ -125,7 +125,7 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
         yield {
             "diseases": [ent.text for ent in diseases],
             "syndromes": [ent.text for ent in syndromes],
-            "locations": [ent.text for ent in locations],
+            "locations": list(set([ent.text for ent in locations])),
             "event_date": seng3011_date_format(date),
         }
     if len(dates) > 1:
