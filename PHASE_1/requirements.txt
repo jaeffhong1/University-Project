@@ -13,3 +13,4 @@ pytest
 Flask
 uwsgi
 black
+apscheduler
