@@ -26,3 +26,17 @@ def test_parser_simple_report():
             "locations": ["Sydney"],
         }
     ]
+
+def test_parser_ignores_dates_after_article_date():
+    article = {
+        "url": "/foo/bar",
+        "date_of_publication": "2005-2-21 xx:xx:xx",
+        "headline": "This is test number 1",
+        "main_text": "read the whole thing",
+        "article_text": """
+            Around 10 cases of sars, located in Sydney, have been reported on November 14 2021.
+            The author can see the future.
+            """,
+    }
+    assert list(parse_article(article)) == []
+

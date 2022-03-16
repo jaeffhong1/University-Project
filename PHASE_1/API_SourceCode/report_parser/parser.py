@@ -64,12 +64,19 @@ def get_paragraphs_from_article(article_html):
         yield " ".join(item.css("*::text").getall())
 
 
-def get_valid_dates(dates_as_strings, relative_base):
+def get_valid_dates(dates_as_strings, date_of_article):
     for s in dates_as_strings:
         # dateparser.parse returns None if it can't parse a date out of the string
-        result = dateparser.parse(s, settings={"RELATIVE_BASE": relative_base})
-        if result:
-            yield result
+        date = dateparser.parse(s, settings={"RELATIVE_BASE": date_of_article})
+        if not date:
+            continue
+
+        # if the date is after the date the article is published on,
+        # then it's definitely not the date of a report
+        if date > date_of_article:
+            continue
+
+        yield date
 
 
 def seng3011_date_format(date):
