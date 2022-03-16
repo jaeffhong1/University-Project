@@ -139,6 +139,8 @@ def report_filter():
 @app.route("/report/from_article_url", methods=["GET"])
 def report_from_article_url():
     url = request.values.get("url")
+    if url is None:
+        raise BadRequest("Missing required query parameter(s)")
     if url.startswith("cidrap.umn.edu"):
         url = "https://www." + url
     if url.startswith("www.cidrap.umn.edu"):
