@@ -1,0 +1,104 @@
+[
+    {
+        "name": "Outbreak"
+    },
+    {
+        "name": "Infection"
+    },
+    {
+        "name": "Fever"
+    },
+    {
+        "name": "Virus"
+    },
+    {
+        "name": "Epidemic"
+    },
+    {
+        "name": "Infectious"
+    },
+    {
+        "name": "Illness"
+    },
+    {
+        "name": "Bacteria"
+    },
+    {
+        "name": "Emerging"
+    },
+    {
+        "name": "Unknown virus"
+    },
+    {
+        "name": "Myster(ious)y disease"
+    },
+    {
+        "name": "Zika"
+    },
+    {
+        "name": "MERS"
+    },
+    {
+        "name": "Salmonella"
+    },
+    {
+        "name": "Legionnaire"
+    },
+    {
+        "name": "Measles"
+    },
+    {
+        "name": "Category A Agents:"
+    },
+    {
+        "name": "Anthrax"
+    },
+    {
+        "name": "Botulism"
+    },
+    {
+        "name": "Plague"
+    },
+    {
+        "name": "Smallpox and other related pox viruses"
+    },
+    {
+        "name": "Tularemia"
+    },
+    {
+        "name": "Junin Fever"
+    },
+    {
+        "name": "Machupo Fever"
+    },
+    {
+        "name": "Guanarito Fever"
+    },
+    {
+        "name": "Chapare Fever"
+    },
+    {
+        "name": "Lassa Fever"
+    },
+    {
+        "name": "Lujo Fever"
+    },
+    {
+        "name": "Hantavirus"
+    },
+    {
+        "name": "Rift Valley Fever"
+    },
+    {
+        "name": "Crimean Congo Hemorrhagic Fever"
+    },
+    {
+        "name": "Dengue"
+    },
+    {
+        "name": "Ebola"
+    },
+    {
+        "name": "Marburg"
+    }
+]
