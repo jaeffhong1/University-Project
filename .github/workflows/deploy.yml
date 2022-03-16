@@ -31,4 +31,4 @@ jobs:
             git checkout origin/main            # go on the latest version
 
             # need to run as sudo because systemctl
-            echo ${{ secrets.ACCOUNT_PASSWORD }} | sudo -S bash ./PHASE_1/deploy.sh
+            echo ${{ secrets.ACCOUNT_PASSWORD }} | sudo -S bash ./PHASE_1/deploy.sh | tee "/home/web/logs/gh-pipeline-$(date +"%Y-%m-%d_%H_%M_%S")"
