@@ -4,6 +4,6 @@
 
 set -xe
 
-pushd PHASE_1
+pushd PHASE_1/TestScripts
 pytest
 popd
