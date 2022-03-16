@@ -13,14 +13,7 @@
 ## Writing/inserting to database
 ### Simple writing/inserting of single row
 To make changes to a particular table, you must import from model.schemas the object you would like to create.
-Create a new row of a particular table like so:
-```python
-from model import schemas 
-
-my_new_disease_row = schemas.Disease(name='A new disease!!!!')
-```
-
-If you want to insert it into the database, you must be in a session:
+To create a new object and insert it:
 ```python
 from model import session, schemas
 
@@ -43,7 +36,7 @@ with session.Connection() as dbs:
     article = schemas.Article(
         url = 'articles.com/articles/1.html',
         headline = 'My new article!',
-        eventdate = schemas.EventDate(daydate='2022-03-13', 13, 2)
+        eventdate = schemas.EventDate(daydate='2022-03-13', hour=13, minute=2)
     )
         
     dbs.add(article)
@@ -69,9 +62,10 @@ with session.Connection() as dbs:
     
     dbs.add(report)
 ```
-Notice the use of `dbs.get_diseases`. Use this to get all Disease objects by their name.
+Notice the use of `dbs.get_diseases`. Use this to get all Disease objects by their name. 
 
 ### Example 3: Inserting reports by IDs
+Sometimes, you NEED to know the ID of objects you are inserting. However, you shouldn't set the ID of an object since they are automatically created by MySQL. You might need to the ID of an object already (or just inserted) in the database for the use as a foreign key. This is needed if you want to insert multiple objects with the same foreign key e.g. multiple reports in one article.
 ```python
 from model import session, schemas
 
@@ -139,4 +133,3 @@ with session.Connection() as dbs:
 ```
 
 From here you can actually change the values of reports and when you commit, these changes will be made on the db.
-
