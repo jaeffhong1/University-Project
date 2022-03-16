@@ -1,0 +1,5 @@
+black
+scrapy
+datefinder
+spacy
+pytest
