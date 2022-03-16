@@ -109,22 +109,6 @@ def test_report_invalid_date_range():
     assert response.json() == expected_response
 
 
-def test_article_unknown_key_terms():
-    expected_response = {"message": "Unknown key_term"}
-    url = "http://seng3011.duckdns.orgarticle/filter?start_date=2021-03-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=randomdisease&location=california"
-    response = requests.get(url)
-    assert response.status_code == 400
-    assert response.json() == expected_response
-
-
-def test_report_unknown_key_terms():
-    expected_response = {"message": "Unknown key_term"}
-    url = "http://seng3011.duckdns.orgreport/filter?start_date=2021-03-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=randomdisease&location=california"
-    response = requests.get(url)
-    assert response.status_code == 400
-    assert response.json() == expected_response
-
-
 def test_missing_url():
     expected_response = {"message": "Missing required query parameter(s)"}
     url = "http://seng3011.duckdns.orgreport/from_article_url"

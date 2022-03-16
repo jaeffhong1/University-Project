@@ -68,10 +68,6 @@ def default_handler(err):
     return response
 
 
-with open("./report_parser/key_terms_list.json") as fp:
-    KEY_TERMS = [kt["name"].lower() for kt in json.load(fp)]
-
-
 def check_valid_date_range(start_date, end_date):
     start_date = start_date.replace("x", "0")
     end_date = end_date.replace("x", "0")
@@ -107,8 +103,6 @@ def check_filter_criteria(start_date, end_date, key_terms, location):
     if not re.search(date_format, start_date) or not re.search(date_format, end_date):
         raise BadRequest("Invalid date expression")
     check_valid_date_range(start_date, end_date)
-    if key_terms.lower() not in KEY_TERMS:
-        raise BadRequest("Unknown key_term")
 
 
 @app.route("/alive", methods=["GET"])
