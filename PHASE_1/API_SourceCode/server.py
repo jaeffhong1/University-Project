@@ -65,6 +65,7 @@ def default_handler(err):
             "message": err.get_description(),
         }
     )
+    response.content_type = "application/json"
     return response
 
 
