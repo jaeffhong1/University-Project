@@ -106,6 +106,15 @@ def check_filter_criteria(start_date, end_date, key_terms, location):
     check_valid_date_range(start_date, end_date)
 
 
+@app.route("/", methods=["GET"])
+def index():
+    return {
+        "api_documentation": "https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0",
+        "authors": "f0b5",
+        "source": "cidrap.umn.edu",
+    }
+
+
 @app.route("/alive", methods=["GET"])
 def alive():
     return {"sql_connected": mydb is not None, "scrapy_online": False}
