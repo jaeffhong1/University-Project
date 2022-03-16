@@ -7,30 +7,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.10
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: "3.9"
+          cache: 'pip'
 
+      - run: pip install --upgrade pip
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f PHASE_1/API_SourceCode/requirements.txt ]; then pip install -r PHASE_1/API_SourceCode/requirements.txt; fi
+        run: pip install -r PHASE_1/requirements.txt
 
       - name: Lint with black
-        run: |
-          # make sure code has been formated with black
-          black --check PHASE_1/API_SourceCode/
+        run: black --check PHASE_1/API_SourceCode/
 
       - name: Make sure no __pycache__ and no .pyc file is present
-        run: |
-          if git ls-files | grep __pycache__ || git-ls-files | grep '.pyc$' ; then exit 1; fi
+        run: if git ls-files | grep __pycache__ || git-ls-files | grep '.pyc$' ; then exit 1; fi
 
       - name: Make sure posts.json wasn't commited
-        run: |
-          ! find -name "posts.json" -type f
-          if git ls-files | grep posts.json ; then exit 1; fi
+        run: if git ls-files | grep posts.json ; then exit 1; fi
           
       - name: Run all tests
-        run: |
-          ./PHASE_1/run-all-tests.sh
+        run: ./PHASE_1/run-all-tests.sh
