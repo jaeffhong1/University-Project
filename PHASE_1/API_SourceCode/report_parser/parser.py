@@ -67,14 +67,17 @@ def get_paragraphs_from_article(article_html):
 def get_valid_dates(dates_as_strings, date_of_article):
     for s in dates_as_strings:
         # dateparser.parse returns None if it can't parse a date out of the string
-        date = dateparser.parse(s, settings={"RELATIVE_BASE": date_of_article})
+        date = dateparser.parse(s, languages=['en'], settings={"RELATIVE_BASE": date_of_article})
         if not date:
             continue
 
         # if the date is after the date the article is published on,
         # then it's definitely not the date of a report
-        if date > date_of_article:
-            continue
+        try:
+            if date > date_of_article:
+                continue
+        except TypeError:
+            pass    # can't compare date with time zone, and date without time zone
 
         yield date
 
@@ -128,16 +131,17 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
             "locations": list(set([ent.text for ent in locations])),
             "event_date": seng3011_date_format(date),
         }
-    if len(dates) > 1:
-        print(
-            "[warning] more than one date for the report", article_url, repr(doc.text)
-        )
+    # if len(dates) > 1:
+    #     print(
+    #         "[warning] more than one date for the report", article_url, repr(doc.text)
+    #     )
 
 
 def parse_article(article, notebook_debugging=False):
     paragraphs = get_paragraphs_from_article(article["article_text"])
     article_date = dateparser.parse(
-        article["date_of_publication"].replace(" xx:xx:xx", "")
+        article["date_of_publication"].replace(" xx:xx:xx", ""),
+        languages=['en']
     )
     for doc in nlp.pipe(paragraphs):
         yield from get_reports_from_doc(

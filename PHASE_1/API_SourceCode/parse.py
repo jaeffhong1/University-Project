@@ -7,7 +7,7 @@
 
 import json
 from report_parser import parse_article
-from model import session, schemas
+from db.model import session, schemas
 
 posts_file = "./posts.json"
 
@@ -41,7 +41,6 @@ def format_date_for_db(timedate) -> tuple:
         )  # hour, minute and seconds should be separated by colon (':')
 
         # hour is a required value in the database
-        hour_int = int(hour)
     except:
         raise ValueError(
             f'The format of parameter \'timedate\' was wrong. Expected value of format of "YYYY-M-D HH:MM:SS", but recieved "{timedate}".'
@@ -49,9 +48,17 @@ def format_date_for_db(timedate) -> tuple:
 
     # minute is an optional field, give it None value if it can't be parsed to an int e.g. minute = 'xx'
     try:
+        hour_int = int(hour)
+    except ValueError:
+        hour_int = 0
+    try:
         minute_int = int(minute)
     except:
         minute_int = None
+
+    year = int(year)
+    month = int(month)
+    day = int(day)
 
     # format and return as tuple of three elements: datetime, hour, minute
     # pad month and day to 2 digits
@@ -76,6 +83,8 @@ def insert_article(article: dict) -> int:
     # dict['date_of_publication'] needs to be separated into daydate, hour minute values for db insertion
     daydate, hour, minute = format_date_for_db(article["date_of_publication"])
 
+    if minute == None:
+        minute = 0
     # format_date_for_db can return None for value 'minute'. Since articles have no optional parameters, throw error in this case.
     if minute == None:
         raise ValueError(
@@ -120,7 +129,7 @@ def insert_reports(article_id: int, reports: list) -> None:
         for report in reports:
 
             # dict['date_of_publication'] needs to be separated into daydate, hour minute values for db insertion
-            daydate, hour, minute = format_date_for_db(article["event_date"])
+            daydate, hour, minute = format_date_for_db(article["date_of_publication"])
 
             r = schemas.Report(
                 article_id=article_id,
@@ -130,8 +139,8 @@ def insert_reports(article_id: int, reports: list) -> None:
                 finish_eventdate=schemas.EventDate(
                     daydate=daydate, hour=hour, minute=minute
                 ),  # for now assume same end date
-                diseases=dbs.get_diseases(*report.diseases),  # split list into args
-                syndromes=dbs.get_syndromes(*report.syndromes),  # split list into args
+                diseases=dbs.get_diseases(*report['diseases']),  # split list into args
+                syndromes=dbs.get_syndromes(*report['syndromes']),  # split list into args
             )
 
             dbs.add(r)
