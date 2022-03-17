@@ -9,6 +9,7 @@ import requests
 import os
 import re
 from datetime import datetime
+from geoid import find_geo_id
 
 
 app = Flask(__name__)
@@ -177,6 +178,9 @@ def article_filter():
             if not match:
                 continue
 
+        for report in article['reports']:
+            convert_location_in_report(report)
+
         articles.append(article)
 
     return jsonify(articles)
@@ -213,7 +217,9 @@ def report_filter():
                 if not match:
                     continue
 
-            matches.append(report)
+            convert_location_in_report(report)
+            if len(report['locations']) > 0:
+                matches.append(report)
     return jsonify(matches)
 
 
@@ -274,6 +280,17 @@ def load_full_articles_from_db():
     with open("db2/full-articles.json") as fp:
         for line in fp:
             yield json.loads(line)
+
+
+def convert_location_in_report(report):
+    for i in range(len(report['locations'])):
+        geoname_ids = []
+        geoname_id = find_geo_id(report['locations'][i])
+        if geoname_id > 0:
+            geoname_ids.append({
+                'geonames_id': geoname_id    
+            })
+    report['locations'] = geoname_ids
 
 
 if __name__ == "__main__":
