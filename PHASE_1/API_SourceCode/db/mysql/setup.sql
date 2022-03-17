@@ -85,9 +85,7 @@ CREATE TABLE Articles (
 CREATE TABLE Reports ( 
     id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
 
-    article_id INT UNSIGNED UNSIGNED,
-    geonames_id INT UNSIGNED UNSIGNED,
-
+    article_id INT UNSIGNED NOT NULL,
     start_eventdate_id INT UNSIGNED NOT NULL,
     finish_eventdate_id INT UNSIGNED,
     
@@ -98,8 +96,8 @@ CREATE TABLE Reports (
 
 CREATE TABLE ReportDiseases (
     id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    disease_id INT,
-    report_id INT,
+    disease_id INT UNSIGNED,
+    report_id INT UNSIGNED,
 
     FOREIGN KEY(disease_id) REFERENCES Diseases(id),
     FOREIGN KEY(report_id) REFERENCES Reports(id)
@@ -107,10 +105,20 @@ CREATE TABLE ReportDiseases (
 
 CREATE TABLE ReportSyndromes (
     id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    syndrome_id INT NOT NULL,
-    report_id INT NOT NULL,
+    syndrome_id INT UNSIGNED NOT NULL,
+    report_id INT UNSIGNED NOT NULL,
 
     FOREIGN KEY(syndrome_id) REFERENCES Syndromes(id),
+    FOREIGN KEY(report_id) REFERENCES Reports(id)
+);
+
+-- Stores one of the locations of a particular report
+-- There can be multiple ReportLocations of the same location (e.g. Sydney), but refer to a different report that coincidentally occured at the same place
+CREATE TABLE ReportLocations ( 
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    geonames_id VARCHAR(255), -- reference to geonames ID public database, NOT a foreign key
+    report_id INT UNSIGNED,
+
     FOREIGN KEY(report_id) REFERENCES Reports(id)
 );
 
