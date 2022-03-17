@@ -65,7 +65,7 @@ CREATE TABLE Articles (
 
     url VARCHAR(255) NOT NULL UNIQUE,
     headline VARCHAR(255) NOT NULL UNIQUE,
-    main_text VARCHAR(65535), -- 65 kb is a very large file
+    main_text TEXT(65535), -- 65 kb is a very large file
 
     publish_date VARCHAR(19) -- at most 19
 );
@@ -74,8 +74,8 @@ CREATE TABLE Reports (
     id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
 
     article_id INT(255),
-    start_date VARCHAR(19) NOT NULL,
-    finish_date VARCHAR(19), -- Nullable, incase report starts and finishes at the same time
+    start_date TEXT(65535) NOT NULL,
+    finish_date TEXT(65535), -- Nullable, incase report starts and finishes at the same time
     geonames_id VARCHAR(255),
     
     FOREIGN KEY(article_id) REFERENCES Articles(id),
