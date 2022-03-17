@@ -7,9 +7,8 @@
 
 import json
 from report_parser import parse_article
-from model import session, schemas
+from db.model import session, schemas
 
-posts_file = "./posts.json"
 
 
 def format_date_for_db(timedate) -> tuple:
@@ -41,17 +40,24 @@ def format_date_for_db(timedate) -> tuple:
         )  # hour, minute and seconds should be separated by colon (':')
 
         # hour is a required value in the database
-        hour_int = int(hour)
     except:
         raise ValueError(
             f'The format of parameter \'timedate\' was wrong. Expected value of format of "YYYY-M-D HH:MM:SS", but recieved "{timedate}".'
         )
+    try:
+        hour_int = int(hour)
+    except ValueError:
+        hour_int = 0
 
     # minute is an optional field, give it None value if it can't be parsed to an int e.g. minute = 'xx'
     try:
         minute_int = int(minute)
     except:
         minute_int = None
+
+    year = int(year)
+    month = int(month)
+    day = int(day)
 
     # format and return as tuple of three elements: datetime, hour, minute
     # pad month and day to 2 digits
@@ -77,6 +83,10 @@ def insert_article(article: dict) -> int:
     daydate, hour, minute = format_date_for_db(article["date_of_publication"])
 
     # format_date_for_db can return None for value 'minute'. Since articles have no optional parameters, throw error in this case.
+    if minute == None:
+        minute = 0
+
+
     if minute == None:
         raise ValueError(
             f"Dictionary parameter 'article' contains insufficient datetime information in key 'date_of_publication' for insertion in Articles table. Ensure the 'date_of_publication' contains valid 'minute' data."
@@ -120,7 +130,7 @@ def insert_reports(article_id: int, reports: list) -> None:
         for report in reports:
 
             # dict['date_of_publication'] needs to be separated into daydate, hour minute values for db insertion
-            daydate, hour, minute = format_date_for_db(article["event_date"])
+            daydate, hour, minute = format_date_for_db(article["date_of_publication"])
 
             r = schemas.Report(
                 article_id=article_id,
@@ -130,19 +140,37 @@ def insert_reports(article_id: int, reports: list) -> None:
                 finish_eventdate=schemas.EventDate(
                     daydate=daydate, hour=hour, minute=minute
                 ),  # for now assume same end date
-                diseases=dbs.get_diseases(*report.diseases),  # split list into args
-                syndromes=dbs.get_syndromes(*report.syndromes),  # split list into args
+                diseases=dbs.get_diseases(*report['diseases']),  # split list into args
+                syndromes=dbs.get_syndromes(*report['syndromes']),  # split list into args
             )
 
             dbs.add(r)
 
 
 if __name__ == "__main__":
-    # remove_all_articles_and_reports() # just re-insert everything every time?
+    import sys
+    posts_file = sys.argv[1]
+    counts_file = sys.argv[2]
+
+    if 'posts' in counts_file:
+        print("usage: python3 parse.py <posts_file> <counts_file>")
+        sys.exit(1)
+
+    try:
+        with open(counts_file) as fp:
+            skip = int(next(fp))
+    except FileNotFoundError:
+        skip = 0
+
 
     with open(posts_file) as fp:
+        # skip already processed lines
+        for i in range(skip):
+            next(fp)
+
         for line in fp:
 
+            print(repr(line))
             # exstracts all article data including body
             article = json.loads(line)
 
@@ -152,3 +180,8 @@ if __name__ == "__main__":
             # insert all reports at once to avoid constant opening and closing of db connection causing network overload
             reports = parse_article(article)
             insert_reports(article_id, reports)
+
+            skip += 1
+
+    with open(counts_file, 'w') as fp:
+        fp.write(skip)

@@ -154,6 +154,3 @@ def main(posts_file):
             for report in parse_article(article):
                 print("insert into db:", report)
 
-
-if __name__ == "__main__":
-    main("../posts.json")
