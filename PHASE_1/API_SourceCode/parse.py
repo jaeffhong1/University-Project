@@ -139,8 +139,10 @@ def insert_reports(article_id: int, reports: list) -> None:
                 finish_eventdate=schemas.EventDate(
                     daydate=daydate, hour=hour, minute=minute
                 ),  # for now assume same end date
-                diseases=dbs.get_diseases(*report['diseases']),  # split list into args
-                syndromes=dbs.get_syndromes(*report['syndromes']),  # split list into args
+                diseases=dbs.get_diseases(*report["diseases"]),  # split list into args
+                syndromes=dbs.get_syndromes(
+                    *report["syndromes"]
+                ),  # split list into args
             )
 
             dbs.add(r)
