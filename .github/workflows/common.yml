@@ -22,7 +22,7 @@ jobs:
         with:
           path: ./geonames/
           key: geonames-${{ hashFiles('**/*.zip') }}
-          restore-key: |
+          restore-keys: |
             ${{ runner.os }}-geonames-
 
       - name: Download (or load from cache) country to geoid map file
