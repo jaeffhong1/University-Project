@@ -96,15 +96,25 @@ def check_valid_date_range(start_date, end_date):
     ):
         raise BadRequest("start_date cannot be later than today")
 
+def convert_date(date_string):
+    date_string = date_string.replace('x', '0')
+    return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
 
 def check_filter_criteria(start_date, end_date, key_terms, location):
     if any(param is None for param in [start_date, end_date, key_terms, location]):
         raise BadRequest("Missing required query parameter(s)")
-    date_format = "^([1-2][0-9]{3}|xxxx)-([0-2][0-9]|xx)-([0-3][0-9]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)"
-    if not re.search(date_format, start_date) or not re.search(date_format, end_date):
-        raise BadRequest("Invalid date expression")
-    check_valid_date_range(start_date, end_date)
+    # date_format = "^([1-2][0-9]{3}|xxxx)-([0-2][0-9]|xx)-([0-3][0-9]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)"
+    date_format = r'^(\d{4})-(\d\d|xx)-(\d\d|xx) (\d\d|xx):(\d\d|xx):(\d\d|xx)$'
+    if not re.search(date_format, start_date):
+        raise BadRequest("Invalid start date expression")
+    if not re.search(date_format, end_date):
+        raise BadRequest("Invalid end date expression")
 
+    # check_valid_date_range(start_date, end_date)
+
+def matches_date_range(start, end, date):
+    start, end, date = convert_date(start), convert_date(end), convert_date(date)
+    return start <= date <= end 
 
 @app.route("/", methods=["GET"])
 def index():
@@ -137,7 +147,27 @@ def report_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
-    return {}
+
+    reports = []
+    with open('db_reports/all-reports.json') as fp:
+        for line in fp:
+            report = json.loads(line)
+            if not matches_date_range(start_date, end_date, report["event_date"]):
+                continue
+            if location != '' and location not in report['locations']:
+                continue
+
+            if key_terms != '':
+                match = False
+                for kt in key_terms.split(','):
+                    if kt in report['diseases'] or kt in report['syndromes']:
+                        match = True
+                if not match:
+                    continue
+            # for kt in key_terms:
+
+            reports.append(report)
+    return jsonify(reports)
 
 
 @app.route("/report/from_article_url", methods=["GET"])
@@ -173,8 +203,4 @@ def test_scrape():
 
 
 if __name__ == "__main__":
-    test_scrape()
-    scheduler = BackgroundScheduler()
-    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
-    scheduler.start()
     app.run(host="0.0.0.0", port=36042)
