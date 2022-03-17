@@ -108,12 +108,12 @@ def check_valid_date_range(start_date, end_date):
 def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     if any(param is None for param in [start_date, end_date, key_terms, location]):
         raise BadRequest("Missing required query parameter(s)")
-    date_format = "^([1-2][0-9]{3}|xxxx)-(0[1-9]|1[0-2]|xx)-(0[1-9]|[12][0-9]|3[01]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)$"
+    date_format = r"^([1-2][0-9]{3}|xxxx)-(0[1-9]|1[0-2]|xx)-(0[1-9]|[12][0-9]|3[01]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)$"
     if not re.search(date_format, start_date) or not re.search(date_format, end_date):
         raise BadRequest("Invalid date expression")
     check_valid_date_range(start_date, end_date)
-    timezone_format = "^utc(+|-)(1[0-2]|0?[1-9])$"
-    if not re.search(timezone_format, timezone):
+    timezone_format = r"^utc(+|-)(1[0-2]|0?[1-9])$"
+    if timezone is not None and not re.search(timezone_format, timezone):
         raise BadRequest("Invalid timezone expression")
 
 
@@ -130,6 +130,8 @@ def article_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     timezone = request.values.get("timezone")
+    if timezone is not None:
+        timezone = timezone.lower()
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
     return {}
 
@@ -141,6 +143,8 @@ def report_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     timezone = request.values.get("timezone")
+    if timezone is not None:
+        timezone = timezone.lower()
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
     return {}
 
