@@ -1,8 +1,9 @@
 import os
 from functools import lru_cache
+from geopy.geocoders import GeoNames
 
 path_to_locations = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "Locations", "CountryToGeoID-sorted.txt")
+    os.path.dirname(os.path.abspath(__file__)), "Locations", "CountryToGeoID2-sorted.txt")
 
 
 @lru_cache
@@ -27,12 +28,9 @@ def find_GeoID(location):
             lo=mid
             continue
         f.close()
-        return line[1]
+        return int(line[1])
     f.close()
     return -1
-
-location = "Abasakur Number 2"
-print(str(find_GeoID(location)))
 
 
 
