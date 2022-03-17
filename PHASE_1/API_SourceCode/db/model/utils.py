@@ -1,3 +1,4 @@
+from ast import Return
 import json  # for parsing syndromes and diseases json list from ViewReports
 from datetime import datetime as dt
 from sqlalchemy import text
@@ -88,7 +89,7 @@ class UtilitySession(Session):
 
     # returns dictionary not Models Objects
     # so cant be used to fetch modifiable objects, use inbuilt orm tools for that
-    def __parseViewReport(self, vr: tuple):
+    def __parseViewReport(self, vr: tuple) -> dict:
         return {
             "id": vr[0],
             "geonames_id": vr[1],
@@ -103,21 +104,39 @@ class UtilitySession(Session):
             "report_finish_daydate": self.__parseDatetime(vr[10]),
             "report_finish_hour": vr[11],
             "report_finish_minute": vr[12],
-            "diseases": json.loads(vr[13]),  # parse the json string to list of strings
+            "diseases": json.loads(vr[13]), # parse the json string to list of strings
             "syndromes": json.loads(vr[14]),
         }
 
-        # convert vrc back to a tuple
-        return tuple(vrc)
+    def __parseViewArticle(self, a: tuple) -> dict:
+        return {
+            "id": a[0],
+            "url": a[1],
+            "headline": a[2],
+            "daydate": self.__parseDatetime(a[3]),
+            "hour": a[4],
+            "minute": a[5]
+        }
 
-    def ViewReports(self):
+    def ViewReports(self, id=None, geonames_id=None,):
         result = self.execute(text("SELECT * FROM ViewReports;"))
 
         view_reports = [self.__parseViewReport(res) for res in result]
 
-        for v in view_reports:
-            print(type(v))
-
-        # print('DONE')
-
         return view_reports
+
+    def ViewArticles(self, id=None, url=None, headline=None, daydate=None, hour=None, minute=None):
+        result = self.execute(text("SELECT * FROM ViewArticles;"))
+        
+        view_articles = [self.__parseViewArticle(res) for res in result]
+        
+        # filter out unwanted rows
+        return filter(
+            lambda row : (row['id'] == id or id == None)
+                     and (row['url'] == url or url == None)
+                     and (row['headline'] == headline or headline == None)
+                     and (row['daydate'] == daydate or daydate == None)
+                     and (row['hour'] == hour or hour == None)
+                     and (row['minute'] == minute or minute == None), 
+            view_articles
+        )
