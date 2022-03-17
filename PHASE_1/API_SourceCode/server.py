@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, jsonify, request, make_response
 import mysql.connector
 from mysql.connector import errorcode
@@ -9,10 +10,13 @@ import requests
 import os
 import re
 from datetime import datetime
+import time
+from flask import Flask, request, jsonify, current_app, g as app_ctx
 from geoid import find_geo_id
 
 
 app = Flask(__name__)
+logging.basicConfig(filename='server.log', level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [%(message)s]')
 
 mydb = None
 mydb = mysql.connector.connect(
@@ -22,6 +26,22 @@ mydb = mysql.connector.connect(
     port=5231,
     auth_plugin="mysql_native_password",
 )
+
+@app.before_request
+def logging_before():
+    # Store the start time for the request
+    app_ctx.start_time = time.perf_counter()
+
+
+@app.after_request
+def logging_after(response):
+    # Get total time in milliseconds
+    total_time = time.perf_counter() - app_ctx.start_time
+    time_in_ms = int(total_time * 1000)
+    # Log the time taken for the endpoint 
+    current_app.logger.info('%s ms %s %s %s', time_in_ms, request.method, request.path, dict(request.args))
+    return response
+
 
 
 @app.errorhandler(500)
