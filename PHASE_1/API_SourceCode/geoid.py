@@ -5,10 +5,14 @@ path_to_locations = os.path.join(
 )
 
 
-geoid_db_file = open(path_to_locations, encoding="ISO-8859-1")
+try:
+    geoid_db_file = open(path_to_locations, encoding="ISO-8859-1")
+except FileNotFoundError:
+    pass  # we're running on the pipeline
+
 
 def find_geo_id(location):
-    location = location.replace("'s", '').replace("The ", '').title()
+    location = location.replace("'s", "").replace("The ", "").title()
     # Compute filesize
     hi = os.fstat(geoid_db_file.fileno()).st_size
     lo = 0
@@ -31,16 +35,18 @@ def find_geo_id(location):
         # geoid_db_file.close()
         return int(line[1])
     # f.close()
-    return -1 
+    return -1
 
-if __name__  == "__main__":
+
+if __name__ == "__main__":
     import json
-    with open('db2/full-articles.json') as fp:
+
+    with open("db2/full-articles.json") as fp:
         for line in fp:
             article = json.loads(line)
-            for report in article['reports']:
-                for location in report['locations']:
+            for report in article["reports"]:
+                for location in report["locations"]:
                     if find_geo_id(location) < 0:
-                        print('y')
+                        print("y")
                     else:
-                        print('x')
+                        print("x")

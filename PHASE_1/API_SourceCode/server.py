@@ -16,7 +16,11 @@ from geoid import find_geo_id
 
 
 app = Flask(__name__)
-logging.basicConfig(filename='server.log', level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [%(message)s]')
+logging.basicConfig(
+    filename="server.log",
+    level=logging.DEBUG,
+    format="[%(asctime)s] [%(levelname)s] [%(message)s]",
+)
 
 mydb = None
 mydb = mysql.connector.connect(
@@ -26,6 +30,7 @@ mydb = mysql.connector.connect(
     port=5231,
     auth_plugin="mysql_native_password",
 )
+
 
 @app.before_request
 def logging_before():
@@ -38,10 +43,11 @@ def logging_after(response):
     # Get total time in milliseconds
     total_time = time.perf_counter() - app_ctx.start_time
     time_in_ms = int(total_time * 1000)
-    # Log the time taken for the endpoint 
-    current_app.logger.info('%s ms %s %s %s', time_in_ms, request.method, request.path, dict(request.args))
+    # Log the time taken for the endpoint
+    current_app.logger.info(
+        "%s ms %s %s %s", time_in_ms, request.method, request.path, dict(request.args)
+    )
     return response
-
 
 
 @app.errorhandler(500)
@@ -182,10 +188,12 @@ def article_filter():
             match = False
             for kt in key_terms.split(","):
                 kt = kt.lower()
-                if kt in article['main_text'].lower():
+                if kt in article["main_text"].lower():
                     match = True
                 for report in article["reports"]:
-                    if kt in (d.lower() for d in report["diseases"]) or kt in (s.lower() for s in report["syndromes"]):
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (
+                        s.lower() for s in report["syndromes"]
+                    ):
                         match = True
             if not match:
                 continue
@@ -193,17 +201,23 @@ def article_filter():
         if location != "":
             match = False
             for report in article["reports"]:
-                if location_matches(location, report['locations']):
+                if location_matches(location, report["locations"]):
                     match = True
             if not match:
                 continue
 
-        for report in article['reports']:
+        valid_reports = []
+        for report in article["reports"]:
             convert_location_in_report(report)
+            if len(report["locations"]) > 0:
+                valid_reports.append(report)
 
-        articles.append(article)
+        if len(valid_reports) > 0:
+            article["reports"] = valid_reports
+            articles.append(article)
 
     return jsonify(articles)
+
 
 def location_matches(location, locations):
     location = location.lower()
@@ -218,27 +232,28 @@ def report_filter():
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
 
-
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
         for report in reports:
             if not matches_date_range(start_date, end_date, report["event_date"]):
                 continue
-            if not location_matches(location, repor['locations']):
+            if not location_matches(location, repor["locations"]):
                 continue
 
             if key_terms != "":
                 match = False
                 for kt in key_terms.split(","):
                     kt = kt.lower()
-                    if kt in (d.lower() for d in report["diseases"]) or kt in (s.lower() for s in report["syndromes"]):
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (
+                        s.lower() for s in report["syndromes"]
+                    ):
                         match = True
                 if not match:
                     continue
 
             convert_location_in_report(report)
-            if len(report['locations']) > 0:
+            if len(report["locations"]) > 0:
                 matches.append(report)
     return jsonify(matches)
 
@@ -303,14 +318,12 @@ def load_full_articles_from_db():
 
 
 def convert_location_in_report(report):
-    for i in range(len(report['locations'])):
+    for i in range(len(report["locations"])):
         geoname_ids = []
-        geoname_id = find_geo_id(report['locations'][i])
+        geoname_id = find_geo_id(report["locations"][i])
         if geoname_id > 0:
-            geoname_ids.append({
-                'geonames_id': geoname_id    
-            })
-    report['locations'] = geoname_ids
+            geoname_ids.append({"geonames_id": geoname_id})
+    report["locations"] = geoname_ids
 
 
 if __name__ == "__main__":
