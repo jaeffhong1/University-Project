@@ -17,6 +17,22 @@ jobs:
       - name: Install dependencies
         run: pip install -r PHASE_1/requirements.txt
 
+      - uses: actions/cache@v2
+        id: cache-geo-names
+        with:
+          path: ./geonames/
+          key: geonames-${{ hashFiles('**/*.zip') }}
+          restore-keys: |
+            ${{ runner.os }}-geonames-
+
+      - name: Download (or load from cache) country to geoid map file
+        run: |
+          mkdir -p ./geonames/
+          wget https://cgi.cse.unsw.edu.au/~z5312157/country-to-geo.zip -O ./geonames/country-to-geo.zip
+          unzip ./geonames/country-to-geo.zip -d ./geonames/
+          mv ./geonames/CountryToGeoID-sorted.txt PHASE_1/API_SourceCode/country-to-geo.txt
+        if: steps.cache-geo-names.outputs.cache-hit != 'true'
+
       - name: Lint with black
         run: black --check PHASE_1/API_SourceCode/
 
