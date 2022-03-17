@@ -1,6 +1,5 @@
 import sys
 import os
-import json
 import pytest
 
 sys.path.append(os.path.join(os.getcwd(), "../API_SourceCode"))
@@ -145,16 +144,16 @@ def test_malformed_url(client):
     # test non-CIDRAP url
     url = "/report/from_article_url?url=www.example.com"
     response = client.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 400
     assert response.json == expected_response
     # test invalid urls
     url = "/report/from_article_url?url=abcdefg"
     response = client.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 400
     assert response.json == expected_response
     url = "/report/from_article_url?url=http://non-existing.com/"
     response = client.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 400
     assert response.json == expected_response
 
 

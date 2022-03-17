@@ -4,7 +4,7 @@ from mysql.connector import errorcode
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 import json
-from werkzeug.exceptions import HTTPException, BadRequest, NotFound
+from werkzeug.exceptions import HTTPException, BadRequest
 import requests
 import os
 import re
@@ -151,7 +151,7 @@ def report_from_article_url():
     if url.startswith("www.cidrap.umn.edu"):
         url = "https://" + url
     if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
-        raise NotFound("Malformed url")
+        raise BadRequest("Malformed url")
     return {}
 
 
