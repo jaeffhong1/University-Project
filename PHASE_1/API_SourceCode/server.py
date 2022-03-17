@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 import mysql.connector
 from mysql.connector import errorcode
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -97,13 +97,31 @@ def check_valid_date_range(start_date, end_date):
         raise BadRequest("start_date cannot be later than today")
 
 
+def convert_date(date_string):
+    date_string = date_string.replace("x", "0")
+    # there are inconsistencies
+    try:
+        return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+
+
 def check_filter_criteria(start_date, end_date, key_terms, location):
     if any(param is None for param in [start_date, end_date, key_terms, location]):
         raise BadRequest("Missing required query parameter(s)")
-    date_format = "^([1-2][0-9]{3}|xxxx)-([0-2][0-9]|xx)-([0-3][0-9]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)"
-    if not re.search(date_format, start_date) or not re.search(date_format, end_date):
-        raise BadRequest("Invalid date expression")
+    # date_format = "^([1-2][0-9]{3}|xxxx)-([0-2][0-9]|xx)-([0-3][0-9]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)"
+    date_format = r"^(\d{4})-(\d\d|xx)-(\d\d|xx)T(\d\d|xx):(\d\d|xx):(\d\d|xx)$"
+    if not re.search(date_format, start_date):
+        raise BadRequest("Invalid start date expression")
+    if not re.search(date_format, end_date):
+        raise BadRequest("Invalid end date expression")
+
     check_valid_date_range(start_date, end_date)
+
+
+def matches_date_range(start, end, date):
+    start, end, date = convert_date(start), convert_date(end), convert_date(date)
+    return start <= date <= end
 
 
 @app.route("/", methods=["GET"])
@@ -127,7 +145,38 @@ def article_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
-    return {}
+
+    articles = []
+    for article in load_full_articles_from_db():
+        if not matches_date_range(start_date, end_date, article["date_of_publication"]):
+            continue
+
+        article["main_text"] = article["article_text"]
+        del article["article_text"]  # keys are wrong in the database
+
+        if article["main_text"] is None:
+            continue  # what?
+
+        if key_terms != "":
+            match = False
+            for kt in key_terms.split(","):
+                for report in article["reports"]:
+                    if kt in report["diseases"] or kt in report["syndromes"]:
+                        match = True
+            if not match:
+                continue
+
+        if location != "":
+            match = False
+            for report in article["reports"]:
+                if location in reports["locations"]:
+                    match = True
+            if not match:
+                continue
+
+        articles.append(article)
+
+    return jsonify(articles)
 
 
 @app.route("/report/filter", methods=["GET"])
@@ -137,7 +186,26 @@ def report_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
-    return {}
+
+    matches = []
+    for article in load_full_articles_from_db():
+        reports = article["reports"]
+        for report in reports:
+            if not matches_date_range(start_date, end_date, report["event_date"]):
+                continue
+            if location != "" and location not in report["locations"]:
+                continue
+
+            if key_terms != "":
+                match = False
+                for kt in key_terms.split(","):
+                    if kt in report["diseases"] or kt in report["syndromes"]:
+                        match = True
+                if not match:
+                    continue
+
+            matches.append(report)
+    return jsonify(matches)
 
 
 @app.route("/report/from_article_url", methods=["GET"])
@@ -145,13 +213,22 @@ def report_from_article_url():
     url = request.values.get("url")
     if url is None:
         raise BadRequest("Missing required query parameter(s)")
-    if url.startswith("cidrap.umn.edu"):
-        url = "https://www." + url
-    if url.startswith("www.cidrap.umn.edu"):
-        url = "https://" + url
-    if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
+    # if url.startswith("cidrap.umn.edu"):
+    #     url = "https://www." + url
+    # if url.startswith("www.cidrap.umn.edu"):
+    #     url = "https://" + url
+    # if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
+    # if "cidrap.umn.edu" not in url:
+    if not url.startswith("/"):
         raise NotFound("Malformed url")
-    return {}
+
+    for article in load_full_articles_from_db():
+        if article["url"] == url:
+            return jsonify(article["reports"])
+
+    return make_response(
+        jsonify({"message": "URL didn't match any known post", "url": url}), 404
+    )
 
 
 def test_scrape():
@@ -172,9 +249,23 @@ def test_scrape():
     )
 
 
+def load_reports_from_db():
+    with open("db_reports/all-reports.json") as fp:
+        for line in fp:
+            yield json.loads(line)
+
+
+def load_articles_from_db():
+    with open("posts.json") as fp:
+        for line in fp:
+            yield json.loads(line)
+
+
+def load_full_articles_from_db():
+    with open("db2/full-articles.json") as fp:
+        for line in fp:
+            yield json.loads(line)
+
+
 if __name__ == "__main__":
-    test_scrape()
-    scheduler = BackgroundScheduler()
-    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
-    scheduler.start()
     app.run(host="0.0.0.0", port=36042)

@@ -22,7 +22,7 @@ def test_parser_simple_report():
         {
             "diseases": ["sars"],
             "syndromes": [],
-            "event_date": "2021-11-14 xx:xx:xx",
+            "event_date": "2021-11-14Txx:xx:xx",
             "locations": ["Sydney"],
         }
     ]
@@ -57,7 +57,7 @@ def test_parser_selects_only_valid_dates():
         {
             "diseases": ["sars"],
             "syndromes": [],
-            "event_date": "2021-11-14 xx:xx:xx",
+            "event_date": "2021-11-14Txx:xx:xx",
             "locations": ["Sydney"],
         }
     ]
@@ -78,7 +78,7 @@ def test_parser_removes_duplicate_locations():
         {
             "diseases": ["sars"],
             "syndromes": [],
-            "event_date": "2021-11-14 xx:xx:xx",
+            "event_date": "2021-11-14Txx:xx:xx",
             "locations": ["Sydney"],
         }
     ]

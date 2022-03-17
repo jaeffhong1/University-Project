@@ -10,3 +10,5 @@ PHASE_1/API_SourceCode/db/model_sql_alchemy/db.env
 **/.venv
 **/.pytest_cache
 **/.hypothesis
+db_reports
+db2
