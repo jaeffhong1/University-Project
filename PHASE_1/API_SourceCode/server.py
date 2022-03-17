@@ -160,8 +160,11 @@ def article_filter():
         if key_terms != "":
             match = False
             for kt in key_terms.split(","):
+                kt = kt.lower()
+                if kt in article['main_text'].lower():
+                    match = True
                 for report in article["reports"]:
-                    if kt in report["diseases"] or kt in report["syndromes"]:
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (s.lower() for s in report["syndromes"]):
                         match = True
             if not match:
                 continue
@@ -169,7 +172,7 @@ def article_filter():
         if location != "":
             match = False
             for report in article["reports"]:
-                if location in report["locations"]:
+                if location_matches(location, report['locations']):
                     match = True
             if not match:
                 continue
@@ -177,6 +180,10 @@ def article_filter():
         articles.append(article)
 
     return jsonify(articles)
+
+def location_matches(location, locations):
+    location = location.lower()
+    return location not in (l.lower() for l in locations)
 
 
 @app.route("/report/filter", methods=["GET"])
@@ -187,19 +194,21 @@ def report_filter():
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
 
+
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
         for report in reports:
             if not matches_date_range(start_date, end_date, report["event_date"]):
                 continue
-            if location != "" and location not in report["locations"]:
+            if not location_matches(location, repor['locations']):
                 continue
 
             if key_terms != "":
                 match = False
                 for kt in key_terms.split(","):
-                    if kt in report["diseases"] or kt in report["syndromes"]:
+                    kt = kt.lower()
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (s.lower() for s in report["syndromes"]):
                         match = True
                 if not match:
                     continue
