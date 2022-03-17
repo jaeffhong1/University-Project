@@ -156,3 +156,36 @@ def test_malformed_url(client):
     response = client.get(url)
     assert response.status_code == 404
     assert response.json == expected_response
+
+
+def test_article_too_many_requests(client):
+    expected_response = {
+        "message": "Too many requests received. Please try again later."
+    }
+    url = "/article/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california"
+    for i in range(210):
+        response = client.get(url)
+    assert response.status_code == 429
+    assert response.json == expected_response
+
+
+def test_report_too_many_requests(client):
+    expected_response = {
+        "message": "Too many requests received. Please try again later."
+    }
+    url = "/report/filter?start_date=2019-10-01Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california"
+    for i in range(210):
+        response = client.get(url)
+    assert response.status_code == 429
+    assert response.json == expected_response
+
+
+def test_from_article_url_too_many_requests(client):
+    expected_response = {
+        "message": "Too many requests received. Please try again later."
+    }
+    url = "/report/from_article_url?url=https://www.cidrap.umn.edu/news-perspective/2022/02/news-scan-feb-22-2022"
+    for i in range(11):
+        response = client.get(url)
+    assert response.status_code == 429
+    assert response.json == expected_response
