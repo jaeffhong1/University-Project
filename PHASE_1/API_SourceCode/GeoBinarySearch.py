@@ -1,6 +1,5 @@
 import os
 from functools import lru_cache
-from geopy.geocoders import GeoNames
 
 path_to_locations = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
