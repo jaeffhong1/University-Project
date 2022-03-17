@@ -60,37 +60,25 @@ CREATE TABLE Syndromes ( -- do we need this?
     name VARCHAR(32) UNIQUE -- ensure the name is unique, so no duplicate diseases
 );
 
--- not unique, duplicate times may exist
-CREATE TABLE EventDates (
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    daydate date NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
-
-    -- however, hour and minute might not be set so define these separately 
-    hour INT(255), -- Nullable
-    minute INT(255) -- Nullable
-);
-
 CREATE TABLE Articles (
     id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
 
-    url VARCHAR(255),
-    headline VARCHAR(255),
-    -- main_VARCHAR(255) VARCHAR(255), -- 100 kb is a very large VARCHAR(255) file
-    eventdate_id INT(255),
+    url VARCHAR(255) NOT NULL UNIQUE,
+    headline VARCHAR(255) NOT NULL UNIQUE,
+    main_text VARCHAR(65535), -- 65 kb is a very large file
 
-    FOREIGN KEY(eventdate_id) REFERENCES EventDates(id)
+    publish_date VARCHAR(19) -- at most 19
 );
 
 CREATE TABLE Reports ( 
     id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
 
     article_id INT(255),
-    start_eventdate_id INT(255) NOT NULL,
-    finish_eventdate_id INT(255), -- Nullable, incase report starts and finishes at the same time
+    start_date VARCHAR(19) NOT NULL,
+    finish_date VARCHAR(19), -- Nullable, incase report starts and finishes at the same time
+    geonames_id VARCHAR(255),
     
     FOREIGN KEY(article_id) REFERENCES Articles(id),
-    FOREIGN KEY(start_eventdate_id) REFERENCES EventDates(id),
-    FOREIGN KEY(finish_eventdate_id) REFERENCES EventDates(id)
 );
 
 CREATE TABLE ReportDiseases (
@@ -108,16 +96,6 @@ CREATE TABLE ReportSyndromes (
     report_id INT(255),
 
     FOREIGN KEY(syndrome_id) REFERENCES Syndromes(id),
-    FOREIGN KEY(report_id) REFERENCES Reports(id)
-);
-
--- Stores one of the locations of a particular report
--- There can be multiple ReportLocations of the same location (e.g. Sydney), but refer to a different report that coincidentally occured at the same place
-CREATE TABLE ReportLocations ( 
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    geonames_id VARCHAR(255), -- reference to geonames ID public database, NOT a foreign key
-    report_id INT(255),
-
     FOREIGN KEY(report_id) REFERENCES Reports(id)
 );
 
