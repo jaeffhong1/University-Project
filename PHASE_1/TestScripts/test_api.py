@@ -258,3 +258,11 @@ def test_url_not_found_error(client):
     response = client.get(url)
     assert response.status_code == 404
     assert response.json == expected_response
+
+
+def test_alive_endpoint(client):
+    url = "/alive"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.json.get("sql_connected") is not None
+    assert response.json.get("scrapy_online") is not None
