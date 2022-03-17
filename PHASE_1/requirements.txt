@@ -3,3 +3,4 @@ scrapy
 datefinder
 spacy
 pytest
+Flask-Limiter

@@ -9,6 +9,8 @@ import requests
 import os
 import re
 from datetime import datetime
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 
 app = Flask(__name__)
@@ -22,6 +24,12 @@ mydb = mysql.connector.connect(
     auth_plugin="mysql_native_password",
 )
 
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per minute"],
+)
+
 
 @app.errorhandler(500)
 def server_error_handler(err):
@@ -29,7 +37,7 @@ def server_error_handler(err):
     response = err.get_response()
     response.data = json.dumps(
         {
-            "message": "Potential server failure. Please try http://seng3011.duckdns.org/alive for more information",
+            "message": "Potential server failure. Please try http://seng3011.duckdns.org/alive for more information or contact the development team.",
         }
     )
     response.content_type = "application/json"
@@ -107,6 +115,7 @@ def check_filter_criteria(start_date, end_date, key_terms, location):
 
 
 @app.route("/alive", methods=["GET"])
+@limiter.exempt
 def alive():
     return {"sql_connected": mydb is not None, "scrapy_online": False}
 
@@ -132,6 +141,7 @@ def report_filter():
 
 
 @app.route("/report/from_article_url", methods=["GET"])
+@limiter.limit("10 per minute")
 def report_from_article_url():
     url = request.values.get("url")
     if url is None:
