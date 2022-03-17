@@ -169,7 +169,7 @@ def article_filter():
         if location != "":
             match = False
             for report in article["reports"]:
-                if location in reports["locations"]:
+                if location in report["locations"]:
                     match = True
             if not match:
                 continue
