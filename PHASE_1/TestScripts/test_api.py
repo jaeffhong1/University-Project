@@ -188,3 +188,13 @@ def test_from_article_url_too_many_requests(client):
         response = client.get(url)
     assert response.status_code == 429
     assert response.json == expected_response
+
+
+def test_url_not_found_error(client):
+    expected_response = {
+        "message": "It looks like you've reached a URL that doesn't exist. Please check the API documentation on https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0#/",
+    }
+    url = "/url/yeet"
+    response = client.get(url)
+    assert response.status_code == 404
+    assert response.json == expected_response

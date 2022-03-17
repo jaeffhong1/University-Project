@@ -57,6 +57,19 @@ def server_error_handler(err):
     return response
 
 
+@app.errorhandler(404)
+def server_error_handler(err):
+    """customise message for too many requests"""
+    response = err.get_response()
+    response.data = json.dumps(
+        {
+            "message": "It looks like you've reached a URL that doesn't exist. Please check the API documentation on https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0#/",
+        }
+    )
+    response.content_type = "application/json"
+    return response
+
+
 def get_description(self, environ=None, scope=None):
     return self.description
 
