@@ -352,10 +352,9 @@ def load_articles_from_db():
 
 
 def load_full_articles_from_db():
-    with open("db2/full-articles.json") as fp:
-        path_to_articles = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "db2", "full-articles.json"
-        )
+    path_to_articles = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "db2", "full-articles.json"
+    )
     with open(path_to_articles) as fp:
         for line in fp:
             yield json.loads(line)
