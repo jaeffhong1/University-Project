@@ -184,6 +184,7 @@ def article_filter():
         if article["main_text"] is None:
             continue  # what?
 
+        convert_main_text_article(article)
         if key_terms != "":
             match = False
             for kt in key_terms.split(","):
@@ -231,7 +232,7 @@ def report_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
-
+    
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
