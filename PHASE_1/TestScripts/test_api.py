@@ -1,6 +1,5 @@
 import sys
 import os
-import json
 import pytest
 
 sys.path.append(os.path.join(os.getcwd(), "../API_SourceCode"))
@@ -132,6 +131,22 @@ def test_report_invalid_date_range(client):
     assert response.json == expected_response
 
 
+def test_article_invalid_timezone_expression(client):
+    expected_response = {"message": "Invalid timezone expression"}
+    url = "/article/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california&timezone=abcd"
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json == expected_response
+
+
+def test_report_invalid_timezone_expression(client):
+    expected_response = {"message": "Invalid timezone expression"}
+    url = "/report/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california&timezone=abcd"
+    response = client.get(url)
+    assert response.status_code == 400
+    assert response.json == expected_response
+
+
 def test_missing_url(client):
     expected_response = {"message": "Missing required query parameter(s)"}
     url = "/report/from_article_url"
@@ -145,14 +160,32 @@ def test_malformed_url(client):
     # test non-CIDRAP url
     url = "/report/from_article_url?url=www.example.com"
     response = client.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 400
     assert response.json == expected_response
     # test invalid urls
     url = "/report/from_article_url?url=abcdefg"
     response = client.get(url)
-    assert response.status_code == 404
+    assert response.status_code == 400
     assert response.json == expected_response
     url = "/report/from_article_url?url=http://non-existing.com/"
     response = client.get(url)
+    assert response.status_code == 400
+    assert response.json == expected_response
+
+
+def test_url_not_found_error(client):
+    expected_response = {
+        "message": "It looks like you've reached a URL that doesn't exist. Please check the API documentation on https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0#/",
+    }
+    url = "/url/yeet"
+    response = client.get(url)
     assert response.status_code == 404
     assert response.json == expected_response
+
+
+def test_alive_endpoint(client):
+    url = "/alive"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.json.get("sql_connected") is not None
+    assert response.json.get("scrapy_online") is not None

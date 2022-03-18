@@ -1,18 +1,21 @@
 import logging
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, current_app, g as app_ctx
 import mysql.connector
 from mysql.connector import errorcode
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 import json
-from werkzeug.exceptions import HTTPException, BadRequest, NotFound
+from werkzeug.exceptions import HTTPException, BadRequest
 import requests
 import os
 import re
 from datetime import datetime
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import time
-from flask import Flask, request, jsonify, current_app, g as app_ctx
 from geoid import find_geo_id
+import pytz
+
 from scrapy.selector import Selector
 
 app = Flask(__name__)
@@ -29,6 +32,12 @@ mydb = mysql.connector.connect(
     password="@piFethi3011",
     port=5231,
     auth_plugin="mysql_native_password",
+)
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per minute"],
 )
 
 
@@ -56,7 +65,7 @@ def server_error_handler(err):
     response = err.get_response()
     response.data = json.dumps(
         {
-            "message": "Potential server failure. Please try http://seng3011.duckdns.org/alive for more information",
+            "message": "Potential server failure. Please try http://seng3011.duckdns.org/alive for more information or contact the development team.",
         }
     )
     response.content_type = "application/json"
@@ -70,6 +79,19 @@ def server_error_handler(err):
     response.data = json.dumps(
         {
             "message": "Too many requests received. Please try again later.",
+        }
+    )
+    response.content_type = "application/json"
+    return response
+
+
+@app.errorhandler(404)
+def server_error_handler(err):
+    """customise message for too many requests"""
+    response = err.get_response()
+    response.data = json.dumps(
+        {
+            "message": "It looks like you've reached a URL that doesn't exist. Please check the API documentation on https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0#/",
         }
     )
     response.content_type = "application/json"
@@ -124,30 +146,41 @@ def check_valid_date_range(start_date, end_date):
         raise BadRequest("start_date cannot be later than today")
 
 
-def convert_date(date_string):
-    date_string = date_string.replace("x", "0")
-    # there are inconsistencies
-    try:
-        return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
-    except ValueError:
-        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+ALL_TIMEZONES = pytz.all_timezones
+CIDRAP_TIMEZONE = "US/Central"
 
 
-def check_filter_criteria(start_date, end_date, key_terms, location):
+def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     if any(param is None for param in [start_date, end_date, key_terms, location]):
         raise BadRequest("Missing required query parameter(s)")
-    # date_format = "^([1-2][0-9]{3}|xxxx)-([0-2][0-9]|xx)-([0-3][0-9]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)"
-    date_format = r"^(\d{4})-(\d\d|xx)-(\d\d|xx)T(\d\d|xx):(\d\d|xx):(\d\d|xx)$"
-    if not re.search(date_format, start_date):
-        raise BadRequest("Invalid start date expression")
-    if not re.search(date_format, end_date):
-        raise BadRequest("Invalid end date expression")
-
+    date_format = r"^([1-2][0-9]{3}|xxxx)-(0[1-9]|1[0-2]|xx)-(0[1-9]|[12][0-9]|3[01]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)$"
+    if not re.search(date_format, start_date) or not re.search(date_format, end_date):
+        raise BadRequest("Invalid date expression")
     check_valid_date_range(start_date, end_date)
+    if timezone not in ALL_TIMEZONES:
+        raise BadRequest("Invalid timezone expression")
+    if find_geo_id(location) < 0:
+        raise BadRequest("Invalid location")
 
 
-def matches_date_range(start, end, date):
-    start, end, date = convert_date(start), convert_date(end), convert_date(date)
+def convert_date(date_string, timezone):
+    date_string = date_string.replace("x", "0")
+    cidrap_timezone = pytz.timezone(CIDRAP_TIMEZONE)
+    input_timezone = pytz.timezone(timezone)
+    # there are inconsistencies
+    try:
+        dt = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+    return cidrap_timezone.localize(dt).astimezone(input_timezone)
+
+
+def matches_date_range(start, end, date, timezone=CIDRAP_TIMEZONE):
+    start, end, date = (
+        convert_date(start, timezone),
+        convert_date(end, timezone),
+        convert_date(date, timezone),
+    )
     return start <= date <= end
 
 
@@ -161,6 +194,7 @@ def index():
 
 
 @app.route("/alive", methods=["GET"])
+@limiter.exempt
 def alive():
     return {"sql_connected": mydb is not None, "scrapy_online": True}
 
@@ -171,11 +205,16 @@ def article_filter():
     end_date = request.values.get("end_date")
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
-    check_filter_criteria(start_date, end_date, key_terms, location)
+    timezone = request.values.get("timezone")
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
+    check_filter_criteria(start_date, end_date, key_terms, location, timezone)
 
     articles = []
     for article in load_full_articles_from_db():
-        if not matches_date_range(start_date, end_date, article["date_of_publication"]):
+        if not matches_date_range(
+            start_date, end_date, article["date_of_publication"], timezone
+        ):
             continue
 
         article["main_text"] = article["article_text"]
@@ -231,13 +270,18 @@ def report_filter():
     end_date = request.values.get("end_date")
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
-    check_filter_criteria(start_date, end_date, key_terms, location)
+    timezone = request.values.get("timezone")
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
+    check_filter_criteria(start_date, end_date, key_terms, location, timezone)
 
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
         for report in reports:
-            if not matches_date_range(start_date, end_date, report["event_date"]):
+            if not matches_date_range(
+                start_date, end_date, report["event_date"], timezone
+            ):
                 continue
             if not location_matches(location, report["locations"]):
                 continue
@@ -260,23 +304,20 @@ def report_filter():
 
 
 @app.route("/report/from_article_url", methods=["GET"])
+@limiter.limit("10 per minute")
 def report_from_article_url():
     url = request.values.get("url")
     if url is None:
         raise BadRequest("Missing required query parameter(s)")
-    # if url.startswith("cidrap.umn.edu"):
-    #     url = "https://www." + url
-    # if url.startswith("www.cidrap.umn.edu"):
-    #     url = "https://" + url
-    # if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
-    # if "cidrap.umn.edu" not in url:
-    if not url.startswith("/"):
-        raise NotFound("Malformed url")
-
+    if url.startswith("cidrap.umn.edu"):
+        url = "https://www." + url
+    if url.startswith("www.cidrap.umn.edu"):
+        url = "https://" + url
+    if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
+        raise BadRequest("Malformed url")
     for article in load_full_articles_from_db():
         if article["url"] == url:
             return jsonify(article["reports"])
-
     return make_response(
         jsonify({"message": "URL didn't match any known post", "url": url}), 404
     )
