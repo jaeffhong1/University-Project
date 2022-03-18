@@ -281,7 +281,7 @@ def report_filter():
                 start_date, end_date, report["event_date"], timezone
             ):
                 continue
-            if not location_matches(location, repor["locations"]):
+            if not location_matches(location, report["locations"]):
                 continue
 
             if key_terms != "":
