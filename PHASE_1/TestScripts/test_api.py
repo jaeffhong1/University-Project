@@ -165,14 +165,6 @@ def test_article_invalid_timezone_expression(client):
     response = client.get(url)
     assert response.status_code == 400
     assert response.json == expected_response
-    url = "/article/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california&timezone=abcd+1000"
-    response = client.get(url)
-    assert response.status_code == 400
-    assert response.json == expected_response
-    url = "/article/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california&timezone=abcd-1000"
-    response = client.get(url)
-    assert response.status_code == 400
-    assert response.json == expected_response
 
 
 def test_report_invalid_timezone_expression(client):
@@ -181,11 +173,19 @@ def test_report_invalid_timezone_expression(client):
     response = client.get(url)
     assert response.status_code == 400
     assert response.json == expected_response
-    url = "/report/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california&timezone=utc+1000"
+
+
+def test_article_invalid_location(client):
+    expected_response = {"message": "Invalid location"}
+    url = "/article/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=abcdefg"
     response = client.get(url)
     assert response.status_code == 400
     assert response.json == expected_response
-    url = "/report/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=california&timezone=utc-1000"
+
+
+def test_report_invalid_location(client):
+    expected_response = {"message": "Invalid location"}
+    url = "/report/filter?start_date=2022-02-10Txx:xx:xx&end_date=2022-03-01Txx:xx:xx&key_terms=outbreak&location=abcdefg"
     response = client.get(url)
     assert response.status_code == 400
     assert response.json == expected_response

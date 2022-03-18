@@ -14,6 +14,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import time
 from geoid import find_geo_id
+import pytz
 
 
 app = Flask(__name__)
@@ -144,6 +145,10 @@ def check_valid_date_range(start_date, end_date):
         raise BadRequest("start_date cannot be later than today")
 
 
+ALL_TIMEZONES = pytz.all_timezones
+CIDRAP_TIMEZONE = "US/Central"
+
+
 def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     if any(param is None for param in [start_date, end_date, key_terms, location]):
         raise BadRequest("Missing required query parameter(s)")
@@ -151,22 +156,30 @@ def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     if not re.search(date_format, start_date) or not re.search(date_format, end_date):
         raise BadRequest("Invalid date expression")
     check_valid_date_range(start_date, end_date)
-    timezone_format = r"^utc(\+|\-)(1[0-2]|0?[1-9])$"
-    if timezone is not None and not re.search(timezone_format, timezone):
+    if timezone not in ALL_TIMEZONES:
         raise BadRequest("Invalid timezone expression")
+    if find_geo_id(location) < 0:
+        raise BadRequest("Invalid location")
 
 
-def convert_date(date_string):
+def convert_date(date_string, timezone):
     date_string = date_string.replace("x", "0")
+    cidrap_timezone = pytz.timezone(CIDRAP_TIMEZONE)
+    input_timezone = pytz.timezone(timezone)
     # there are inconsistencies
     try:
-        return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
+        dt = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
     except ValueError:
-        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+    return cidrap_timezone.localize(dt).astimezone(input_timezone)
 
 
-def matches_date_range(start, end, date):
-    start, end, date = convert_date(start), convert_date(end), convert_date(date)
+def matches_date_range(start, end, date, timezone=CIDRAP_TIMEZONE):
+    start, end, date = (
+        convert_date(start, timezone),
+        convert_date(end, timezone),
+        convert_date(date, timezone),
+    )
     return start <= date <= end
 
 
@@ -182,7 +195,7 @@ def index():
 @app.route("/alive", methods=["GET"])
 @limiter.exempt
 def alive():
-    return {"sql_connected": mydb is not None, "scrapy_online": False}
+    return {"sql_connected": mydb is not None, "scrapy_online": True}
 
 
 @app.route("/article/filter", methods=["GET"])
@@ -192,13 +205,15 @@ def article_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     timezone = request.values.get("timezone")
-    if timezone is not None:
-        timezone = timezone.lower()
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
 
     articles = []
     for article in load_full_articles_from_db():
-        if not matches_date_range(start_date, end_date, article["date_of_publication"]):
+        if not matches_date_range(
+            start_date, end_date, article["date_of_publication"], timezone
+        ):
             continue
 
         article["main_text"] = article["article_text"]
@@ -254,15 +269,17 @@ def report_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     timezone = request.values.get("timezone")
-    if timezone is not None:
-        timezone = timezone.lower()
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
 
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
         for report in reports:
-            if not matches_date_range(start_date, end_date, report["event_date"]):
+            if not matches_date_range(
+                start_date, end_date, report["event_date"], timezone
+            ):
                 continue
             if not location_matches(location, repor["locations"]):
                 continue
@@ -336,6 +353,10 @@ def load_articles_from_db():
 
 def load_full_articles_from_db():
     with open("db2/full-articles.json") as fp:
+        path_to_articles = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "db2", "full-articles.json"
+        )
+    with open(path_to_articles) as fp:
         for line in fp:
             yield json.loads(line)
 
