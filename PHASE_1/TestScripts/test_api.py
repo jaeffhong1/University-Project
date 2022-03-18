@@ -217,6 +217,106 @@ def test_malformed_url(client):
     assert response.json == expected_response
 
 
+def test_url_not_found_error(client):
+    expected_response = {
+        "message": "It looks like you've reached a URL that doesn't exist. Please check the API documentation on https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0#/",
+    }
+    url = "/url/yeet"
+    response = client.get(url)
+    assert response.status_code == 404
+    assert response.json == expected_response
+
+
+def test_alive_endpoint(client):
+    url = "/alive"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.json.get("sql_connected") is not None
+    assert response.json.get("scrapy_online") is not None
+
+
+def test_article_filter_with_timezone(client):
+    # test with timezone
+    url = "/article/filter?start_date=2021-10-01T08%3A45%3A10&end_date=2021-11-08T19%3A37%3A12&key_terms=Fever&location=Netherlands&timezone=Australia%2FSydney"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.json) == 5
+    for i in range(len(response.json)):
+        assert response.json[i].get("date_of_publication") is not None
+        assert response.json[i].get("headline") is not None
+        assert response.json[i].get("main_text") is not None
+        assert response.json[i].get("reports") is not None
+        assert response.json[i].get("url") is not None
+
+
+def test_article_filter_without_timezone(client):
+    # test without timezone
+    url = "/article/filter?start_date=2021-10-01T08%3A45%3A10&end_date=2021-11-08T19%3A37%3A12&key_terms=Fever&location=Netherlands"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.json) == 5
+    for i in range(len(response.json)):
+        assert response.json[i].get("date_of_publication") is not None
+        assert response.json[i].get("headline") is not None
+        assert response.json[i].get("main_text") is not None
+        assert response.json[i].get("reports") is not None
+        assert response.json[i].get("url") is not None
+
+
+def test_article_filter_multi_key_terms(client):
+    # test with multiple key terms
+    url = "/article/filter?start_date=2019-10-01T08%3A45%3A10&end_date=2022-01-08T19%3A37%3A12&key_terms=outbreak%2Cemerging&location=netherlands"
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+def test_report_filter_with_timezone(client):
+    # test with timezone
+    url = "/report/filter?start_date=2021-10-01T08%3A45%3A10&end_date=2021-11-08T19%3A37%3A12&key_terms=Fever&location=Netherlands&timezone=Australia%2FSydney"
+    response = client.get(url)
+    assert response.status_code == 200
+    for i in range(len(response.json)):
+        assert response.json[i].get("diseases") is not None
+        assert response.json[i].get("event_date") is not None
+        assert response.json[i].get("locations") is not None
+        assert response.json[i].get("syndromes") is not None
+
+
+def test_report_filter_without_timezone(client):
+    # test without timezone
+    url = "/report/filter?start_date=2021-10-01T08%3A45%3A10&end_date=2021-11-08T19%3A37%3A12&key_terms=Fever&location=Netherlands"
+    response = client.get(url)
+    assert response.status_code == 200
+    for i in range(len(response.json)):
+        assert response.json[i].get("diseases") is not None
+        assert response.json[i].get("event_date") is not None
+        assert response.json[i].get("locations") is not None
+        assert response.json[i].get("syndromes") is not None
+
+
+def test_report_filter_multi_key_terms(client):
+    # test with multiple key terms
+    url = "/report/filter?start_date=2019-10-01T08%3A45%3A10&end_date=2022-01-08T19%3A37%3A12&key_terms=outbreak%2Cemerging&location=netherlands"
+    response = client.get(url)
+    assert response.status_code == 200
+    for i in range(len(response.json)):
+        assert response.json[i].get("diseases") is not None
+        assert response.json[i].get("event_date") is not None
+        assert response.json[i].get("locations") is not None
+        assert response.json[i].get("syndromes") is not None
+
+
+def test_from_article_url(client):
+    url = "/report/from_article_url?url=https%3A%2F%2Fwww.cidrap.umn.edu%2Fnews-perspective%2F2021%2F11%2Fnews-scan-nov-08-2021"
+    response = client.get(url)
+    assert response.status_code == 200
+    for i in range(len(response.json)):
+        assert response.json[i].get("diseases") is not None
+        assert response.json[i].get("event_date") is not None
+        assert response.json[i].get("locations") is not None
+        assert response.json[i].get("syndromes") is not None
+
+
 def test_article_too_many_requests(client):
     expected_response = {
         "message": "Too many requests received. Please try again later."
@@ -248,21 +348,3 @@ def test_from_article_url_too_many_requests(client):
         response = client.get(url)
     assert response.status_code == 429
     assert response.json == expected_response
-
-
-def test_url_not_found_error(client):
-    expected_response = {
-        "message": "It looks like you've reached a URL that doesn't exist. Please check the API documentation on https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0#/",
-    }
-    url = "/url/yeet"
-    response = client.get(url)
-    assert response.status_code == 404
-    assert response.json == expected_response
-
-
-def test_alive_endpoint(client):
-    url = "/alive"
-    response = client.get(url)
-    assert response.status_code == 200
-    assert response.json.get("sql_connected") is not None
-    assert response.json.get("scrapy_online") is not None
