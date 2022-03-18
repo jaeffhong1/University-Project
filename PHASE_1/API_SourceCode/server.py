@@ -315,12 +315,11 @@ def report_from_article_url():
         url = "https://" + url
     if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
         raise BadRequest("Malformed url")
+    url = url.replace("https://www.cidrap.umn.edu", "")
     for article in load_full_articles_from_db():
         if article["url"] == url:
             return jsonify(article["reports"])
-    return make_response(
-        jsonify({"message": "URL didn't match any known post", "url": url}), 404
-    )
+    raise BadRequest("URL didn't match any known post")
 
 
 def test_scrape():
