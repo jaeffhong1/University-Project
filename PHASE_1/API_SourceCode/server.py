@@ -13,7 +13,7 @@ from datetime import datetime
 import time
 from flask import Flask, request, jsonify, current_app, g as app_ctx
 from geoid import find_geo_id
-
+from scrapy.selector import Selector
 
 app = Flask(__name__)
 logging.basicConfig(
@@ -235,10 +235,11 @@ def report_filter():
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
+        convert_main_text_article(article)
         for report in reports:
             if not matches_date_range(start_date, end_date, report["event_date"]):
                 continue
-            if not location_matches(location, repor["locations"]):
+            if not location_matches(location, report["locations"]):
                 continue
 
             if key_terms != "":
@@ -312,7 +313,10 @@ def load_articles_from_db():
 
 
 def load_full_articles_from_db():
-    with open("db2/full-articles.json") as fp:
+    path_to_articles = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "db2", "full-articles.json"
+)
+    with open(path_to_articles) as fp:
         for line in fp:
             yield json.loads(line)
 
@@ -325,6 +329,11 @@ def convert_location_in_report(report):
             geoname_ids.append({"geonames_id": geoname_id})
     report["locations"] = geoname_ids
 
+def convert_main_text_article(article):
+    html_text = Selector(text=article["main_text"])
+    main_text = html_text.css("div.fieldlayout-region-body.fieldlayout-region-body-full *::text").getall()
+    whole_main_text = (''.join(main_text)) 
+    article["main_text"] = whole_main_text
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=36042)
