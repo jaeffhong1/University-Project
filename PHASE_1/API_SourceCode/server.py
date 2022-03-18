@@ -16,6 +16,7 @@ import time
 from geoid import find_geo_id
 import pytz
 
+from scrapy.selector import Selector
 
 app = Flask(__name__)
 logging.basicConfig(
@@ -254,6 +255,7 @@ def article_filter():
             article["reports"] = valid_reports
             articles.append(article)
 
+        convert_main_text_article(article)
     return jsonify(articles)
 
 
@@ -369,5 +371,18 @@ def convert_location_in_report(report):
     report["locations"] = geoname_ids
 
 
+def convert_main_text_article(article):
+    html_text = Selector(text=article["main_text"])
+    main_text = html_text.css(
+        "div.fieldlayout-region-body.fieldlayout-region-body-full *::text"
+    ).getall()
+    whole_main_text = "".join(main_text)
+    article["main_text"] = whole_main_text
+
+
 if __name__ == "__main__":
+    test_scrape()
+    scheduler = BackgroundScheduler()
+    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
+    scheduler.start()
     app.run(host="0.0.0.0", port=36042)
