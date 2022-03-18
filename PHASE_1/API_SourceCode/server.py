@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+import logging
+from flask import Flask, jsonify, request, make_response, current_app, g as app_ctx
 import mysql.connector
 from mysql.connector import errorcode
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -11,9 +12,16 @@ import re
 from datetime import datetime
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import time
+from geoid import find_geo_id
 
 
 app = Flask(__name__)
+logging.basicConfig(
+    filename="server.log",
+    level=logging.DEBUG,
+    format="[%(asctime)s] [%(levelname)s] [%(message)s]",
+)
 
 mydb = None
 mydb = mysql.connector.connect(
@@ -29,6 +37,24 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per minute"],
 )
+
+
+@app.before_request
+def logging_before():
+    # Store the start time for the request
+    app_ctx.start_time = time.perf_counter()
+
+
+@app.after_request
+def logging_after(response):
+    # Get total time in milliseconds
+    total_time = time.perf_counter() - app_ctx.start_time
+    time_in_ms = int(total_time * 1000)
+    # Log the time taken for the endpoint
+    current_app.logger.info(
+        "%s ms %s %s %s", time_in_ms, request.method, request.path, dict(request.args)
+    )
+    return response
 
 
 @app.errorhandler(500)
@@ -124,10 +150,32 @@ def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     date_format = r"^([1-2][0-9]{3}|xxxx)-(0[1-9]|1[0-2]|xx)-(0[1-9]|[12][0-9]|3[01]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)$"
     if not re.search(date_format, start_date) or not re.search(date_format, end_date):
         raise BadRequest("Invalid date expression")
-    check_valid_date_range(start_date, end_date)
+        check_valid_date_range(start_date, end_date)
     timezone_format = r"^utc(\+|\-)(1[0-2]|0?[1-9])$"
     if timezone is not None and not re.search(timezone_format, timezone):
         raise BadRequest("Invalid timezone expression")
+
+def convert_date(date_string):
+    date_string = date_string.replace("x", "0")
+    # there are inconsistencies
+    try:
+        return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+
+
+def matches_date_range(start, end, date):
+    start, end, date = convert_date(start), convert_date(end), convert_date(date)
+    return start <= date <= end
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return {
+        "api_documentation": "https://app.swaggerhub.com/apis/tanyawhy/SENG3011_f0b5/1.0.0",
+        "authors": "f0b5",
+        "source": "cidrap.umn.edu",
+    }
 
 
 @app.route("/alive", methods=["GET"])
@@ -146,7 +194,57 @@ def article_filter():
     if timezone is not None:
         timezone = timezone.lower()
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
-    return {}
+
+    articles = []
+    for article in load_full_articles_from_db():
+        if not matches_date_range(start_date, end_date, article["date_of_publication"]):
+            continue
+
+        article["main_text"] = article["article_text"]
+        del article["article_text"]  # keys are wrong in the database
+
+        if article["main_text"] is None:
+            continue  # what?
+
+        if key_terms != "":
+            match = False
+            for kt in key_terms.split(","):
+                kt = kt.lower()
+                if kt in article["main_text"].lower():
+                    match = True
+                for report in article["reports"]:
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (
+                        s.lower() for s in report["syndromes"]
+                    ):
+                        match = True
+            if not match:
+                continue
+
+        if location != "":
+            match = False
+            for report in article["reports"]:
+                if location_matches(location, report["locations"]):
+                    match = True
+            if not match:
+                continue
+
+        valid_reports = []
+        for report in article["reports"]:
+            convert_location_in_report(report)
+            if len(report["locations"]) > 0:
+                valid_reports.append(report)
+
+        if len(valid_reports) > 0:
+            article["reports"] = valid_reports
+            articles.append(article)
+
+    return jsonify(articles)
+
+
+def location_matches(location, locations):
+    location = location.lower()
+    return location not in (l.lower() for l in locations)
+>>>>>>> main
 
 
 @app.route("/report/filter", methods=["GET"])
@@ -159,7 +257,31 @@ def report_filter():
     if timezone is not None:
         timezone = timezone.lower()
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
-    return {}
+
+    matches = []
+    for article in load_full_articles_from_db():
+        reports = article["reports"]
+        for report in reports:
+            if not matches_date_range(start_date, end_date, report["event_date"]):
+                continue
+            if not location_matches(location, repor["locations"]):
+                continue
+
+            if key_terms != "":
+                match = False
+                for kt in key_terms.split(","):
+                    kt = kt.lower()
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (
+                        s.lower() for s in report["syndromes"]
+                    ):
+                        match = True
+                if not match:
+                    continue
+
+            convert_location_in_report(report)
+            if len(report["locations"]) > 0:
+                matches.append(report)
+    return jsonify(matches)
 
 
 @app.route("/report/from_article_url", methods=["GET"])
@@ -174,7 +296,12 @@ def report_from_article_url():
         url = "https://" + url
     if "cidrap.umn.edu" not in url or requests.get(url).status_code != 200:
         raise BadRequest("Malformed url")
-    return {}
+    for article in load_full_articles_from_db():
+        if article["url"] == url:
+            return jsonify(article["reports"])
+    return make_response(
+        jsonify({"message": "URL didn't match any known post", "url": url}), 404
+    )
 
 
 def test_scrape():
@@ -195,9 +322,32 @@ def test_scrape():
     )
 
 
+def load_reports_from_db():
+    with open("db_reports/all-reports.json") as fp:
+        for line in fp:
+            yield json.loads(line)
+
+
+def load_articles_from_db():
+    with open("posts.json") as fp:
+        for line in fp:
+            yield json.loads(line)
+
+
+def load_full_articles_from_db():
+    with open("db2/full-articles.json") as fp:
+        for line in fp:
+            yield json.loads(line)
+
+
+def convert_location_in_report(report):
+    for i in range(len(report["locations"])):
+        geoname_ids = []
+        geoname_id = find_geo_id(report["locations"][i])
+        if geoname_id > 0:
+            geoname_ids.append({"geonames_id": geoname_id})
+    report["locations"] = geoname_ids
+
+
 if __name__ == "__main__":
-    test_scrape()
-    scheduler = BackgroundScheduler()
-    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
-    scheduler.start()
     app.run(host="0.0.0.0", port=36042)

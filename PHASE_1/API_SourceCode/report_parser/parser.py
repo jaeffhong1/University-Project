@@ -56,6 +56,8 @@ def render_document(doc):
 
 
 def get_paragraphs_from_article(article_html):
+    if article_html is None:
+        return
 
     body = Selector(text=article_html)
     text = " ".join(s.strip() for s in body.css("#content *::text").getall())
@@ -64,12 +66,24 @@ def get_paragraphs_from_article(article_html):
         yield " ".join(item.css("*::text").getall())
 
 
-def get_valid_dates(dates_as_strings, relative_base):
+def get_valid_dates(dates_as_strings, date_of_article):
     for s in dates_as_strings:
         # dateparser.parse returns None if it can't parse a date out of the string
-        result = dateparser.parse(s, settings={"RELATIVE_BASE": relative_base})
-        if result:
-            yield result
+        date = dateparser.parse(
+            s, languages=["en"], settings={"RELATIVE_BASE": date_of_article}
+        )
+        if not date:
+            continue
+
+        # if the date is after the date the article is published on,
+        # then it's definitely not the date of a report
+        try:
+            if date > date_of_article:
+                continue
+        except TypeError:
+            pass  # can't compare date with time zone, and date without time zone
+
+        yield date
 
 
 def seng3011_date_format(date):
@@ -82,7 +96,7 @@ def seng3011_date_format(date):
     minute = date.minute if date.minute != 0 else "xx"
     second = date.second if date.second != 0 else "xx"
 
-    return f"{year}-{month:>02}-{day:>02} {hour:>02}:{minute:>02}:{second:>02}"
+    return f"{year}-{month:>02}-{day:>02}T{hour:>02}:{minute:>02}:{second:>02}"
 
 
 def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=False):
@@ -95,6 +109,8 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
     syndromes = with_ent("SYNDROME")
     dates = with_ent("DATE")
     locations = with_ent("GPE")  # countries, cities and states
+
+    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
 
     if not ((any(diseases) or any(syndromes)) and any(dates) and any(locations)):
         return
@@ -109,28 +125,33 @@ def get_reports_from_doc(doc, date_of_article, article_url, notebook_debugging=F
             )
         render_document(doc)
 
-    dates = list(get_valid_dates((ent.text for ent in dates), date_of_article))
+    # geoid_locations = []
+    # for location in locations:
+    #     geoid_locations.append({
+    #         "geonames_id": get_geoid_from_location(location)
+    #     })
 
     # if there is more than one date, we create a report for each one
     # (I don't have any better ideas right now. We'd rather have false
     # positives than false negatives for this project)
     for date in dates:
         yield {
-            "diseases": [ent.text for ent in diseases],
-            "syndromes": [ent.text for ent in syndromes],
-            "locations": [ent.text for ent in locations],
+            "diseases": list(set([ent.text for ent in diseases])),
+            "syndromes": list(set([ent.text for ent in syndromes])),
+            "locations": list(set([ent.text for ent in locations])),
+            # "locations": geoid_locations,
             "event_date": seng3011_date_format(date),
         }
-    if len(dates) > 1:
-        print(
-            "[warning] more than one date for the report", article_url, repr(doc.text)
-        )
+    # if len(dates) > 1:
+    #     print(
+    #         "[warning] more than one date for the report", article_url, repr(doc.text)
+    #     )
 
 
 def parse_article(article, notebook_debugging=False):
     paragraphs = get_paragraphs_from_article(article["article_text"])
     article_date = dateparser.parse(
-        article["date_of_publication"].replace(" xx:xx:xx", "")
+        article["date_of_publication"].replace(" xx:xx:xx", ""), languages=["en"]
     )
     for doc in nlp.pipe(paragraphs):
         yield from get_reports_from_doc(

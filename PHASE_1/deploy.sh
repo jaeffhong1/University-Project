@@ -2,7 +2,16 @@ set -xe    # print commands as they are run, and exit as soon as one command fai
 
 echo "$(whoami) deploying"
 
-# TODO: re-scrape
+pip install -r PHASE_1/requirements.txt
+
+pushd PHASE_1/API_SourceCode
+
+# rescrape
+touch /home/web/posts.json  # if the file doesn't exists, scrapy crashes. It just needs to be looked after
+python3 -m scrapy crawl posts -a num_pages=-1 -a file_to_output=/home/web/posts.json -o /home/web/posts.json -t jsonlines
+
+popd
+
 # TODO: re parse reports
 
 # restart the server

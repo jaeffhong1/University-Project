@@ -27,8 +27,12 @@ jobs:
             [ ! -d SENG3011_f0b5 ] && git clone git@github.com:f0b5-org/SENG3011_f0b5.git || echo "git repo already cloned, keep going"
 
             cd SENG3011_f0b5
-            git fetch origin main               # get latest version
-            git checkout origin/main            # go on the latest version
+            git fetch origin main                          # get latest version
+            if ! git checkout origin/main; then            # go on the latest version
+              git stash save -u "someone (probably Mathieu) changed some code on the server (again), preventing checkout $(date)"
+              echo oops >> /home/web/CHANGES_ON_LIVE_SERVER_STASHED_BY_DEPLOY_PIPELINE
+              git checkout origin/main
+            fi
 
             # need to run as sudo because systemctl
-            echo ${{ secrets.ACCOUNT_PASSWORD }} | sudo -S bash ./PHASE_1/deploy.sh
+            echo ${{ secrets.ACCOUNT_PASSWORD }} | sudo -S bash ./PHASE_1/deploy.sh | tee "/home/web/logs/gh-pipeline-$(date +"%Y-%m-%d_%H_%M_%S")"
