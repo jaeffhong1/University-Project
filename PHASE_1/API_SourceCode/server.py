@@ -162,7 +162,7 @@ def index():
 
 @app.route("/alive", methods=["GET"])
 def alive():
-    return {"sql_connected": mydb is not None, "scrapy_online": False}
+    return {"sql_connected": mydb is not None, "scrapy_online": True}
 
 
 @app.route("/article/filter", methods=["GET"])
@@ -340,4 +340,8 @@ def convert_main_text_article(article):
 
 
 if __name__ == "__main__":
+    test_scrape()
+    scheduler = BackgroundScheduler()
+    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
+    scheduler.start()
     app.run(host="0.0.0.0", port=36042)
