@@ -150,10 +150,11 @@ def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     date_format = r"^([1-2][0-9]{3}|xxxx)-(0[1-9]|1[0-2]|xx)-(0[1-9]|[12][0-9]|3[01]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)$"
     if not re.search(date_format, start_date) or not re.search(date_format, end_date):
         raise BadRequest("Invalid date expression")
-        check_valid_date_range(start_date, end_date)
+    check_valid_date_range(start_date, end_date)
     timezone_format = r"^utc(\+|\-)(1[0-2]|0?[1-9])$"
     if timezone is not None and not re.search(timezone_format, timezone):
         raise BadRequest("Invalid timezone expression")
+
 
 def convert_date(date_string):
     date_string = date_string.replace("x", "0")
@@ -244,7 +245,6 @@ def article_filter():
 def location_matches(location, locations):
     location = location.lower()
     return location not in (l.lower() for l in locations)
->>>>>>> main
 
 
 @app.route("/report/filter", methods=["GET"])
