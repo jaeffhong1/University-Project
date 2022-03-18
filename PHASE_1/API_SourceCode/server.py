@@ -184,7 +184,6 @@ def article_filter():
         if article["main_text"] is None:
             continue  # what?
 
-        convert_main_text_article(article)
         if key_terms != "":
             match = False
             for kt in key_terms.split(","):
@@ -217,6 +216,7 @@ def article_filter():
             article["reports"] = valid_reports
             articles.append(article)
 
+        convert_main_text_article(article)
     return jsonify(articles)
 
 
@@ -236,7 +236,6 @@ def report_filter():
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
-        convert_main_text_article(article)
         for report in reports:
             if not matches_date_range(start_date, end_date, report["event_date"]):
                 continue
