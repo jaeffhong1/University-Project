@@ -232,7 +232,7 @@ def report_filter():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     check_filter_criteria(start_date, end_date, key_terms, location)
-    
+
     matches = []
     for article in load_full_articles_from_db():
         reports = article["reports"]
@@ -315,8 +315,8 @@ def load_articles_from_db():
 
 def load_full_articles_from_db():
     path_to_articles = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "db2", "full-articles.json"
-)
+        os.path.dirname(os.path.abspath(__file__)), "db2", "full-articles.json"
+    )
     with open(path_to_articles) as fp:
         for line in fp:
             yield json.loads(line)
@@ -330,11 +330,15 @@ def convert_location_in_report(report):
             geoname_ids.append({"geonames_id": geoname_id})
     report["locations"] = geoname_ids
 
+
 def convert_main_text_article(article):
     html_text = Selector(text=article["main_text"])
-    main_text = html_text.css("div.fieldlayout-region-body.fieldlayout-region-body-full *::text").getall()
-    whole_main_text = (''.join(main_text)) 
+    main_text = html_text.css(
+        "div.fieldlayout-region-body.fieldlayout-region-body-full *::text"
+    ).getall()
+    whole_main_text = "".join(main_text)
     article["main_text"] = whole_main_text
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=36042)
