@@ -75,7 +75,7 @@ CREATE TABLE Articles (
 
     url VARCHAR(255),
     headline VARCHAR(255),
-    -- main_VARCHAR(255) VARCHAR(255), -- 100 kb is a very large VARCHAR(255) file
+    maintext VARCHAR(MAX),
     eventdate_id INT(255),
 
     FOREIGN KEY(eventdate_id) REFERENCES EventDates(id)
