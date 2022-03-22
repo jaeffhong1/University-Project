@@ -75,7 +75,7 @@ CREATE TABLE Articles (
 
     url VARCHAR(255),
     headline VARCHAR(255),
-    maintext VARCHAR(MAX),
+    maintext TEXT,
     eventdate_id INT UNSIGNED,
 
     FOREIGN KEY(eventdate_id) REFERENCES EventDates(id)
