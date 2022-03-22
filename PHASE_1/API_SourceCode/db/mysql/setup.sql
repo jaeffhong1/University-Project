@@ -144,6 +144,7 @@ CREATE VIEW ViewArticles AS
     SELECT Articles.id, 
            Articles.url, 
            Articles.headline, 
+           Articles.maintext,
            EventDates.daydate AS daydate, 
            EventDates.hour AS hour, 
            EventDates.minute AS minute
@@ -154,7 +155,8 @@ CREATE VIEW ViewArticles AS
 CREATE VIEW ViewReportArticles AS
     SELECT Reports.id AS report_id, 
            ViewArticles.url AS article_url, 
-           ViewArticles.headline AS article_headline, 
+           ViewArticles.headline AS article_headline,
+           ViewArticles.maintext AS article_maintext, 
            ViewArticles.daydate AS article_daydate, 
            ViewArticles.hour AS article_hour, 
            ViewArticles.minute AS article_minute
@@ -196,6 +198,7 @@ CREATE VIEW ViewReports AS
            ViewReportLocations.geonames_id,
            ViewReportArticles.article_url, -- article content
            ViewReportArticles.article_headline, 
+           ViewReportArticles.article_maintext,
            ViewReportArticles.article_daydate, 
            ViewReportArticles.article_hour, 
            ViewReportArticles.article_minute,
