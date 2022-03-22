@@ -48,7 +48,7 @@ DROP VIEW IF EXISTS ViewCountDiseasesLocations;
 -- no duplicates
 -- do not modify after setup
 CREATE TABLE Diseases (
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32) UNIQUE  -- ensure the name is unique, so no duplicate diseases
 );
 
@@ -56,37 +56,37 @@ CREATE TABLE Diseases (
 -- no duplicates
 -- do not modify after setup
 CREATE TABLE Syndromes ( -- do we need this?
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32) UNIQUE -- ensure the name is unique, so no duplicate diseases
 );
 
 -- not unique, duplicate times may exist
 CREATE TABLE EventDates (
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
     daydate date NOT NULL, -- since a date is compulsory, we can use the inbuilt datatype
 
     -- however, hour and minute might not be set so define these separately 
-    hour INT(255), -- Nullable
-    minute INT(255) -- Nullable
+    hour INT UNSIGNED, -- Nullable
+    minute INT UNSIGNED -- Nullable
 );
 
 CREATE TABLE Articles (
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
 
     url VARCHAR(255),
     headline VARCHAR(255),
     maintext VARCHAR(MAX),
-    eventdate_id INT(255),
+    eventdate_id INT UNSIGNED,
 
     FOREIGN KEY(eventdate_id) REFERENCES EventDates(id)
 );
 
 CREATE TABLE Reports ( 
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
 
-    article_id INT(255),
-    start_eventdate_id INT(255) NOT NULL,
-    finish_eventdate_id INT(255), -- Nullable, incase report starts and finishes at the same time
+    article_id INT UNSIGNED,
+    start_eventdate_id INT UNSIGNED NOT NULL,
+    finish_eventdate_id INT UNSIGNED, -- Nullable, incase report starts and finishes at the same time
     
     FOREIGN KEY(article_id) REFERENCES Articles(id),
     FOREIGN KEY(start_eventdate_id) REFERENCES EventDates(id),
@@ -94,18 +94,18 @@ CREATE TABLE Reports (
 );
 
 CREATE TABLE ReportDiseases (
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    disease_id INT(255),
-    report_id INT(255),
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    disease_id INT UNSIGNED,
+    report_id INT UNSIGNED,
 
     FOREIGN KEY(disease_id) REFERENCES Diseases(id),
     FOREIGN KEY(report_id) REFERENCES Reports(id)
 );
 
 CREATE TABLE ReportSyndromes (
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    syndrome_id INT(255),
-    report_id INT(255),
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    syndrome_id INT UNSIGNED,
+    report_id INT UNSIGNED,
 
     FOREIGN KEY(syndrome_id) REFERENCES Syndromes(id),
     FOREIGN KEY(report_id) REFERENCES Reports(id)
@@ -114,9 +114,9 @@ CREATE TABLE ReportSyndromes (
 -- Stores one of the locations of a particular report
 -- There can be multiple ReportLocations of the same location (e.g. Sydney), but refer to a different report that coincidentally occured at the same place
 CREATE TABLE ReportLocations ( 
-    id INT(255) UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id INT UNSIGNED UNIQUE NOT NULL PRIMARY KEY AUTO_INCREMENT,
     geonames_id VARCHAR(255), -- reference to geonames ID public database, NOT a foreign key
-    report_id INT(255),
+    report_id INT UNSIGNED,
 
     FOREIGN KEY(report_id) REFERENCES Reports(id)
 );
