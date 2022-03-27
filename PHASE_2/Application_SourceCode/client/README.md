@@ -1,5 +1,12 @@
 # Nick's Disease Dashboard Example | js-react-disease-dashboard-1
 
+## Usage
+Ensure both node/npm and yarn are installed.
+```
+yarn install
+yarn start
+```
+
 ## Architecture
 * React.JS
 * React Router (react-router-dom)
