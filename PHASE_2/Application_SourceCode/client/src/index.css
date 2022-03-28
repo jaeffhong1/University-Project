@@ -2,6 +2,12 @@
     padding-left: 2em;
 }
 
+.dataSourceSelect {
+    float: right;
+    margin-right: 1em;
+    margin-left: 0em;
+}
+
 .logo {
     float: left;
     color: white;
