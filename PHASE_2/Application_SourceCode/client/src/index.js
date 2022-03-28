@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 // import components
 import Breadcrumb from './components/Breadcrumb';
+import DataSourceSelect from './components/DataSourceSelect';
 
 // import my pages
 import Home from './pages/Home/Home';
@@ -29,7 +30,11 @@ ReactDOM.render(
                 <Menu theme="dark" mode="horizontal">
                     <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                     <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
+                    <div key="3" className="dataSourceSelect" style={{float: 'right', order: 3, position: 'relative', right: 0, left: '67vw'}}>
+                    <DataSourceSelect/>
+                </div>
                 </Menu>
+                
             </Header>
 
             <Content style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}>
