@@ -30,9 +30,10 @@ ReactDOM.render(
                 <Menu theme="dark" mode="horizontal">
                     <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                     <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-                    <div key="3" className="dataSourceSelect" style={{float: 'right', order: 3, position: 'relative', right: 0, left: '67vw'}}>
-                    <DataSourceSelect/>
-                </div>
+                    <div key="3" className="dataSourceSelect">
+                        <DataSourceSelect/>
+                    </div>
+                    <div id="nothing"></div>
                 </Menu>
                 
             </Header>
