@@ -1,31 +1,56 @@
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-import { Mosaic } from 'react-mosaic-component';
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import './App.css';
+import SourceSelector from "./SourceSelectors";
+import Widget from "./widgets/Widget";
 
-const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
-  a: <div>Left Window</div>,
-  b: <div>Top Right Window</div>,
-  c: <div>Bottom Right Window</div>,
+let count = 0;
+
+export type TReport = {
+  diseases: string[],
+  syndromes: string[],
+  event_date: string,
+  // event_date_obj: Date,
+  locations: string[],
+}
+
+export type TSource = {
+  url: string,
+  date_of_publication: string,
+  // date_of_publication_obj: Date,
+  headline: string,
+  main_text: string,
+  reports: TReport[]
+}[]
+
+const titleMap: Record<string, string> = {
+  window0: "Select a widget",
+  SourceSelector: "Source selector",
 };
+
+const source: TSource = []
 
 function App() {
   return (
     <div id="app">
-    <Mosaic<string>
-      renderTile={(id) => ELEMENT_MAP[id]}
-      initialValue={{
-        direction: 'row',
-        first: 'a',
-        second: {
-          direction: 'column',
-          first: 'b',
-          second: 'c',
-        },
-        splitPercentage: 40,
-      }}
-      className="mosaic-blueprint-theme bp3-dark"
+      <Mosaic<string>
+        renderTile={(id, path) => (
+          <MosaicWindow<string> path={path} createNode={() => {
+            const name = 'window' + (++count)
+            titleMap[name] = name
+            return name
+          }} title={titleMap[id]}>
+            {id == "SourceSelector" ? <SourceSelector /> : <Widget source={source} mosaic={{titleMap, id}} />}
+          </MosaicWindow>
+        )}
+        initialValue={{
+          direction: 'row',
+          first: 'SourceSelector',
+          second: 'window0',
+          splitPercentage: 20
+        }}
       />
     </div>
   );
