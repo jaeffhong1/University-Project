@@ -10,7 +10,7 @@ path_to_locations = os.path.join(
 
 @lru_cache
 def find_GeoID(location):
-    f = open(path_to_locations, encoding="utf8")
+    f = open(path_to_locations, encoding="ISO-8859-1")
     # Compute filesize
     hi = os.fstat(f.fileno()).st_size
     lo = 0
