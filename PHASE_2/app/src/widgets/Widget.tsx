@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { TSource } from "../App";
 import CountReports from "./CountReports";
+import Twitter from "./Twitter";
 import WidgetSelector from "./WidgetSelector";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function Widget(props: Props): JSX.Element {
+    return <Twitter source={props.source} />
     const [type, setType] = useState("select");
     if (type === "select") {
         return <WidgetSelector setType={setType} />

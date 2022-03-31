@@ -36,6 +36,9 @@ function App() {
   return (
     <div id="app">
       <Mosaic<string>
+        resize={{
+
+        }}
         renderTile={(id, path) => (
           <MosaicWindow<string> path={path} createNode={() => {
             const name = 'window' + (++count)
