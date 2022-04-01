@@ -340,9 +340,12 @@ def report_filter_for_internal_use():
         relevant_locations = []
         for location in report["locations"]:
             location_hierarchy = find_hierarchy2(int(location["geonames_id"]))
-            relevant_locations.append(convert_geo_tup(location_hierarchy[0]))
-            relevant_locations.append(convert_geo_tup(location_hierarchy[1]))
-            relevant_locations.append(convert_geo_tup(location_hierarchy[2]))
+            rel_location = {
+                "state": convert_geo_tup(location_hierarchy[0]),
+                "country": convert_geo_tup(location_hierarchy[1]),
+                "continent": convert_geo_tup(location_hierarchy[2]),
+            }
+            relevant_locations.append(rel_location)
         report["locations"] = relevant_locations
     return jsonify(matches)
 
