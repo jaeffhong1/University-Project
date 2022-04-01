@@ -323,7 +323,7 @@ def report_from_article_url():
     raise BadRequest("URL didn't match any known post")
 
 
-@app.route("/location/gethierarchy", methods=["GET"])
+@app.route("/location/hierarchy", methods=["GET"])
 def get_country_by_geoid():
     geoid = request.values.get("geoid")
     if geoid is None or not geoid.isdigit():
