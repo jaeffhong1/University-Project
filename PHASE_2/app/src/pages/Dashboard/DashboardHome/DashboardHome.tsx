@@ -8,10 +8,10 @@ import { Progress } from 'antd';
 //import Plot from "react-plotly.js";
 
 // mosaic
-import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+//import "@blueprintjs/core/lib/css/blueprint.css";
+//import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
-import 'react-mosaic-component/react-mosaic-component.css';
+//import 'react-mosaic-component/react-mosaic-component.css';
 
 // widgets
 import SourceSelector from "./SourceSelectors";
@@ -43,31 +43,31 @@ const DashboardHome = (props: Props) => {
     };
 
     return (
-        <main className='main' style={{margin: '1.5em', height: '100%'}}>
+        <main className='main' style={{ height: '100%'}}>
             <div id="mosaic" style={{height: '100%'}}>
-            <Mosaic<string>
-                renderTile={(id, path) => (
-                    <MosaicWindow<string> 
-                        path={path} 
-                        createNode={() => {
-                            const name = 'window' + count;
-                            setCount(count + 1);
-                            titleMap[name] = name;
-                            return name;
-                        }} 
-                        title={titleMap[id]}
-                    >
-                        {id == "SourceSelector" ? <SourceSelector /> : <Widget source={props.source} mosaic={{titleMap, id}} />}
-                    </MosaicWindow>
-                )}
+                <Mosaic<string>
+                    renderTile={(id, path) => (
+                        <MosaicWindow<string> 
+                            path={path} 
+                            createNode={() => {
+                                const name = 'window' + count;
+                                setCount(count + 1);
+                                titleMap[name] = name;
+                                return name;
+                            }} 
+                            title={titleMap[id]}
+                        >
+                            {id == "SourceSelector" ? <SourceSelector /> : <Widget source={props.source} mosaic={{titleMap, id}} />}
+                        </MosaicWindow>
+                    )}
 
-                initialValue={{
-                    direction: 'row',
-                    first: 'SourceSelector',
-                    second: 'window0',
-                    splitPercentage: 20
-                }}
-            />
+                    initialValue={{
+                        direction: 'row',
+                        first: 'SourceSelector',
+                        second: 'window0',
+                        splitPercentage: 20
+                    }}
+                />
             </div>
         </main>
     );

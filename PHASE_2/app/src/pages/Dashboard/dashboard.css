@@ -41,8 +41,13 @@ button[title="Close Window"]::before {
 
 html,
 body,
-#mosaic {
-  height: 100%;
+#mosaic,
+.main
+{
   width: 100%;
   margin: 0;
+}
+
+.ant-layout-content div {
+  height: 100%;
 }
