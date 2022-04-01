@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { TSource } from "../App";
+import { TSource } from "../../../../App";
 import CountReports from "./CountReports";
 import WidgetSelector from "./WidgetSelector";
 

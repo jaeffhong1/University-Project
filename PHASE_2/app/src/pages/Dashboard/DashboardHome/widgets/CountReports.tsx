@@ -1,4 +1,4 @@
-import { TSource } from "../App"
+import { TSource } from "../../../../App";
 
 interface Props {
     source: TSource

@@ -13,3 +13,6 @@ PHASE_1/API_SourceCode/db/model_sql_alchemy/db.env
 db_reports
 db2
 server.log
+
+/**/node_modules/*
+/PHASE_2/app/node_modules/*

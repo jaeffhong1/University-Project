@@ -1,0 +1,48 @@
+.js-plotly-plot {
+  width: 100%;
+  height: 18em;
+}
+
+#components-layout-demo-top-side .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+}
+  
+.ant-row-rtl #components-layout-demo-top-side .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+.ant-menu-item {
+  margin-top: 0;
+}
+
+/* damn i hate frontend */
+button[title="Replace Window"] {
+  display: none;
+}
+
+button[title="Split Window"]::before {
+  content: "+"
+}
+
+button[title="Expand"]::before {
+  content: '↑';
+}
+button[title="Close Window"]::before {
+  content: '×';
+}
+
+html,
+body,
+#mosaic {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
