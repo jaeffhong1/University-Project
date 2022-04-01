@@ -27,6 +27,7 @@ def find_hierarchy(geoid):
 
 def find_hierarchy2(geoid):
     hierarchy_list = []
+    hierarchy_list.append(geoid)
     f_codes = ["ADM5", "ADM4", "ADM3", "ADM2", "ADM1", "PCLI", "CONT"]
     line = get_id_line(geoid)
     countryCode = line[8]
@@ -137,4 +138,7 @@ def find_all_CountryCodes(countryCode):
     f2.close()
     return all_locations
         
-find_hierarchy2(2657896)
+#2171707 chatswood
+#8176220 unsw
+
+find_hierarchy2(2077456)
