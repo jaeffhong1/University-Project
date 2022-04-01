@@ -14,6 +14,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import time
 from geoid import find_geo_id
+from idToHierarchy import find_hierarchy2
 import pytz
 
 from scrapy.selector import Selector
@@ -320,6 +321,28 @@ def report_from_article_url():
         if article["url"] == url:
             return jsonify(article["reports"])
     raise BadRequest("URL didn't match any known post")
+
+
+@app.route("/location/gethierarchy", methods=["GET"])
+def get_country_by_geoid():
+    geoid = request.values.get("geoid")
+    if geoid is None or not geoid.isdigit():
+        raise BadRequest("Geoid must be a number")
+    location_hierarchy = find_hierarchy2(int(geoid))
+    result = {}
+    result["state"] = convert_geo_tup(location_hierarchy[0])
+    result["country"] = convert_geo_tup(location_hierarchy[1])
+    result["continent"] = convert_geo_tup(location_hierarchy[2])
+    return jsonify(result)
+
+
+def convert_geo_tup(geo_tuple):
+    locaiton_info = {}
+    locaiton_info["geoid"] = geo_tuple[0]
+    locaiton_info["name"] = geo_tuple[1]
+    locaiton_info["lat"] = geo_tuple[2]
+    locaiton_info["lng"] = geo_tuple[3]
+    return locaiton_info
 
 
 def test_scrape():
