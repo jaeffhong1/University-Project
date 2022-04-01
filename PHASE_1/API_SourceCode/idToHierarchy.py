@@ -16,14 +16,14 @@ path_to_locations2 = os.path.join(
     "Locations",
     "allCountriesCode-sorted2.txt",
 )
+global_hierarchy_list = []
 
 def find_hierarchy(geoid):
     hierarchy_list = []
     get_parents(geoid, hierarchy_list)
 
     for location in hierarchy_list:
-        line = get_id_line(int(location))
-        print(line[1], line[7])
+        global_hierarchy_list.append(location)
 
 def find_hierarchy2(geoid):
     hierarchy_list = []
@@ -59,11 +59,19 @@ def find_hierarchy2(geoid):
         i += 1
 
     for location in hierarchy_list:
-        line = get_id_line(int(location))
-        print(line[1], line[7])
+        global_hierarchy_list.append(location)
 
     last_location = hierarchy_list[-1]
     find_hierarchy(last_location)
+
+    all_location_tuple = []
+    sliced_global_hierarchy_list = global_hierarchy_list[-4:]
+    for location in sliced_global_hierarchy_list[:-1]:
+        line = get_id_line(int(location))
+        location_tuple = (line[0], line[2], line[4], line[5])
+        all_location_tuple.append(location_tuple)
+
+    return all_location_tuple
 
 def get_id_line(geoid):
     f = open(path_to_locations, encoding="ISO-8859-1")
@@ -141,4 +149,5 @@ def find_all_CountryCodes(countryCode):
 #2171707 chatswood
 #8176220 unsw
 
-find_hierarchy2(2077456)
+a = find_hierarchy2(8176220)
+print(a)
