@@ -1,8 +1,6 @@
 
 import { useState } from "react";
-import { TSource } from "../App";
-import CountReports from "./CountReports";
-import Twitter from "./Twitter";
+import { TReactComponent, TSource } from "../App";
 import WidgetSelector from "./WidgetSelector";
 
 interface Props {
@@ -11,16 +9,22 @@ interface Props {
         titleMap: Record<string, string>
     },
     source: TSource,
+    allWidgets: {[key: string]: TReactComponent }
+}
+
+export interface WidgetProps {
+    source: TSource;
 }
 
 export default function Widget(props: Props): JSX.Element {
-    return <Twitter source={props.source} />
     const [type, setType] = useState("select");
     if (type === "select") {
-        return <WidgetSelector setType={setType} />
-    } else if (type === "CountReports") {
-        return <CountReports source={props.source} />
+        return <WidgetSelector setType={setType} allWidgets={props.allWidgets} />
     } else {
-        return <p>Unknown widget type <code>{type}</code></p>
+        const T = props.allWidgets[type];
+        if (T === undefined) {
+            return <p>Unknown widget type <code>{type}</code></p>
+        }
+        return <T source={props.source} />
     }
 }

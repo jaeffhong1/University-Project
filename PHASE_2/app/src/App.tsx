@@ -1,10 +1,13 @@
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import React from "react";
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import './App.css';
 import SourceSelector from "./SourceSelectors";
-import Widget from "./widgets/Widget";
+import { CasesAgainstTime } from "./widgets/CasesAgainstTime";
+import CountReports from "./widgets/CountReports";
+import Widget, { WidgetProps } from "./widgets/Widget";
 
 let count = 0;
 
@@ -30,6 +33,12 @@ const titleMap: Record<string, string> = {
   SourceSelector: "Source selector",
 };
 
+export type TReactComponent = typeof React.Component | ((p: WidgetProps) => JSX.Element)
+const allWidgets: {[key: string]: TReactComponent } = {
+  'Cases against time': CasesAgainstTime,
+  'Count reports': CountReports,
+}
+
 const source: TSource = []
 
 function App() {
@@ -45,7 +54,7 @@ function App() {
             titleMap[name] = name
             return name
           }} title={titleMap[id]}>
-            {id == "SourceSelector" ? <SourceSelector /> : <Widget source={source} mosaic={{titleMap, id}} />}
+            {id == "SourceSelector" ? <SourceSelector /> : <Widget source={source} mosaic={{titleMap, id}} allWidgets={allWidgets}  />}
           </MosaicWindow>
         )}
         initialValue={{

@@ -1,10 +1,7 @@
-import { TSource } from "../App"
+import { WidgetProps } from "./Widget"
 
-interface Props {
-    source: TSource
-}
 
-export default function CountReports(props: Props) {
+export default function CountReports(props: WidgetProps) {
     return (
         <p>Article Count: {props.source.length}</p>
     )
