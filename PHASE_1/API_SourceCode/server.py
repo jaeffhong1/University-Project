@@ -262,16 +262,10 @@ def article_filter():
 
 def location_matches(location, locations):
     location = location.lower()
-    return location not in (l.lower() for l in locations)
+    return location in (l.lower() for l in locations)
 
 
-@app.route("/report/filter", methods=["GET"])
-def report_filter():
-    start_date = request.values.get("start_date")
-    end_date = request.values.get("end_date")
-    key_terms = request.values.get("key_terms")
-    location = request.values.get("location")
-    timezone = request.values.get("timezone")
+def get_matching_reports(start_date, end_date, key_terms, location, timezone):
     if timezone is None:
         timezone = CIDRAP_TIMEZONE
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
@@ -301,6 +295,17 @@ def report_filter():
             convert_location_in_report(report)
             if len(report["locations"]) > 0:
                 matches.append(report)
+    return matches
+
+
+@app.route("/report/filter", methods=["GET"])
+def report_filter():
+    start_date = request.values.get("start_date")
+    end_date = request.values.get("end_date")
+    key_terms = request.values.get("key_terms")
+    location = request.values.get("location")
+    timezone = request.values.get("timezone")
+    matches = get_matching_reports(start_date, end_date, key_terms, location, timezone)
     return jsonify(matches)
 
 
@@ -321,6 +326,25 @@ def report_from_article_url():
         if article["url"] == url:
             return jsonify(article["reports"])
     raise BadRequest("URL didn't match any known post")
+
+
+@app.route("/report/filter/internal", methods=["GET"])
+def report_filter_for_internal_use():
+    start_date = request.values.get("start_date")
+    end_date = request.values.get("end_date")
+    key_terms = request.values.get("key_terms")
+    location = request.values.get("location")
+    timezone = request.values.get("timezone")
+    matches = get_matching_reports(start_date, end_date, key_terms, location, timezone)
+    for report in matches:
+        relevant_locations = []
+        for location in report["locations"]:
+            location_hierarchy = find_hierarchy2(int(location["geonames_id"]))
+            relevant_locations.append(convert_geo_tup(location_hierarchy[0]))
+            relevant_locations.append(convert_geo_tup(location_hierarchy[1]))
+            relevant_locations.append(convert_geo_tup(location_hierarchy[2]))
+        report["locations"] = relevant_locations
+    return jsonify(matches)
 
 
 @app.route("/location/hierarchy", methods=["GET"])
