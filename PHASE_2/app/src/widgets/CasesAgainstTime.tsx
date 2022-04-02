@@ -1,40 +1,53 @@
+import { Data as PlotlyData } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
 import { TArticle, TSource } from "../App";
 import "./plotly.css";
 import { WidgetProps } from "./Widget";
 
+
+const DURATION = {
+    'Second': 1,
+    'Minute': 60,
+    'Hour': 60 * 60,
+    'Day': 24 * 60 * 60,
+    'Week': 7 * 24 * 60 * 60,
+    'Month': 30 * 7 * 24 * 60 * 60
+}
+
 interface State {
     data: {
         bins: string[],
+        plotdata: PlotlyData[],
         counts: number[],
         source: TSource;
     } | null;
+    binWidth: keyof typeof DURATION
 }
 
-enum Duration {
-    SECOND = 1,
-    MINUTE = 60,
-    HOUR = 60 * 60,
-    DAY = 24 * 60 * 60,
-    WEEK = 7 * 24 * 60 * 60,
-}
-
-function makeBinsAndCounts(start: number, end: number, width: number, articles: TArticle[]): [Date[], number[]] {
+function makeBinsAndCounts(start: number, end: number, width: number, articles: TArticle[]): [Date[], {[key: string]: number[]}] {
     const bins = []
-    for (let i = 0; i < (end - start) / width; i++) {
+    for (let i = 0; i < (end - start) / width + 1; i++) {
         bins.push(start + i * width)
     }
-    const counts = []
-    counts.length = bins.length
+    console.log(bins)
+    const counts: {[key: string]: number[]} = {}
     for (let article of articles) {
         for (let report of article.reports) {
             const t = report.event_date_obj.valueOf() / 1000
-            console.assert(t >= start)
-            const i = (t - start) / width
-            console.assert(i < counts.length)
-            if (!counts[i]) counts[i] = 0;
-            counts[i]++;
+            // some reports are included because another report in the same article matched
+            if (t < start || t > end)
+                continue;
+            const i = Math.floor((t - start) / width)
+            console.assert(i <= bins.length, `${i} ${counts.length} ${report.event_date_obj}`)
+            for (let dis of report.diseases) {
+                if (counts[dis] == undefined) {
+                    counts[dis] = []
+                    counts[dis].length = bins.length
+                }
+                if (!counts[dis][i]) counts[dis][i] = 0;
+                counts[dis][i]++;
+            }
         }
     }
     return [bins.map(x => new Date(x * 1000)), counts]
@@ -44,7 +57,8 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
     constructor(props: WidgetProps) {
         super(props)
         this.state = {
-                data: null
+            data: null,
+            binWidth: 'Day'
         }
     }
 
@@ -55,38 +69,44 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
         const [bins, counts] = makeBinsAndCounts(
             props.source.meta.start.valueOf() / 1000,
             props.source.meta.end.valueOf() / 1000,
-            Duration.DAY,
+            DURATION[currentState.binWidth],
             props.source.articles
         )
-        console.log(bins)
-        console.log(counts)
+        const plotdata = []
+        for (let dis of Object.keys(counts)) {
+            plotdata.push({
+                x: bins,
+                y: counts[dis],
+                type: 'bar',
+                name: dis,
+            })
+        }
         return {
             data: {
                 source: props.source,
-                bins: bins,
-                counts: counts,
+                plotdata,
             }
         }
       }
 
     render() {
-        // return <pre><code>Source={JSON.stringify(this.props.source, null, 2)}</code></pre>
         if (this.state.data == null)
             return <p>Computing graph points from props</p>
 
-        return <Plot 
-                data={
-                    [
-                        {
-                            x: this.state.data.bins,
-                            y: this.state.data.counts,
-                            type: 'bar',
-                            mode: 'lines+markers',
-                        },
-                    ]
-                }
-                layout={{autosize: true, title: 'Cases Against Time'}}
+        return <React.Fragment>
+            <p>
+                <select value={this.state.binWidth} onChange={(e) => {
+                    // @ts-ignore
+                    this.setState({binWidth: e.target.value})
+                }} style={{margin: '0 8px'}}>
+                    {["Month", "Week", "Day"].map((k: string) => <option key={k} value={k}>{k}</option>)}
+                </select>
+            </p>
+            <Plot 
+                data={ this.state.data.plotdata }
+                layout={{autosize: true, title: 'Reports Against Time', barmode: 'stack'}}
             />
+        </React.Fragment>
 
     }
 }

@@ -22,3 +22,7 @@ button[title="Expand"]::before {
 button[title="Close Window"]::before {
   content: '×';
 }
+
+p {
+  margin: 12px; /* stupid css reset */
+}
