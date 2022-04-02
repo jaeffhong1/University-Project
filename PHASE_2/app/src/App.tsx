@@ -15,14 +15,14 @@ export type TReport = {
   diseases: string[],
   syndromes: string[],
   event_date: string,
-  // event_date_obj: Date,
+  event_date_obj: Date,
   locations: string[],
 }
 
 export type TSource = {
   url: string,
   date_of_publication: string,
-  // date_of_publication_obj: Date,
+  date_of_publication_obj: Date,
   headline: string,
   main_text: string,
   reports: TReport[]
