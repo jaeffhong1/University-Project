@@ -19,14 +19,23 @@ export type TReport = {
   locations: string[],
 }
 
-export type TSource = {
+export type TArticle = {
   url: string,
   date_of_publication: string,
   date_of_publication_obj: Date,
   headline: string,
   main_text: string,
   reports: TReport[]
-}[]
+}
+
+
+export type TSource = {
+  meta: {
+    start: Date,
+    end: Date,
+  },
+  articles: TArticle[]
+};
 
 const titleMap: Record<string, string> = {
   window0: "Select a widget",
@@ -40,7 +49,7 @@ const allWidgets: {[key: string]: TReactComponent } = {
 }
 
 function App() {
-  const [source, setSource] = useState<TSource>([]);
+  const [source, setSource] = useState<TSource|null>(null);
   return (
     <div id="app">
       <Mosaic<string>

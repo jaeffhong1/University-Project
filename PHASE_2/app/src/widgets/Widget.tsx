@@ -8,7 +8,7 @@ interface Props {
         id: string,
         titleMap: Record<string, string>
     },
-    source: TSource,
+    source: TSource | null,
     allWidgets: {[key: string]: TReactComponent }
 }
 
@@ -20,6 +20,8 @@ export default function Widget(props: Props): JSX.Element {
     const [type, setType] = useState("select");
     if (type === "select") {
         return <WidgetSelector setType={setType} allWidgets={props.allWidgets} />
+    } else if (props.source == null) {
+        return <p>Loading sources, please wait...</p>
     } else {
         const T = props.allWidgets[type];
         if (T === undefined) {
