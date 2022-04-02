@@ -17,9 +17,7 @@ const DURATION = {
 
 interface State {
     data: {
-        bins: string[],
         plotdata: PlotlyData[],
-        counts: number[],
         source: TSource;
     } | null;
     binWidth: keyof typeof DURATION
@@ -53,6 +51,34 @@ function makeBinsAndCounts(start: number, end: number, width: number, articles: 
     return [bins.map(x => new Date(x * 1000)), counts]
 }
 
+function makeData(source: TSource, binWidth: keyof typeof DURATION): {data: {
+    source: TSource,
+    plotdata: PlotlyData[]
+}} {
+    const [bins, counts] = makeBinsAndCounts(
+        source.meta.start.valueOf() / 1000,
+        source.meta.end.valueOf() / 1000,
+        DURATION[binWidth],
+        source.articles
+    )
+    const plotdata = []
+    for (let dis of Object.keys(counts)) {
+        plotdata.push({
+            x: bins,
+            y: counts[dis],
+            type: 'bar',
+            name: dis,
+        })
+    }
+    return {
+        data: {
+            source,
+            // @ts-ignore
+            plotdata,
+        }
+    }
+}
+
 export class CasesAgainstTime extends React.Component<WidgetProps, State> {
     constructor(props: WidgetProps) {
         super(props)
@@ -66,27 +92,7 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
         if (currentState.data != null && currentState.data.source === props.source)
             return null;
 
-        const [bins, counts] = makeBinsAndCounts(
-            props.source.meta.start.valueOf() / 1000,
-            props.source.meta.end.valueOf() / 1000,
-            DURATION[currentState.binWidth],
-            props.source.articles
-        )
-        const plotdata = []
-        for (let dis of Object.keys(counts)) {
-            plotdata.push({
-                x: bins,
-                y: counts[dis],
-                type: 'bar',
-                name: dis,
-            })
-        }
-        return {
-            data: {
-                source: props.source,
-                plotdata,
-            }
-        }
+        return makeData(props.source, currentState.binWidth)
       }
 
     render() {
@@ -97,7 +103,8 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
             <p>
                 <select value={this.state.binWidth} onChange={(e) => {
                     // @ts-ignore
-                    this.setState({binWidth: e.target.value})
+                    const binWidth: keyof typeof DURATION = e.target.value;
+                    this.setState({binWidth, data: makeData(this.props.source, binWidth).data})
                 }} style={{margin: '0 8px'}}>
                     {["Month", "Week", "Day"].map((k: string) => <option key={k} value={k}>{k}</option>)}
                 </select>
