@@ -22,3 +22,33 @@
 .ant-menu-item {
   margin-top: 0;
 }
+
+/* damn i hate frontend */
+button[title="Replace Window"] {
+  display: none;
+}
+
+button[title="Split Window"]::before {
+  content: "+"
+}
+
+button[title="Expand"]::before {
+  content: '↑';
+}
+button[title="Close Window"]::before {
+  content: '×';
+}
+
+html,
+body,
+#mosaic,
+.main
+{
+  width: 100%;
+  margin: 0;
+  min-height: 82vh; /* 82% of window height */
+}
+
+.ant-layout-content div {
+  height: 100%;
+}
