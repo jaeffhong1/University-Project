@@ -5,6 +5,8 @@ PHASE_1/API_SourceCode/myprojectenv/
 PHASE_1/API_SourceCode/seng3011env/
 PHASE_1/API_SourceCode/db/model_manual/db.env
 PHASE_1/API_SourceCode/db/model_sql_alchemy/db.env
+PHASE_2/Application_SourceCode/client/node_modules/
+**/node_modules/
 **/__pycache__
 **/posts.json
 **/.venv
@@ -13,3 +15,10 @@ PHASE_1/API_SourceCode/db/model_sql_alchemy/db.env
 db_reports
 db2
 server.log
+
+
+**/db.env
+PHASE_2/Application_SourceCode/client/node_modules/.yarn-integrity
+
+/**/node_modules/*
+/PHASE_2/app/node_modules/*
