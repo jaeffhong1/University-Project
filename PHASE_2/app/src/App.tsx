@@ -1,6 +1,6 @@
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import React from "react";
+import React, { useState } from "react";
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import './App.css';
@@ -39,22 +39,19 @@ const allWidgets: {[key: string]: TReactComponent } = {
   'Count reports': CountReports,
 }
 
-const source: TSource = []
-
 function App() {
+  const [source, setSource] = useState<TSource>([]);
   return (
     <div id="app">
       <Mosaic<string>
-        resize={{
-
-        }}
+        resize={{}}
         renderTile={(id, path) => (
           <MosaicWindow<string> path={path} createNode={() => {
             const name = 'window' + (++count)
             titleMap[name] = name
             return name
           }} title={titleMap[id]}>
-            {id == "SourceSelector" ? <SourceSelector /> : <Widget source={source} mosaic={{titleMap, id}} allWidgets={allWidgets}  />}
+            {id == "SourceSelector" ? <SourceSelector setSource={setSource}/> : <Widget source={source} mosaic={{titleMap, id}} allWidgets={allWidgets}  />}
           </MosaicWindow>
         )}
         initialValue={{
