@@ -1,7 +1,7 @@
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import React, { useState } from "react";
-import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import './App.css';
 import SourceSelector from "./SourceSelectors";
@@ -44,10 +44,22 @@ const allWidgets: {[key: string]: TReactComponent } = {
 
 function App() {
   const [source, setSource] = useState<TSource|null>(null);
+  const val: MosaicNode<string> = {
+          direction: 'row',
+          first: 'SourceSelector',
+          second: 'window0',
+          splitPercentage: 20
+        }
+  const [mos, setMos] = useState(val)
   return (
     <div id="app">
       <Mosaic<string>
         resize={{}}
+        onRelease={(newNode: MosaicNode<string> | null) => {
+          if (newNode !== null)
+            // @ts-ignore
+            setMos(newNode)
+        }}
         renderTile={(id, path) => (
           <MosaicWindow<string> path={path} createNode={() => {
             const name = 'window' + (++count)
@@ -57,12 +69,8 @@ function App() {
             {id == "SourceSelector" ? <SourceSelector setSource={setSource}/> : <Widget source={source} mosaic={{titleMap, id}} allWidgets={allWidgets}  />}
           </MosaicWindow>
         )}
-        initialValue={{
-          direction: 'row',
-          first: 'SourceSelector',
-          second: 'window0',
-          splitPercentage: 20
-        }}
+        // @ts-ignore
+        initialValue={mos}
       />
     </div>
   );
