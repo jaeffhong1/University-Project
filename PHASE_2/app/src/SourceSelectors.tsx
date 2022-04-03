@@ -41,13 +41,7 @@ export default class SourceSelector extends React.Component<Props, State> {
         const location = 'Sydney'
         const keyTerms = 'COVID-19'
 
-        let articles;
-        try {
-            articles = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
-        } catch (e: any) {
-            alert('fetch source' + e)
-            return;
-        }
+        const articles = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
         
         const source = {
             meta: {
@@ -69,7 +63,7 @@ export default class SourceSelector extends React.Component<Props, State> {
             <form action="#" onSubmit={(e) => e.preventDefault()}>
                 {/* @ts-ignore */}
                 <div onChange={(e) => this.setState({sourceName: e.target.value})}>
-                    <p> <input type="radio" id="source-f0b5" value="f0b5" name="source" /> <label htmlFor="source-f0b5">f0b5</label> </p>
+                    <p> <input type="radio" id="source-f0b5" value="f0b5" name="source" /> <label htmlFor="source-f0b5" defaultChecked={true}>f0b5</label> </p>
                     <p> <input type="radio" id="source-epiwatch" value="epiwatch" name="source" /> <label htmlFor="source-epiwatch">EpiWatch</label> </p>
                 </div>
                 <p>

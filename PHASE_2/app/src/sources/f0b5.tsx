@@ -1,4 +1,4 @@
-import { TArticle, TSource } from "../App";
+import { TArticle } from "../App";
 import CacheSystem from "../CacheSystem";
 import { SourceAdaptor } from "../SourceSelectors";
 
@@ -43,18 +43,10 @@ export default class SourceAdaptorf0b5 implements SourceAdaptor {
         const obj = JSON.parse(resp)
         this.addDateObjects(obj)
         return obj
-        // const source = {
-        //     meta: {
-        //         start: parseDate(start),
-        //         end: parseDate(end),
-        //     },
-        //     articles,
-        // }
     }
 
-    addDateObjects(source: TSource) {
-        if (source === null) throw new Error("stop")
-        for (let article of source.articles) {
+    addDateObjects(articles: TArticle[]) {
+        for (let article of articles) {
             if (article.date_of_publication && !article.date_of_publication_obj)
                 article.date_of_publication_obj = parseDate(article.date_of_publication)
             for (let report of article.reports) {
