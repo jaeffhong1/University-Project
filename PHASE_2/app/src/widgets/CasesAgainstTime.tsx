@@ -28,7 +28,6 @@ function makeBinsAndCounts(start: number, end: number, width: number, articles: 
     for (let i = 0; i < (end - start) / width + 1; i++) {
         bins.push(start + i * width)
     }
-    console.log(bins)
     const counts: {[key: string]: number[]} = {}
     for (let article of articles) {
         for (let report of article.reports) {

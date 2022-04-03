@@ -1,6 +1,7 @@
 import React from "react";
 import { TArticle, TSource } from "./App";
 import CacheSystem from "./CacheSystem";
+import "./SourceSelector.css";
 
 interface Props {
     setSource: (s: TSource) => void;
@@ -26,29 +27,54 @@ function parseDate(s: string): Date {
     ))
 }
 
-export default class SourceSelector extends React.Component<Props> {
-    componentDidMount() {
-        // const p = CacheSystem.fetch('sydney-covid-cases-01', 'http://seng3011.duckdns.org/article/filter?location=Sydney&start_date=2022-01-01Txx:xx:xx&end_date=2022-02-01Txx:xx:xx&key_terms=COVID-19', {})
-        const p = CacheSystem.fetch('tmp', 'http://seng3011.duckdns.org/article/filter?location=Sydney&start_date=2022-01-01Txx:xx:xx&end_date=2022-02-01Txx:xx:xx&key_terms=COVID-19', undefined)
-        p.then(resp => {
-            if (typeof resp != "string") {
-                console.error(resp)
-                throw new Error("stop")
+interface State {
+    startDate: string;
+    endDate: string;
+}
+
+export default class SourceSelector extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        const today = new Date();
+        this.state = {
+            startDate: '2022-01-01',
+            endDate: `${today.getUTCFullYear()}-${String(today.getUTCMonth()).padStart(2, '0')}-${String(today.getUTCDate()).padStart(2, '0')}`,
+        }
+    }
+    
+    async fetchSource() {
+        const start = this.state.startDate + 'Txx:xx:xx'
+        const end = this.state.endDate + 'Txx:xx:xx'
+        const location = 'Sydney'
+        const keyTerms = 'COVID-19'
+        const name = `source-cache-${start}-${end}-${location}-${keyTerms}`
+        console.log("fetch for", name)
+        const resp = await CacheSystem.fetch(name, `http://seng3011.duckdns.org/article/filter?location=${location}&start_date=${start}&end_date=${end}&key_terms=${keyTerms}`)
+        console.log("done")
+        if (typeof resp != "string") {
+            console.error(resp)
+            if (resp.status === 400) {
+                alert("[400]: " + (await resp.json()).message)
+                return
             }
-            const articles = JSON.parse(resp) as TArticle[];
-            const source = {
-                meta: {
-                    start: parseDate('2022-01-01Txx:xx:xx'),
-                    end: parseDate('2022-02-01Txx:xx:xx'),
-                },
-                articles,
-            }
-            this.addDateObjects(source)
-            // console.log('set source')
-            this.props.setSource(source)
-        })
+            throw new Error("stop")
+        }
+        const articles = JSON.parse(resp) as TArticle[];
+        const source = {
+            meta: {
+                start: parseDate(start),
+                end: parseDate(end),
+            },
+            articles,
+        }
+        this.addDateObjects(source)
+        // console.log('set source')
+        this.props.setSource(source)
     }
 
+    componentDidMount() {
+        this.fetchSource()
+    }
 
     addDateObjects(source: TSource) {
         if (source === null) throw new Error("stop")
@@ -61,6 +87,18 @@ export default class SourceSelector extends React.Component<Props> {
     }
 
     render() {
-        return <p>Selected source for you</p>
+        return <form action="#" onSubmit={(e) => e.preventDefault()}>
+            <p>
+                From: 
+                <input type="date" value={this.state.startDate} onChange={e => this.setState({'startDate': e.target.value})} />
+                <input type="time" defaultValue='00:00:00'/>
+            </p>
+            <p>
+                To:
+                <input type="date" value={this.state.endDate} onChange={e => this.setState({'endDate': e.target.value})} />
+                <input type="time" defaultValue='00:00:00' />
+            </p>
+            <p><button onClick={() => this.fetchSource()}>Fetch</button></p>
+        </form>
     }
 }
