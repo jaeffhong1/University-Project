@@ -163,6 +163,18 @@ def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     if find_geo_id(location) < 0:
         raise BadRequest("Invalid location")
 
+def check_filter_criteria_internal(start_date, end_date, key_terms, location, timezone):
+    if any(param is None for param in [start_date, end_date]):
+        raise BadRequest("Missing required query parameter(s)")
+    date_format = r"^([1-2][0-9]{3}|xxxx)-(0[1-9]|1[0-2]|xx)-(0[1-9]|[12][0-9]|3[01]|xx)T([0-2][0-9]|xx):([0-5][0-9]|xx):([0-5][0-9]|xx)$"
+    if not re.search(date_format, start_date) or not re.search(date_format, end_date):
+        raise BadRequest("Invalid date expression")
+    check_valid_date_range(start_date, end_date)
+    if timezone not in ALL_TIMEZONES:
+        raise BadRequest("Invalid timezone expression")
+    if location != "" and find_geo_id(location) < 0:
+        raise BadRequest("Invalid location")
+
 
 def convert_date(date_string, timezone):
     date_string = date_string.replace("x", "0")
@@ -297,6 +309,42 @@ def get_matching_reports(start_date, end_date, key_terms, location, timezone):
                 matches.append(report)
     return matches
 
+def get_matching_reports_internal(start_date, end_date, key_terms, location, timezone):
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
+    if key_terms is None:
+        key_terms = ""
+    if location is None:
+        location = ""
+    check_filter_criteria_internal(start_date, end_date, key_terms, location, timezone)
+
+    matches = []
+    for article in load_full_articles_from_db():
+        reports = article["reports"]
+        for report in reports:
+            if not matches_date_range(
+                start_date, end_date, report["event_date"], timezone
+            ):
+                continue
+            if location != "" and not location_matches(location, report["locations"]):
+                continue
+
+            if key_terms != "":
+                match = False
+                for kt in key_terms.split(","):
+                    kt = kt.lower()
+                    if kt in (d.lower() for d in report["diseases"]) or kt in (
+                        s.lower() for s in report["syndromes"]
+                    ):
+                        match = True
+                if not match:
+                    continue
+
+            convert_location_in_report(report)
+            if len(report["locations"]) > 0:
+                matches.append(report)
+    return matches
+
 
 @app.route("/report/filter", methods=["GET"])
 def report_filter():
@@ -335,17 +383,34 @@ def report_filter_for_internal_use():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     timezone = request.values.get("timezone")
-    matches = get_matching_reports(start_date, end_date, key_terms, location, timezone)
+    matches = get_matching_reports_internal(start_date, end_date, key_terms, location, timezone)
     for report in matches:
         relevant_locations = []
         for location in report["locations"]:
             location_hierarchy = find_hierarchy2(int(location["geonames_id"]))
-            rel_location = {
-                "location": convert_geo_tup(location_hierarchy[0]),
-                "state": convert_geo_tup(location_hierarchy[1]),
-                "country": convert_geo_tup(location_hierarchy[2]),
-                "continent": convert_geo_tup(location_hierarchy[3]),
-            }
+            rel_location = ""
+            if (len(location_hierarchy) == 4):
+                rel_location = {
+                    "location": convert_geo_tup(location_hierarchy[0]),
+                    "state": convert_geo_tup(location_hierarchy[1]),
+                    "country": convert_geo_tup(location_hierarchy[2]),
+                    "continent": convert_geo_tup(location_hierarchy[3]),
+                }
+            elif (len(location_hierarchy) == 3):
+                rel_location = {
+                    "location": convert_geo_tup(location_hierarchy[0]),
+                    "state": "",
+                    "country": convert_geo_tup(location_hierarchy[1]),
+                    "continent": convert_geo_tup(location_hierarchy[2]),
+                }
+            elif (len(location_hierarchy) == 2):
+                rel_location = {
+                    "location": convert_geo_tup(location_hierarchy[0]),
+                    "state": "",
+                    "country": "",
+                    "continent": convert_geo_tup(location_hierarchy[1]),
+                }
+
             relevant_locations.append(rel_location)
         report["locations"] = relevant_locations
     return jsonify(matches)
@@ -366,12 +431,12 @@ def get_country_by_geoid():
 
 
 def convert_geo_tup(geo_tuple):
-    locaiton_info = {}
-    locaiton_info["geoid"] = geo_tuple[0]
-    locaiton_info["name"] = geo_tuple[1]
-    locaiton_info["lat"] = geo_tuple[2]
-    locaiton_info["lng"] = geo_tuple[3]
-    return locaiton_info
+    location_info = {}
+    location_info["geoid"] = geo_tuple[0]
+    location_info["name"] = geo_tuple[1]
+    location_info["lat"] = geo_tuple[2]
+    location_info["lng"] = geo_tuple[3]
+    return location_info
 
 
 def test_scrape():
