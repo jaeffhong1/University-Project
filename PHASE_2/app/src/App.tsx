@@ -7,6 +7,7 @@ import './App.css';
 import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from "./widgets/CasesAgainstTime";
 import CountReports from "./widgets/CountReports";
+import { HeatMap } from "./widgets/HeatMap";
 import Widget, { WidgetProps } from "./widgets/Widget";
 
 let count = 0;
@@ -46,6 +47,7 @@ export type TReactComponent = typeof React.Component | ((p: WidgetProps) => JSX.
 const allWidgets: {[key: string]: TReactComponent } = {
   'Cases against time': CasesAgainstTime,
   'Count reports': CountReports,
+  'Heat Map': HeatMap,
 }
 
 function App() {
