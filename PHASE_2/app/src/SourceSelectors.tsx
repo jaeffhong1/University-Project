@@ -1,5 +1,5 @@
 import React from "react";
-import { TArticle, TSource } from "./App";
+import { TReport, TSource } from "./App";
 import SourceAdaptorEpiWatch from "./sources/epiwatch";
 import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 import "./SourceSelector.css";
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export interface SourceAdaptor {
-    fetch: (start: string, end: string, location: string, keyTerms: string) => Promise<TArticle[]>
+    fetch: (start: string, end: string, location: string, keyTerms: string) => Promise<TReport[]>
 }
 
 const sourceAdaptors: {[key: string]: SourceAdaptor} = {
@@ -41,14 +41,23 @@ export default class SourceSelector extends React.Component<Props, State> {
         const location = 'Sydney'
         const keyTerms = 'COVID-19'
 
-        const articles = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
+        const reports = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
         
+        const meta = {
+            start: parseDate(start),
+            end: parseDate(end),
+        }
         const source = {
-            meta: {
-                start: parseDate(start),
-                end: parseDate(end),
-            },
-            articles,
+            meta: meta,
+            reports: reports.filter((report: TReport) => {
+                if (!report.event_date)
+                    return false;
+                if (report.event_date.valueOf() < meta.start.valueOf())
+                    return false;
+                if (report.event_date.valueOf() > meta.end.valueOf())
+                    return false;
+                return true;
+            }),
         }
         // console.log('set source')
         this.props.setSource(source)

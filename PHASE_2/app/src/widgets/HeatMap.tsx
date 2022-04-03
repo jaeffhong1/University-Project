@@ -26,17 +26,13 @@ export class HeatMap extends React.Component<WidgetProps, State> {
         const lon = []
         const lat = []
         const z = []
-        for (let article of props.source.articles) {
-            for (let report of article.reports) {
-                if (!report.event_date_obj)
-                    continue
-                    
-                // @ts-ignore
-                lon.push(report.report_location.long)
-                // @ts-ignore
-                lat.push(report.report_location.lat)
-                z.push(1)
-            }
+        for (let report of props.source.reports) {
+            if (!report.event_date)
+                continue
+                
+            lon.push(report.location.long)
+            lat.push(report.location.lat)
+            z.push(1)
         }
         return {
             data: {lon, lat, z}

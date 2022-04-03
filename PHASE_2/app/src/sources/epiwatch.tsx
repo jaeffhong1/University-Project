@@ -1,15 +1,16 @@
-import { TArticle } from "../App"
+import { TReport } from "../App"
 import { SourceAdaptor } from "../SourceSelectors"
 
 
 export default class SourceAdaptorEpiWatch implements SourceAdaptor {
 
-    async fetch(start: string, end: string, location: string, keyTerms: string): Promise<TArticle[]> {
+    async fetch(start: string, end: string, location: string, keyTerms: string): Promise<TReport[]> {
         const name = `source-cache__epiwatch__04__full`
-        const item = localStorage.getItem(name)
-        if (item !== null) {
-            return JSON.parse(item) // assume the right structure
-        }
+        // const item = localStorage.getItem(name)
+        // if (item !== null) {
+        //     return JSON.parse(item) // assume the right structure
+        // }
+
         console.group("fetch for", name)
         const url = 'http://seng3011.duckdns.org/static/combinedData.json'
         const resp = await fetch(url)
@@ -18,17 +19,24 @@ export default class SourceAdaptorEpiWatch implements SourceAdaptor {
             throw new Error("stop")
         }
         const orig = await resp.json()
+        const reports: TReport[] = []
         for (let article of orig) {
-            if (article['publication-date'])
-                article.date_of_publication_obj = new Date(article['publication-date'])
             for (let report of article.reports) {
-                if (report.event_date)
-                    report.event_date_obj = new Date(report.event_date)
-                // report.event_date = report.event_date || report.date_of_publication || article.date_of_publication
+                if (report.event_date) {
+                    reports.push({
+                        diseases: report.diseases.split(' '),
+                        syndromes: [],
+                        location: {
+                            long: report.report_location.long,
+                            lat: report.report_location.lat,
+                        },
+                        event_date: new Date(report.event_date),
+                    })
+                }
             }
         }
-        localStorage.setItem(name, JSON.stringify(orig))
+        // localStorage.setItem(name, reports)
         console.groupEnd()
-        return orig
+        return reports
     }
 }

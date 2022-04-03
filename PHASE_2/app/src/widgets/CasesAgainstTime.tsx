@@ -1,7 +1,7 @@
 import { Data as PlotlyData } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
-import { TArticle, TSource } from "../App";
+import { TReport, TSource } from "../App";
 import "./plotly.css";
 import { WidgetProps } from "./Widget";
 
@@ -23,30 +23,26 @@ interface State {
     binWidth: keyof typeof DURATION
 }
 
-function makeBinsAndCounts(start: number, end: number, width: number, articles: TArticle[]): [Date[], {[key: string]: number[]}] {
+function makeBinsAndCounts(start: number, end: number, width: number, reports: TReport[]): [Date[], {[key: string]: number[]}] {
     const bins = []
     for (let i = 0; i < (end - start) / width + 1; i++) {
         bins.push(start + i * width)
     }
     const counts: {[key: string]: number[]} = {}
-    for (let article of articles) {
-        for (let report of article.reports) {
-            if (!report.event_date_obj)
-                continue
-            const t = report.event_date_obj.valueOf() / 1000
-            // some reports are included because another report in the same article matched
-            if (t < start || t > end)
-                continue;
-            const i = Math.floor((t - start) / width)
-            console.assert(i <= bins.length, `${i} ${counts.length} ${report.event_date_obj}`)
-            for (let dis of report.diseases) {
-                if (counts[dis] == undefined) {
-                    counts[dis] = []
-                    counts[dis].length = bins.length
-                }
-                if (!counts[dis][i]) counts[dis][i] = 0;
-                counts[dis][i]++;
+    for (let report of reports) {
+        const t = report.event_date.valueOf() / 1000
+        // some reports are included because another report in the same article matched
+        if (t < start || t > end)
+            continue;
+        const i = Math.floor((t - start) / width)
+        console.assert(i <= bins.length, `${i} ${counts.length} ${report.event_date}`)
+        for (let dis of report.diseases) {
+            if (counts[dis] == undefined) {
+                counts[dis] = []
+                counts[dis].length = bins.length
             }
+            if (!counts[dis][i]) counts[dis][i] = 0;
+            counts[dis][i]++;
         }
     }
     return [bins.map(x => new Date(x * 1000)), counts]
@@ -60,7 +56,7 @@ function makeData(source: TSource, binWidth: keyof typeof DURATION): {data: {
         source.meta.start.valueOf() / 1000,
         source.meta.end.valueOf() / 1000,
         DURATION[binWidth],
-        source.articles
+        source.reports
     )
     const plotdata = []
     for (let dis of Object.keys(counts)) {

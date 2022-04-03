@@ -10,33 +10,25 @@ import CountReports from "./widgets/CountReports";
 import { HeatMap } from "./widgets/HeatMap";
 import Widget, { WidgetProps } from "./widgets/Widget";
 
-let count = 0;
+let count = 3;
 
 export type TReport = {
   diseases: string[],
   syndromes: string[],
-  event_date?: string,
-  event_date_obj?: Date,
-  locations: string[],
+  event_date: Date,
+  location: {
+    lat: number,
+    long: number,
+  }
 }
-
-export type TArticle = {
-  url: string,
-  date_of_publication?: string,
-  date_of_publication_obj?: Date,
-  headline: string,
-  main_text: string,
-  reports: TReport[]
-}
-
 
 export type TSource = {
   meta: {
     start: Date,
     end: Date,
   },
-  articles: TArticle[]
-};
+  reports: TReport[]
+}
 
 const titleMap: Record<string, string> = {
   window0: "Select a widget",
