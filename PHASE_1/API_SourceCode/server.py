@@ -163,6 +163,7 @@ def check_filter_criteria(start_date, end_date, key_terms, location, timezone):
     if find_geo_id(location) < 0:
         raise BadRequest("Invalid location")
 
+
 def check_filter_criteria_internal(start_date, end_date, key_terms, location, timezone):
     if any(param is None for param in [start_date, end_date]):
         raise BadRequest("Missing required query parameter(s)")
@@ -309,6 +310,7 @@ def get_matching_reports(start_date, end_date, key_terms, location, timezone):
                 matches.append(report)
     return matches
 
+
 def get_matching_reports_internal(start_date, end_date, key_terms, location, timezone):
     if timezone is None:
         timezone = CIDRAP_TIMEZONE
@@ -383,27 +385,29 @@ def report_filter_for_internal_use():
     key_terms = request.values.get("key_terms")
     location = request.values.get("location")
     timezone = request.values.get("timezone")
-    matches = get_matching_reports_internal(start_date, end_date, key_terms, location, timezone)
+    matches = get_matching_reports_internal(
+        start_date, end_date, key_terms, location, timezone
+    )
     for report in matches:
         relevant_locations = []
         for location in report["locations"]:
             location_hierarchy = find_hierarchy2(int(location["geonames_id"]))
             rel_location = ""
-            if (len(location_hierarchy) == 4):
+            if len(location_hierarchy) == 4:
                 rel_location = {
                     "location": convert_geo_tup(location_hierarchy[0]),
                     "state": convert_geo_tup(location_hierarchy[1]),
                     "country": convert_geo_tup(location_hierarchy[2]),
                     "continent": convert_geo_tup(location_hierarchy[3]),
                 }
-            elif (len(location_hierarchy) == 3):
+            elif len(location_hierarchy) == 3:
                 rel_location = {
                     "location": convert_geo_tup(location_hierarchy[0]),
                     "state": "",
                     "country": convert_geo_tup(location_hierarchy[1]),
                     "continent": convert_geo_tup(location_hierarchy[2]),
                 }
-            elif (len(location_hierarchy) == 2):
+            elif len(location_hierarchy) == 2:
                 rel_location = {
                     "location": convert_geo_tup(location_hierarchy[0]),
                     "state": "",
