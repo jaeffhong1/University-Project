@@ -1,31 +1,11 @@
 import React from "react";
 import { TArticle, TSource } from "./App";
 import SourceAdaptorEpiWatch from "./sources/epiwatch";
-import SourceAdaptorf0b5 from "./sources/f0b5";
+import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 import "./SourceSelector.css";
 
 interface Props {
     setSource: (s: TSource) => void;
-}
-
-function parseDate(s: string): Date {
-    let date, time;
-    if (s.includes(' ')) {
-        [date, time] = s.split(' ')
-    } else {
-        [date, time] = s.split('T')
-    }
-    const [year, month, day] = date.split('-')
-    const [hour, minute, second] = time.split(':')
-    // ignore time zone
-    return new Date(Date.UTC(
-        parseInt(year, 10),
-        month == 'xx' ? 0 : parseInt(month, 10),
-        day == 'xx' ? 1 : parseInt(day, 10),
-        hour == 'xx' ? 0 : parseInt(hour, 10),
-        minute == 'xx' ? 0 : parseInt(minute, 10),
-        second == 'xx' ? 0 : parseInt(second, 10),
-    ))
 }
 
 export interface SourceAdaptor {
@@ -65,7 +45,7 @@ export default class SourceSelector extends React.Component<Props, State> {
         try {
             articles = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
         } catch (e: any) {
-            alert(e)
+            alert('fetch source' + e)
             return;
         }
         
@@ -76,23 +56,12 @@ export default class SourceSelector extends React.Component<Props, State> {
             },
             articles,
         }
-        this.addDateObjects(source)
         // console.log('set source')
         this.props.setSource(source)
     }
 
     componentDidMount() {
         this.fetchSource()
-    }
-
-    addDateObjects(source: TSource) {
-        if (source === null) throw new Error("stop")
-        for (let article of source.articles) {
-            article.date_of_publication_obj = parseDate(article.date_of_publication)
-            for (let report of article.reports) {
-                report.event_date_obj = parseDate(report.event_date)
-            }
-        }
     }
 
     render() {

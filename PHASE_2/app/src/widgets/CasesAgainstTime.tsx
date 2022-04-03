@@ -31,6 +31,8 @@ function makeBinsAndCounts(start: number, end: number, width: number, articles: 
     const counts: {[key: string]: number[]} = {}
     for (let article of articles) {
         for (let report of article.reports) {
+            if (!report.event_date_obj)
+                continue
             const t = report.event_date_obj.valueOf() / 1000
             // some reports are included because another report in the same article matched
             if (t < start || t > end)
@@ -105,7 +107,7 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
                     const binWidth: keyof typeof DURATION = e.target.value;
                     this.setState({binWidth, data: makeData(this.props.source, binWidth).data})
                 }} style={{margin: '0 8px'}}>
-                    {["Month", "Week", "Day"].map((k: string) => <option key={k} value={k}>{k}</option>)}
+                    {["Week", "Day"].map((k: string) => <option key={k} value={k}>{k}</option>)}
                 </select>
             </p>
             <Plot 
