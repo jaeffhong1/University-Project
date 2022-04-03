@@ -26,12 +26,14 @@ interface Props {
 const DashboardHome = (props: Props) => {
 //export default function DashboardHome() {
 
+    let _count = 0;
+
     const titleMap: Record<string, string> = {
         window0: "Select a widget",
         SourceSelector: "Source selector",
     };
 
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState(10);
 
     type ViewId = 'a' | 'b' | 'c' | 'new';
 
@@ -50,8 +52,8 @@ const DashboardHome = (props: Props) => {
                         <MosaicWindow<string> 
                             path={path} 
                             createNode={() => {
-                                const name = 'window' + count;
-                                setCount(count + 1);
+                                const name = 'window' + (++_count);
+                                
                                 titleMap[name] = name;
                                 return name;
                             }} 
