@@ -1,6 +1,7 @@
 import React from "react";
 import { TArticle, TSource } from "./App";
-import CacheSystem from "./CacheSystem";
+import SourceAdaptorEpiWatch from "./sources/epiwatch";
+import SourceAdaptorf0b5 from "./sources/f0b5";
 import "./SourceSelector.css";
 
 interface Props {
@@ -27,9 +28,19 @@ function parseDate(s: string): Date {
     ))
 }
 
+export interface SourceAdaptor {
+    fetch: (start: string, end: string, location: string, keyTerms: string) => Promise<TArticle[]>
+}
+
+const sourceAdaptors: {[key: string]: SourceAdaptor} = {
+    f0b5: new SourceAdaptorf0b5(),
+    epiwatch: new SourceAdaptorEpiWatch(),
+}
+
 interface State {
     startDate: string;
     endDate: string;
+    sourceName: keyof typeof sourceAdaptors;
 }
 
 export default class SourceSelector extends React.Component<Props, State> {
@@ -39,27 +50,25 @@ export default class SourceSelector extends React.Component<Props, State> {
         this.state = {
             startDate: '2022-01-01',
             endDate: `${today.getUTCFullYear()}-${String(today.getUTCMonth()).padStart(2, '0')}-${String(today.getUTCDate()).padStart(2, '0')}`,
+            sourceName: 'f0b5',
         }
     }
     
     async fetchSource() {
+
         const start = this.state.startDate + 'Txx:xx:xx'
         const end = this.state.endDate + 'Txx:xx:xx'
         const location = 'Sydney'
         const keyTerms = 'COVID-19'
-        const name = `source-cache-${start}-${end}-${location}-${keyTerms}`
-        console.log("fetch for", name)
-        const resp = await CacheSystem.fetch(name, `http://seng3011.duckdns.org/article/filter?location=${location}&start_date=${start}&end_date=${end}&key_terms=${keyTerms}`)
-        console.log("done")
-        if (typeof resp != "string") {
-            console.error(resp)
-            if (resp.status === 400) {
-                alert("[400]: " + (await resp.json()).message)
-                return
-            }
-            throw new Error("stop")
+
+        let articles;
+        try {
+            articles = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
+        } catch (e: any) {
+            alert(e)
+            return;
         }
-        const articles = JSON.parse(resp) as TArticle[];
+        
         const source = {
             meta: {
                 start: parseDate(start),
@@ -87,18 +96,25 @@ export default class SourceSelector extends React.Component<Props, State> {
     }
 
     render() {
-        return <form action="#" onSubmit={(e) => e.preventDefault()}>
-            <p>
-                From: 
-                <input type="date" value={this.state.startDate} onChange={e => this.setState({'startDate': e.target.value})} />
-                <input type="time" defaultValue='00:00:00'/>
-            </p>
-            <p>
-                To:
-                <input type="date" value={this.state.endDate} onChange={e => this.setState({'endDate': e.target.value})} />
-                <input type="time" defaultValue='00:00:00' />
-            </p>
-            <p><button onClick={() => this.fetchSource()}>Fetch</button></p>
-        </form>
+        return <>
+            <form action="#" onSubmit={(e) => e.preventDefault()}>
+                {/* @ts-ignore */}
+                <div onChange={(e) => this.setState({sourceName: e.target.value})}>
+                    <p> <input type="radio" id="source-f0b5" value="f0b5" name="source" /> <label htmlFor="source-f0b5">f0b5</label> </p>
+                    <p> <input type="radio" id="source-epiwatch" value="epiwatch" name="source" /> <label htmlFor="source-epiwatch">EpiWatch</label> </p>
+                </div>
+                <p>
+                    From: 
+                    <input type="date" value={this.state.startDate} onChange={e => this.setState({'startDate': e.target.value})} />
+                    <input type="time" defaultValue='00:00:00'/>
+                </p>
+                <p>
+                    To:
+                    <input type="date" value={this.state.endDate} onChange={e => this.setState({'endDate': e.target.value})} />
+                    <input type="time" defaultValue='00:00:00' />
+                </p>
+                <p><button onClick={() => this.fetchSource()}>Fetch</button></p>
+            </form>
+        </> 
     }
 }
