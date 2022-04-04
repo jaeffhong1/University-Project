@@ -2,25 +2,6 @@
   padding-left: 2em;
 }
 
-.dataSourceSelect {
-  float: right;
-  margin-right: 1em;
-  margin-left: 0em;
-  order: 3;
-  position: absolute !important;
-  right: 1em !important;
-}
-
-@media screen and (max-width: 600px) {
-  .dataSourceSelect .ant-btn{
-      display: none;
-  }
-
-  .dataSourceSelect .ant-btn-icon-only {
-      display: inline !important; /* override the above hide for this button only */
-  }
-}
-
 .logo {
   float: left;
   color: white;

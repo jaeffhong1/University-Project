@@ -22,7 +22,7 @@ export default function Home() {
                 <Sider className="site-layout-background" width={200}>
                     <Menu
                         mode="inline"
-                        style={{ height: '100%' }}
+                        style={{height: '100%'}}
                         selectedKeys={[currentPage]}
                     >
                         <Menu.Item key="dashboard" style={{marginTop: 0}}><Link to="/dashboard">Dashboard Brief</Link></Menu.Item>
