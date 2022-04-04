@@ -1,0 +1,6 @@
+.js-plotly-plot,
+.plot-container.plotly,
+.svg-container {
+  width: 100% !important;
+  height: 100% !important;
+}
