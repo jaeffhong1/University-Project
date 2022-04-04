@@ -1,23 +1,16 @@
-import { useState } from 'react';
-import { useLocation } from "react-router-dom";
-
-import { Row, Col, Divider } from 'antd';
-import { Card } from 'antd';
-import { Progress } from 'antd';
-
 //import Plot from "react-plotly.js";
-
 // mosaic
 //import "@blueprintjs/core/lib/css/blueprint.css";
 //import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import { TSource } from "../../../App";
 //import 'react-mosaic-component/react-mosaic-component.css';
-
 // widgets
 import SourceSelector from "./SourceSelectors";
 import Widget from "./widgets/Widget";
 
-import { TSource } from "../../../App";
+
+
 
 interface Props {
     source: TSource;
@@ -33,16 +26,7 @@ const DashboardHome = (props: Props) => {
         SourceSelector: "Source selector",
     };
 
-    const [count, setCount] = useState(10);
-
-    type ViewId = 'a' | 'b' | 'c' | 'new';
-
-    const TITLE_MAP: Record<ViewId, string> = {
-        a: 'Left Window',
-        b: 'Top Right Window',
-        c: 'Bottom Right Window',
-        new: 'New Window',
-    };
+    // const [count, setCount] = useState(10);
 
     return (
         <main className='main' style={{ height: '100%'}}>
