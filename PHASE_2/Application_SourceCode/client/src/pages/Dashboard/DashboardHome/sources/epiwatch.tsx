@@ -24,7 +24,7 @@ export default class SourceAdaptorEpiWatch implements SourceAdaptor {
             for (let report of article.reports) {
                 if (report.event_date) {
                     reports.push({
-                        diseases: report.diseases.split(' '),
+                        diseases: report.diseases.split(', '),
                         syndromes: [],
                         location: {
                             long: report.report_location.long,
