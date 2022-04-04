@@ -1,7 +1,6 @@
 
 import { useState } from "react";
-import { TSource } from "../../../../App";
-import CountReports from "./CountReports";
+import { TReactComponent, TSource } from "../DashboardHome";
 import WidgetSelector from "./WidgetSelector";
 
 interface Props {
@@ -9,16 +8,25 @@ interface Props {
         id: string,
         titleMap: Record<string, string>
     },
-    source: TSource,
+    source: TSource | null,
+    allWidgets: {[key: string]: TReactComponent }
+}
+
+export interface WidgetProps {
+    source: TSource;
 }
 
 export default function Widget(props: Props): JSX.Element {
     const [type, setType] = useState("select");
     if (type === "select") {
-        return <WidgetSelector setType={setType} />
-    } else if (type === "CountReports") {
-        return <CountReports source={props.source} />
+        return <WidgetSelector setType={setType} allWidgets={props.allWidgets} />
+    } else if (props.source == null) {
+        return <p>Loading sources, please wait...</p>
     } else {
-        return <p>Unknown widget type <code>{type}</code></p>
+        const T = props.allWidgets[type];
+        if (T === undefined) {
+            return <p>Unknown widget type <code>{type}</code></p>
+        }
+        return <T source={props.source} />
     }
 }

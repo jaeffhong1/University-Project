@@ -49,6 +49,6 @@ body,
   min-height: 82vh; /* 82% of window height */
 }
 
-.ant-layout-content div {
+.ant-layout-content > div {
   height: 100%;
 }
