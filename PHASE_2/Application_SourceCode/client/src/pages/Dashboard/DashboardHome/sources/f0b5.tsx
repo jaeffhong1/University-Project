@@ -55,17 +55,6 @@ export default class SourceAdaptorf0b5 implements SourceAdaptor {
                 })
             }
         }
-        return obj
+        return reports
     }
-
-    // addDateObjects(articles: TArticle[]) {
-    //     for (let article of articles) {
-    //         if (article.date_of_publication && !article.date_of_publication_obj)
-    //             article.date_of_publication_obj = parseDate(article.date_of_publication)
-    //         for (let report of article.reports) {
-    //             if (report.event_date && !report.event_date_obj)
-    //                 report.event_date_obj = parseDate(report.event_date)
-    //         }
-    //     }
-    // }
 }

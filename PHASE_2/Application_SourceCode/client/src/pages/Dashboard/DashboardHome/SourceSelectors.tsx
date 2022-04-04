@@ -59,7 +59,10 @@ export default class SourceSelector extends React.Component<Props, State> {
                 return true;
             }),
         }
-        // console.log('set source')
+        // console.group('reports.length', source.reports.length)
+        // console.log(source.reports)
+        // console.log(reports)
+        // console.groupEnd()
         this.props.setSource(source)
     }
 
