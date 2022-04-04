@@ -70,9 +70,9 @@ function App() {
                         <Menu theme="dark" mode="horizontal">
                             <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                             <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-                            <div key="3" className="dataSourceSelect">
+                            <Menu.Item key="3" className="dataSourceSelect">
                                 <DataSourceSelect/>
-                            </div>
+                            </Menu.Item>
                         </Menu>
                     </Header>
 
