@@ -46,7 +46,7 @@ const allWidgets: {[key: string]: TReactComponent } = {
 
 const DashboardHome = (props: {}) => {
 
-    let count = 10;
+    // let count = 10;
     const [source, setSource] = useState<TSource|null>(null);
     const val: MosaicNode<string> = {
             direction: 'row',
@@ -61,7 +61,7 @@ const DashboardHome = (props: {}) => {
         SourceSelector: "Source selector",
     };
 
-    // const [count, setCount] = useState(10);
+    const [count, setCount] = useState(10);
 
     return (
         <main className='main' style={{ height: '100%'}}>
@@ -75,7 +75,8 @@ const DashboardHome = (props: {}) => {
                     }}
                     renderTile={(id, path) => (
                     <MosaicWindow<string> path={path} createNode={() => {
-                        const name = 'window' + (++count)
+                        setCount(count + 1)
+                        const name = 'window' + count
                         titleMap[name] = name
                         return name
                     }} title={titleMap[id]}>
