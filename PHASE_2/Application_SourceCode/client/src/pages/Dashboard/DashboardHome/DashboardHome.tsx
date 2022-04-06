@@ -43,7 +43,6 @@ const allWidgets: {[key: string]: TReactComponent } = {
 }
 
 const DashboardHome = (props: {}) => {
-//export default function DashboardHome() {
 
     let count = 10;
     const [source, setSource] = useState<TSource|null>(null);

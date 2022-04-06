@@ -72,11 +72,21 @@ export default class SourceSelector extends React.Component<Props, State> {
 
     render() {
         return <>
-            <form action="#" onSubmit={(e) => e.preventDefault()}>
+            <form action="#" onSubmit={(e) => e.preventDefault()} className="source-selector">
                 {/* @ts-ignore */}
                 <div onChange={(e) => this.setState({sourceName: e.target.value})}>
-                    <p> <input type="radio" id="source-f0b5" value="f0b5" name="source" /> <label htmlFor="source-f0b5" defaultChecked={true}>f0b5</label> </p>
-                    <p> <input type="radio" id="source-epiwatch" value="epiwatch" name="source" /> <label htmlFor="source-epiwatch">EpiWatch</label> </p>
+                    <div>
+                        <input type="radio" id="source-f0b5" value="f0b5" name="source" /><label htmlFor="source-f0b5" defaultChecked={true}>f0b5</label>
+                        <blockquote>
+                            Source: <a href="https://www.cidrap.umn.edu/">www.cidrap.umn.edu</a>
+                        </blockquote>
+                    </div>
+                    <div>
+                        <input type="radio" id="source-epiwatch" value="epiwatch" name="source" /><label htmlFor="source-epiwatch">EpiWatch</label>
+                        <blockquote>
+                            Source: <a href="https://www.epiwatch.org/">EpiWatch</a>
+                        </blockquote>
+                    </div>
                 </div>
                 <p>
                     From: 
