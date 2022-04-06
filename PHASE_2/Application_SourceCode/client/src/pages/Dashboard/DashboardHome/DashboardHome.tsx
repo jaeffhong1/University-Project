@@ -10,6 +10,7 @@ import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from './widgets/CasesAgainstTime';
 import CountReports from './widgets/CountReports';
 import { HeatMap } from './widgets/HeatMap';
+import Twitter from './widgets/Twitter';
 import Widget, { WidgetProps } from "./widgets/Widget";
 
 export type TReport = {
@@ -40,6 +41,7 @@ const allWidgets: {[key: string]: TReactComponent } = {
   'Cases against time': CasesAgainstTime,
   'Count reports': CountReports,
   'Heat Map': HeatMap,
+  'Twitter': Twitter,
 }
 
 const DashboardHome = (props: {}) => {
