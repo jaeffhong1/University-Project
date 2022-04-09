@@ -19,7 +19,6 @@ path_to_locations2 = os.path.join(
 )
 global_hierarchy_list = []
 
-
 def find_hierarchy(geoid):
     hierarchy_list = []
     get_parents(geoid, hierarchy_list)
@@ -29,6 +28,8 @@ def find_hierarchy(geoid):
 
 
 def find_hierarchy2(geoid):
+    if global_hierarchy_list:
+        global_hierarchy_list.clear()
     hierarchy_list = []
     hierarchy_list.append(geoid)
     f_codes = ["ADM5", "ADM4", "ADM3", "ADM2", "ADM1", "PCLI"]
