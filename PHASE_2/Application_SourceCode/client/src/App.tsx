@@ -14,6 +14,7 @@ import DataSourceSelect from './components/DataSourceSelect';
 import Dashboard from './pages/Dashboard/Dashboard';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
+import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboard';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
@@ -84,6 +85,7 @@ function App() {
                                 <Route path="/dashboard" element={<Dashboard/>}>
                                     <Route path="/dashboard/" element={<DashboardHome />} />
                                     <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
+                                    <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                 </Route>
                                 <Route path="*" element={<PageNotFound/>}/>
                             </Routes>
