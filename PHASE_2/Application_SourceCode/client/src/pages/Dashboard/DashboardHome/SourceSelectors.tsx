@@ -39,7 +39,7 @@ export default class SourceSelector extends React.Component<Props, State> {
         const start = this.state.startDate + 'Txx:xx:xx'
         const end = this.state.endDate + 'Txx:xx:xx'
         const location = 'Sydney'
-        const keyTerms = 'COVID-19'
+        const keyTerms = 'COVID-19,Fever,Cough,Dengue'
 
         const reports = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
         
@@ -72,21 +72,31 @@ export default class SourceSelector extends React.Component<Props, State> {
 
     render() {
         return <>
-            <form action="#" onSubmit={(e) => e.preventDefault()}>
+            <form action="#" onSubmit={(e) => e.preventDefault()} className="source-selector">
                 {/* @ts-ignore */}
                 <div onChange={(e) => this.setState({sourceName: e.target.value})}>
-                    <p> <input type="radio" id="source-f0b5" value="f0b5" name="source" /> <label htmlFor="source-f0b5" defaultChecked={true}>f0b5</label> </p>
-                    <p> <input type="radio" id="source-epiwatch" value="epiwatch" name="source" /> <label htmlFor="source-epiwatch">EpiWatch</label> </p>
+                    <div>
+                        <input type="radio" id="source-f0b5" value="f0b5" name="source" /><label htmlFor="source-f0b5" defaultChecked={true}>f0b5</label>
+                        <blockquote>
+                            Source: <a href="https://www.cidrap.umn.edu/">www.cidrap.umn.edu</a>
+                        </blockquote>
+                    </div>
+                    <div>
+                        <input type="radio" id="source-epiwatch" value="epiwatch" name="source" /><label htmlFor="source-epiwatch">EpiWatch</label>
+                        <blockquote>
+                            Source: <a href="https://www.epiwatch.org/">EpiWatch</a>
+                        </blockquote>
+                    </div>
                 </div>
                 <p>
                     From: 
-                    <input type="date" value={this.state.startDate} onChange={e => this.setState({'startDate': e.target.value})} />
-                    <input type="time" defaultValue='00:00:00'/>
+                    <input className="sourceSelectorInput" type="date" value={this.state.startDate} onChange={e => this.setState({'startDate': e.target.value})} />
+                    <input className="sourceSelectorInput" type="time" defaultValue='00:00:00'/>
                 </p>
                 <p>
                     To:
-                    <input type="date" value={this.state.endDate} onChange={e => this.setState({'endDate': e.target.value})} />
-                    <input type="time" defaultValue='00:00:00' />
+                    <input className="sourceSelectorInput" type="date" value={this.state.endDate} onChange={e => this.setState({'endDate': e.target.value})} />
+                    <input className="sourceSelectorInput" type="time" defaultValue='00:00:00' />
                 </p>
                 <p><button onClick={() => this.fetchSource()}>Fetch</button></p>
             </form>

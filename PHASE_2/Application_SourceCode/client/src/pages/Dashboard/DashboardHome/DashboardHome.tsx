@@ -10,6 +10,9 @@ import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from './widgets/CasesAgainstTime';
 import CountReports from './widgets/CountReports';
 import { HeatMap } from './widgets/HeatMap';
+import { TreeMap } from './widgets/TreeMap';
+import { Tally } from './widgets/Tally';
+import Twitter from './widgets/Twitter';
 import Widget, { WidgetProps } from "./widgets/Widget";
 
 export type TReport = {
@@ -40,12 +43,14 @@ const allWidgets: {[key: string]: TReactComponent } = {
   'Cases against time': CasesAgainstTime,
   'Count reports': CountReports,
   'Heat Map': HeatMap,
+  'TreeMap': TreeMap,
+  'Twitter': Twitter,
+  'Tally': Tally,
 }
 
 const DashboardHome = (props: {}) => {
-//export default function DashboardHome() {
 
-    let count = 10;
+    // let count = 10;
     const [source, setSource] = useState<TSource|null>(null);
     const val: MosaicNode<string> = {
             direction: 'row',
@@ -60,7 +65,7 @@ const DashboardHome = (props: {}) => {
         SourceSelector: "Source selector",
     };
 
-    // const [count, setCount] = useState(10);
+    const [count, setCount] = useState(10);
 
     return (
         <main className='main' style={{ height: '100%'}}>
@@ -68,13 +73,15 @@ const DashboardHome = (props: {}) => {
                 <Mosaic<string>
                     resize={{}}
                     onRelease={(newNode: MosaicNode<string> | null) => {
-                    if (newNode !== null)
-                        // @ts-ignore
-                        setMos(newNode)
-                    }}
+                        if (newNode !== null)
+                            // @ts-ignore
+                            setMos(newNode)
+                        }
+                    }
                     renderTile={(id, path) => (
                     <MosaicWindow<string> path={path} createNode={() => {
-                        const name = 'window' + (++count)
+                        setCount(count + 1)
+                        const name = 'window' + count
                         titleMap[name] = name
                         return name
                     }} title={titleMap[id]}>
