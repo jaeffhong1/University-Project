@@ -71,7 +71,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
                     </Sider>
 
                     <Content>
-                        <DashboardHeader datastore={this.props.datastore}/>
+                        <DashboardHeader datastore={this.props.datastore} />
                         <div style={{ minHeight: 280 }}>
                             <Outlet />
                         </div>

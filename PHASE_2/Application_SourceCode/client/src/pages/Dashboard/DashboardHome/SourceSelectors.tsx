@@ -63,7 +63,7 @@ export default class SourceSelector extends React.Component<Props, State> {
         // console.log(source.reports)
         // console.log(reports)
         // console.groupEnd()
-        this.props.setSource(source)
+        //this.props.setSource(source)
     }
 
     componentDidMount() {

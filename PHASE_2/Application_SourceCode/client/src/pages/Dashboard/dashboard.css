@@ -52,3 +52,23 @@ body,
 .ant-layout-content > div {
   height: 100%;
 }
+
+/* mosaic */
+.mosaic.mosaic-blueprint-theme {
+  background-color: white !important;
+}
+
+/* mosaic tile */
+.mosaic.mosaic-blueprint-theme .mosaic-window, .mosaic.mosaic-blueprint-theme .mosaic-preview {
+  box-shadow: none !important;
+  border-radius: 0px !important;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(235, 237, 240);
+}
+
+/* mosaic tile header */
+.mosaic.mosaic-blueprint-theme .mosaic-window .mosaic-window-toolbar {
+  box-shadow: none !important;
+  border-radius: 0px !important;
+}

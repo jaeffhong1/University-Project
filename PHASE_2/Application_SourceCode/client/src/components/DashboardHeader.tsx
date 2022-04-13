@@ -7,8 +7,6 @@ import { RangeValue } from 'rc-picker/lib/interface'
 import { DataSourceSelect } from "./DataSourceSelect";
 import DataStore from "../datastore";
 
-//"/Users/nickramsay/Documents/Projects/SENG3011_f0b5/PHASE_2/Application_SourceCode/client/node_modules/rc-picker/lib/interface").EventValue<moment.Moment>
-
 interface IProps {
     datastore: DataStore,
 }

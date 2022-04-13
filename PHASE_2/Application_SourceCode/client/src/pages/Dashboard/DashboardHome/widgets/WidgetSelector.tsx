@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TReactComponent } from "../DashboardHome";
+import { Card, Button, Row, Col } from 'antd';
 
 interface Props {
     setType: (type: string) => void;
@@ -7,16 +8,29 @@ interface Props {
 }
 
 export default function WidgetSelector(props: Props) {
-    const [type, setType] = useState(Object.keys(props.allWidgets)[0]);
+    //const [type, setType] = useState(Object.keys(props.allWidgets)[0]);
+
+    console.log(Object.keys(props.allWidgets));
+
     return (
-        <p style={{margin: '24px 12px'}}>
-            <select value={type} onChange={(e) => setType(e.target.value)} style={{margin: '0 8px'}}>
-                {Object.keys(props.allWidgets).map((k: string) => <option key={k} value={k}>{k}</option>)}
-            </select>
-            <button type="button" onClick={(e: React.MouseEvent) => {
-                console.log("Select", type)
-                props.setType(type)
-            }}>Select</button>
-        </p>
+        <div style={{padding: '2em'}}>
+            <Row gutter={[12, { xs: 4, sm: 8, md: 16, lg: 32 }]}>
+                {
+                    Object.keys(props.allWidgets).map((value, index) => {
+                        return (
+                            <Col className="gutter-row" span={12}>
+                                <Button type="dashed" size="large" block onClick={(e: React.MouseEvent) => {
+                                    props.setType(value)
+                                }}>
+                                    {value}
+                                </Button>
+                            </Col>
+                        )
+                    })
+                }
+            </Row>
+        </div>
+
+        
     )
 }
