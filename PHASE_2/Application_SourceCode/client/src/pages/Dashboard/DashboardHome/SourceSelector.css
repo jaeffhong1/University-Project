@@ -1,3 +1,15 @@
 .sourceSelectorInput {
   margin: 2px 8px;
 }
+
+.source-selector {
+  padding: 8px 8px;
+}
+
+.source-selector blockquote {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  margin-left: 28px;
+  color: rgb(112, 113, 115);
+  font-style: italic;
+}
