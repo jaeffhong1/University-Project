@@ -2,19 +2,19 @@ import os
 
 path_to_locations = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "Locations",
+    "db2",
     "allCountries-sorted.txt",
 )
 
 path_to_hierarchy = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "Locations",
+    "db2",
     "hierarchy-sorted2.txt",
 )
 
 path_to_locations2 = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "Locations",
+    "db2",
     "allCountriesCode-sorted4.txt",
 )
 global_hierarchy_list = []
