@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React  from 'react';
 
 import { Menu, Dropdown, Button, message, Tooltip, Checkbox, Modal } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
 
 import './DataSourceSelect.css';
 
-import { DataStore } from '../datastore';
+import DataStore from '../datastore';
 
 interface IProps {
     datastore: DataStore,
@@ -26,7 +26,7 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
     dataSources: string[] = ["f0b5", "IHeartTeams", "1 group 2 group 3 group 4"];
     
     state: IState = {
-        selectedDataSource: this.props.datastore.GetSelectedDataSource(),
+        selectedDataSource: this.props.datastore.GetDataSource(),
         isModalVisible: false,
         modalTitle: "",
         modalDescription: ""
@@ -45,13 +45,21 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
     handleCheckboxChange(id: string): void {
         
         // update the state
-        this.setState((prevState, props) => ({
-            selectedDataSource: id
-        }));
-
+        //this.setState((prevState, props) => ({
+        //    selectedDataSource: id
+        //}));
 
         // update the data store
-        this.props.datastore.SetSelectedDataSource(id);
+        this.props.datastore.SetDataSource(id);
+
+        // the datastore will force this component to update
+    }
+
+    componentDidUpdate(prevProps: IProps) {
+        // check if we need to update our state from the datastore prop
+        if(this.state.selectedDataSource !== this.props.datastore.GetDataSource()) {
+            this.setState({selectedDataSource: this.props.datastore.GetDataSource()});
+        }
     }
 
     //const [isModalVisible, setIsModalVisible] = useState(false);
@@ -124,7 +132,7 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
                                 this.dataSources.map((value, index) => {
                                     return (
                                         <Menu.Item key={index}>
-                                            <Checkbox onChange={() => this.handleCheckboxChange(value)} checked={this.props.datastore.selectedDataSources[0] == value}>
+                                            <Checkbox onChange={() => this.handleCheckboxChange(value)} checked={this.state.selectedDataSource == value}>
                                                 <span style={{marginRight: '2em'}}>{value}</span>
 
                                                 <Tooltip title="Info">

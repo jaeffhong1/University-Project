@@ -1,7 +1,7 @@
 import App from "./App";
+import { parseDate } from "./pages/Dashboard/DashboardHome/sources/f0b5";
 
-export class DataStore {
-//export class DataStore {
+export default class DataStore {
 
     public static DataSourceDescription: Map<string, string> = new Map<string, string>([
         ["f0b5", "A description about f0b5."],
@@ -10,30 +10,59 @@ export class DataStore {
     ]);
 
     // I'm making this an array for now, but will iterface as though its a string
-    selectedDataSources: string[];
+    private selectedDataSources: string[];
+    private startTime: string;
+    private endTime: string;
 
-    parent: App;
+    private parent: App;
 
-    // we can add these later
+    // we can add these later:
     //articles: TArticle[];
     //reports: TReport[];
 
     constructor(parent: App) {
+        // help calculate today's date
+        const today = new Date();
+
         this.selectedDataSources = ["f0b5"];
+        this.startTime = "2022-01-01";
+        this.endTime = `${today.getUTCFullYear()}-${String(today.getUTCMonth()).padStart(2, '0')}-${String(today.getUTCDate()).padStart(2, '0')}`;
+
+        // store the owner of the datastore so we can tell it to update
         this.parent = parent;
     }
 
-    updateParent(): void {
+    // send a message to "parent" to update itself if data in the datastore changes
+    private updateParent(): void {
         this.parent.datastoreUpdate();
     }
 
-    GetSelectedDataSource(): string {
+    public GetDataSource(): string {
         return this.selectedDataSources[0];
     }
 
-    SetSelectedDataSource(dataSource: string): void {
+    public SetDataSource(dataSource: string): void {
         this.selectedDataSources[0] = dataSource;
 
+        // we should update the parent
+        this.updateParent();
+    }
+
+    public GetStartTime(): string {
+        return this.startTime;
+    }
+
+    public SetStartTime(startTime: string): void {
+        this.startTime = startTime;
+        this.updateParent();
+    }
+
+    public GetEndTime(): string {
+        return this.endTime;
+    }
+
+    public SetEndTime(endTime: string): void {
+        this.endTime = endTime;
         this.updateParent();
     }
 }

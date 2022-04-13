@@ -5,7 +5,7 @@ import { TReport, TSource } from "../DashboardHome";
 import "./plotly.css";
 import { WidgetProps } from "./Widget";
 
-const data: any[] = [
+const hardcoded_data: any[] = [
     {
         type: 'treemap',
         ids: ['1COVID-19', '1Cough', '1Fever', '1Dengue', '2Cough', '2Fever', '1Botulism', '1Hantavirus', '1Rubella', '1Zika', '1Monkeypox', '1Listeriosis', '1Smallpox'],
@@ -31,29 +31,15 @@ const layout: any = {
     }
 };
 
-const DURATION = {
-    'Second': 1,
-    'Minute': 60,
-    'Hour': 60 * 60,
-    'Day': 24 * 60 * 60,
-    'Week': 7 * 24 * 60 * 60,
-    'Month': 30 * 7 * 24 * 60 * 60
-}
-
 interface State {
-    data: {
-        plotdata: Data[],
-        source: TSource;
-    } | null;
-    binWidth: keyof typeof DURATION
+    data: Data[],
 }
 
 export class TreeMap extends React.Component<WidgetProps, State> {
     constructor(props: WidgetProps) {
         super(props)
         this.state = {
-            data: null, // array of reports
-            binWidth: 'Day'
+            data: [], // array of reports
         }
     }
 
@@ -78,25 +64,33 @@ export class TreeMap extends React.Component<WidgetProps, State> {
             parents.push(""); // add the parent to global
         }
 
-        let data: Data = {
-            //type: 'treemap',
-            labels: Array.from(diseaseCounts.keys()),
-            parents: parents,
-            values: values,
-            branchvalues: 'total', // not remainder 
-        }
+        let data: Data[] = [
+            {
+                type: 'treemap',
+                labels: Array.from(diseaseCounts.keys()),
+                parents: parents,
+                values: values,
+                branchvalues: 'total', // not remainder 
+            }
+        ]
 
-        console.log(data);
+        //console.log(data);
         return {
-            data: {data}
+            data: data
         }
     }
 
     render() {
+
+        let data: Data[];
+        //data = hardcoded_data
+        data = this.state.data;
+        console.log(data);
+
         return (
             <React.Fragment>
                 <Plot 
-                    data={[{type: 'treemap', ...this.state.data}]} 
+                    data={data}
                     layout={layout}
                 />
             </React.Fragment>

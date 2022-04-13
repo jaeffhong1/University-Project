@@ -1,25 +1,26 @@
 // mosaic
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import { Layout, Menu, Typography } from 'antd';
-// styled components
-import 'antd/dist/antd.css';
-import React from 'react';
 import 'react-mosaic-component/react-mosaic-component.css';
+
+// styled components
+import { Layout, Menu, Typography } from 'antd';
+import 'antd/dist/antd.css';
+import './App.css'; // custom styles
+// react
+import React from 'react';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import './App.css';
 // import components
 import Breadcrumb from './components/Breadcrumb';
 import { DataSourceSelect } from './components/DataSourceSelect';
-import Dashboard from './pages/Dashboard/Dashboard';
+import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
 // import datastore
-import { DataStore } from "./datastore";
-
+import DataStore from "./datastore";
 
 // extract styled components
 const { Header, Content, Footer } = Layout;
@@ -56,12 +57,9 @@ export class App extends React.Component<IProps, IState> {
         datastore: new DataStore(this)
     }
 
-    componentDidUpdate(prevProps: any) {
-        console.log("APP UPDATED!");
-    }
-
     datastoreUpdate() {
-        console.log("DATASTORE UPDATE");
+        // the datastore object will call this function to tell the app to update state
+        // this will automatically update the prop "datastore" given to any children who will need to check for updates themselves
         this.setState({});
     }
 
@@ -75,9 +73,6 @@ export class App extends React.Component<IProps, IState> {
                             <Menu theme="dark" mode="horizontal">
                                 <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                                 <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-                                <Menu.Item key="3" className="dataSourceSelect">
-                                    <DataSourceSelect datastore={this.state.datastore}/>
-                                </Menu.Item>
                             </Menu>
                         </Header>
 
@@ -86,7 +81,7 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route path="/" element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="/dashboard" element={<Dashboard/>}>
+                                    <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
                                         <Route path="/dashboard/" element={<DashboardHome />} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
                                     </Route>
