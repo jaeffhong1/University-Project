@@ -10,6 +10,7 @@ import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from './widgets/CasesAgainstTime';
 import CountReports from './widgets/CountReports';
 import { HeatMap } from './widgets/HeatMap';
+import { Tally } from './widgets/Tally';
 import Twitter from './widgets/Twitter';
 import Widget, { WidgetProps } from "./widgets/Widget";
 
@@ -42,6 +43,7 @@ const allWidgets: {[key: string]: TReactComponent } = {
   'Count reports': CountReports,
   'Heat Map': HeatMap,
   'Twitter': Twitter,
+  'Tally': Tally,
 }
 
 const DashboardHome = (props: {}) => {
