@@ -39,7 +39,7 @@ export default class SourceSelector extends React.Component<Props, State> {
         const start = this.state.startDate + 'Txx:xx:xx'
         const end = this.state.endDate + 'Txx:xx:xx'
         const location = 'Sydney'
-        const keyTerms = 'COVID-19'
+        const keyTerms = 'COVID-19,Fever,Cough,Dengue'
 
         const reports = await sourceAdaptors[this.state.sourceName].fetch(start, end, location, keyTerms)
         

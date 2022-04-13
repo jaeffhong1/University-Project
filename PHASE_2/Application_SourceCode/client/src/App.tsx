@@ -69,7 +69,7 @@ export class App extends React.Component<IProps, IState> {
                 <BrowserRouter>
                     <Layout className="layout">
                         <Header className="navbar">
-                            <Text className="logo" style={{fontSize: '1.5em'}}>Health</Text>
+                            <Text className="logo" style={{fontSize: '1.5em', fontFamily: 'Montserrat-Light-Alt1, sans-serif'}}>HEALTH DASHBOARD</Text>
                             <Menu theme="dark" mode="horizontal">
                                 <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                                 <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
