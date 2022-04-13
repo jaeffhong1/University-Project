@@ -10,6 +10,7 @@ import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from './widgets/CasesAgainstTime';
 import CountReports from './widgets/CountReports';
 import { HeatMap } from './widgets/HeatMap';
+import { TreeMap } from './widgets/TreeMap';
 import Widget, { WidgetProps } from "./widgets/Widget";
 
 export type TReport = {
@@ -40,6 +41,7 @@ const allWidgets: {[key: string]: TReactComponent } = {
   'Cases against time': CasesAgainstTime,
   'Count reports': CountReports,
   'Heat Map': HeatMap,
+  'TreeMap': TreeMap,
 }
 
 const DashboardHome = (props: {}) => {
@@ -60,18 +62,17 @@ const DashboardHome = (props: {}) => {
         SourceSelector: "Source selector",
     };
 
-    // const [count, setCount] = useState(10);
-
     return (
         <main className='main' style={{ height: '100%'}}>
             <div id="mosaic" style={{height: '100%'}}>
                 <Mosaic<string>
                     resize={{}}
                     onRelease={(newNode: MosaicNode<string> | null) => {
-                    if (newNode !== null)
-                        // @ts-ignore
-                        setMos(newNode)
-                    }}
+                        if (newNode !== null)
+                            // @ts-ignore
+                            setMos(newNode)
+                        }
+                    }
                     renderTile={(id, path) => (
                     <MosaicWindow<string> path={path} createNode={() => {
                         const name = 'window' + (++count)

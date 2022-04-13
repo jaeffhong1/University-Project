@@ -10,13 +10,15 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import './App.css';
 // import components
 import Breadcrumb from './components/Breadcrumb';
-import DataSourceSelect from './components/DataSourceSelect';
+import { DataSourceSelect } from './components/DataSourceSelect';
 import Dashboard from './pages/Dashboard/Dashboard';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
+// import datastore
+import { DataStore } from "./datastore";
 
 
 // extract styled components
@@ -40,61 +42,65 @@ export type TSource = {
     reports: TReport[]
 }[]
 
-function App() {
+interface IProps {}
+interface IState {
+    datastore: DataStore
+}
 
-    // type TReport = {
-    //     diseases: string[],
-    //     syndromes: string[],
-    //     event_date: string,
-    //     // event_date_obj: Date,
-    //     locations: string[],
-    // }
+export class App extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
+        super(props); 
+    }
 
-    // type TSource = {
-    //     url: string,
-    //     date_of_publication: string,
-    //     // date_of_publication_obj: Date,
-    //     headline: string,
-    //     main_text: string,
-    //     reports: TReport[]
-    // }[]
+    state: IState = {
+        datastore: new DataStore(this)
+    }
 
-    // const source: TSource = []
+    componentDidUpdate(prevProps: any) {
+        console.log("APP UPDATED!");
+    }
 
-    return (
-        <div id="app">
-            <BrowserRouter>
-                <Layout className="layout">
-                    <Header className="navbar">
-                        <Text className="logo" style={{fontSize: '1.5em'}}>Health</Text>
-                        <Menu theme="dark" mode="horizontal">
-                            <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
-                            <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-                            <Menu.Item key="3" className="dataSourceSelect">
-                                <DataSourceSelect/>
-                            </Menu.Item>
-                        </Menu>
-                    </Header>
+    datastoreUpdate() {
+        console.log("DATASTORE UPDATE");
+        this.setState({});
+    }
 
-                    <Content style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}>
-                        <Breadcrumb/>
-                        <div className='content'>
-                            <Routes>
-                                <Route path="/" element={<Home/>} />
-                                <Route path="/dashboard" element={<Dashboard/>}>
-                                    <Route path="/dashboard/" element={<DashboardHome />} />
-                                    <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
-                                </Route>
-                                <Route path="*" element={<PageNotFound/>}/>
-                            </Routes>
-                        </div>
-                    </Content>
+    render() {
+        return (
+            <div id="app">
+                <BrowserRouter>
+                    <Layout className="layout">
+                        <Header className="navbar">
+                            <Text className="logo" style={{fontSize: '1.5em'}}>Health</Text>
+                            <Menu theme="dark" mode="horizontal">
+                                <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
+                                <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
+                                <Menu.Item key="3" className="dataSourceSelect">
+                                    <DataSourceSelect datastore={this.state.datastore}/>
+                                </Menu.Item>
+                            </Menu>
+                        </Header>
 
-                    <Footer>Disease Dashboard ©2022</Footer>
-                </Layout>
-            </BrowserRouter>
-        </div>
-    );
+                        <Content style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}>
+                            <Breadcrumb/>
+                            <div className='content'>
+                                <Routes>
+                                    <Route path="/" element={<Home datastore={this.state.datastore}/>} />
+                                    <Route path="/dashboard" element={<Dashboard/>}>
+                                        <Route path="/dashboard/" element={<DashboardHome />} />
+                                        <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
+                                    </Route>
+                                    <Route path="*" element={<PageNotFound/>}/>
+                                </Routes>
+                            </div>
+                        </Content>
+
+                        <Footer>Disease Dashboard ©2022</Footer>
+                    </Layout>
+                </BrowserRouter>
+            </div>
+        );
+    }
 }
 
 export default App;
