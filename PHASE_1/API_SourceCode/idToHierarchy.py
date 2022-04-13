@@ -19,6 +19,7 @@ path_to_locations2 = os.path.join(
 )
 global_hierarchy_list = []
 
+
 def find_hierarchy(geoid):
     hierarchy_list = []
     get_parents(geoid, hierarchy_list)
