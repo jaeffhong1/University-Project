@@ -6,7 +6,7 @@ pushd PHASE_2/Application_SourceCode/client
 
 # bundle the app into static files for production
 yarn install
-yarn run build
+CI='' yarn run build
 
 popd
 
