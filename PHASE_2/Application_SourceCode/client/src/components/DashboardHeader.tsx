@@ -77,7 +77,7 @@ export default class DashboardHeader extends React.Component<IProps, IState> {
                         onCalendarChange={this.handleCalendarChange}
                     />,
                     <Button key="2">Key terms</Button>,
-                    <DataSourceSelect key="3" datastore={this.props.datastore}/>
+                    <DataSourceSelect key="3" datastore={this.props.datastore} />
                 ]}
             />
         )
