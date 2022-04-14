@@ -10,6 +10,6 @@ yarn run build
 
 popd
 
-systemctl restart seng3011_frontend
+systemctl restart nginx
 
 echo "Frontend deployed!"
