@@ -16,9 +16,7 @@ const { Content, Sider } = Layout;
 interface IProps {
     datastore: DataStore
 }
-interface IState {
-    //location: any
-}
+interface IState {}
 
 export default class DashboardRoot extends React.Component<IProps, IState> {
 
@@ -26,9 +24,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
         super(props);
     }
 
-    state: IState = {
-        //location: useLocation()
-    }
+    state: IState = {}
 
     // get the currently selected keys
     //const location = useLocation();
@@ -75,7 +71,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
                     </Sider>
 
                     <Content>
-                        <DashboardHeader datastore={this.props.datastore}/>
+                        <DashboardHeader datastore={this.props.datastore} />
                         <div style={{ minHeight: 280 }}>
                             <Outlet />
                         </div>

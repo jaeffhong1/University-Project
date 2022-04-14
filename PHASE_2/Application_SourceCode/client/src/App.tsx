@@ -1,7 +1,7 @@
 // mosaic
-import "@blueprintjs/core/lib/css/blueprint.css";
-import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import 'react-mosaic-component/react-mosaic-component.css';
+//import "@blueprintjs/core/lib/css/blueprint.css";
+//import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+//import 'react-mosaic-component/react-mosaic-component.css';
 
 // styled components
 import { Layout, Menu, Typography } from 'antd';
@@ -84,7 +84,7 @@ export class App extends React.Component<IProps, IState> {
                                 <Routes>
                                     <Route path="/" element={<Home datastore={this.state.datastore}/>} />
                                     <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
-                                        <Route path="/dashboard/" element={<DashboardHome />} />
+                                        <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
                                         <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                         <Route path="/dashboard/market-place/browse" element={<Browse />} />

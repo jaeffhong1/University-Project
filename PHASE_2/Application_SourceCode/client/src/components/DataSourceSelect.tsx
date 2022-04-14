@@ -23,7 +23,7 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
         super(props); 
     }
 
-    dataSources: string[] = ["f0b5", "IHeartTeams", "1 group 2 group 3 group 4"];
+    dataSources: string[] = ["f0b5", "Epiwatch"];//, "IHeartTeams", "1 group 2 group 3 group 4"];
     
     state: IState = {
         selectedDataSource: this.props.datastore.GetDataSource(),
@@ -43,12 +43,6 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
 
     //const [dataSourceSelection, setDataSourceSelection] = useState(0);
     handleCheckboxChange(id: string): void {
-        
-        // update the state
-        //this.setState((prevState, props) => ({
-        //    selectedDataSource: id
-        //}));
-
         // update the data store
         this.props.datastore.SetDataSource(id);
 
