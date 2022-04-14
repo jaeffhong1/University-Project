@@ -6,27 +6,28 @@
 // styled components
 import { Layout, Menu, Typography } from 'antd';
 import 'antd/dist/antd.css';
-import './App.css'; // custom styles
 // react
 import React from 'react';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import './App.css'; // custom styles
 // import components
 import Breadcrumb from './components/Breadcrumb';
-import { DataSourceSelect } from './components/DataSourceSelect';
+// import datastore
+import DataStore from "./datastore";
+import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
+import { IExternalSource } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
-import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
-import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
 import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
-import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
-import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
 import Browse from './pages/Dashboard/MarketPlace/Browse/browseDashboards';
+import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
+import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
+import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
+import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
-// import datastore
-import DataStore from "./datastore";
 
 // extract styled components
 const { Header, Content, Footer } = Layout;
@@ -51,7 +52,8 @@ export type TSource = {
 
 interface IProps {}
 interface IState {
-    datastore: DataStore
+    datastore: DataStore;
+    externalSources: IExternalSource[],
 }
 
 export class App extends React.Component<IProps, IState> {
@@ -60,13 +62,18 @@ export class App extends React.Component<IProps, IState> {
     }
 
     state: IState = {
-        datastore: new DataStore(this)
+        datastore: new DataStore(this),
+        externalSources: [],
     }
 
     datastoreUpdate() {
         // the datastore object will call this function to tell the app to update state
         // this will automatically update the prop "datastore" given to any children who will need to check for updates themselves
         this.setState({});
+    }
+
+    setExternalSources(externalSources: IExternalSource[]) {
+        this.setState({ externalSources })
     }
 
     render() {
@@ -96,6 +103,9 @@ export class App extends React.Component<IProps, IState> {
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
                                         <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                         <Route path="/dashboard/market-place/browse" element={<Browse />} />
+                                        <Route path="/dashboard/external-sources" element={
+                                            <ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            } />
                                     </Route>
                                     <Route path="*" element={<PageNotFound/>}/>
                                 </Routes>

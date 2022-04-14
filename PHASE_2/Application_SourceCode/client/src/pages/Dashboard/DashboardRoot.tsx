@@ -1,13 +1,13 @@
+import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
 import React from 'react';
-import { Routes, Route, Link, Outlet, useLocation } from 'react-router-dom';
-
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
-
-import './dashboard.css';
+import { Link, Outlet } from 'react-router-dom';
 import DashboardHeader from '../../components/DashboardHeader';
-
 import DataStore from '../../datastore';
+import './dashboard.css';
+
+
+
 
 // extract styled components from import 
 const { SubMenu } = Menu;
@@ -49,6 +49,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
                             selectedKeys={['DashboardHome']}//[this.getCurrentPage()]}
                         >
                             <Menu.Item key="dashboard" style={{marginTop: 0}}><Link to="/dashboard">Dashboard Brief</Link></Menu.Item>
+                            <Menu.Item key="external-sources"><Link to="/dashboard/external-sources">External Sources</Link></Menu.Item>
                             <SubMenu key="sub1" icon={<UserOutlined />} title="Disease Cases">
                                 <Menu.Item key="diseases"><Link to="/dashboard/disease-cases/diseases">Diseases</Link></Menu.Item>
                                 <Menu.Item key="syndromes">Syndromes</Menu.Item>
