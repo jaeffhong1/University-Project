@@ -5,5 +5,5 @@ export default function CountReports(props: WidgetProps) {
         <>
             <p>Report Count: {props.source.reports.length}</p>
         </>
-    )
+    );
 }
