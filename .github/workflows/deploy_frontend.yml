@@ -1,0 +1,39 @@
+name: Deploy Pipeline for Frontend
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    uses: ./.github/workflows/common_frontend.yml
+
+  deploy:
+    needs: test               # run the test before deploying
+    # makes sure only one deployment of frontend happens at a time, backend deployment would not affect it
+    concurrency: deploy_frontend
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          script: |
+            # this server has read-only access to our GitHub repository, using its SSH key
+            [ ! -d SENG3011_f0b5 ] && git clone git@github.com:f0b5-org/SENG3011_f0b5.git || echo "git repo already cloned, keep going"
+
+            cd SENG3011_f0b5
+            git fetch origin main                          # get latest version
+            if ! git checkout origin/main; then            # go on the latest version
+              git stash save -u "someone (probably Mathieu) changed some code on the server (again), preventing checkout $(date)"
+              echo oops >> /home/web/CHANGES_ON_LIVE_SERVER_STASHED_BY_DEPLOY_PIPELINE
+              git checkout origin/main
+            fi
+
+            # need to run as sudo because systemctl
+            echo ${{ secrets.ACCOUNT_PASSWORD }} | sudo -S bash ./PHASE_2/deploy.sh | tee "/home/web/logs/frontend-pipeline-$(date +"%Y-%m-%d_%H_%M_%S")"
