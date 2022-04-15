@@ -72,6 +72,16 @@ export class App extends React.Component<IProps, IState> {
                 url: "http://bar.org",
                 fields: [{name: "firstbar", description: "the first field", type: "string"}],
                 root: "data",
+            },
+            "NSW": {
+                url: "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
+                root: "data",
+                fields: [
+                    {"name": "date", "type": "date", "description": "the date, format YYYY-MM-DD"},
+                    {"name": "postcode", "type": "string", "description": "the postcode"},
+                    {"name": "total_cases", "type": "number", "description": "total number of cases"},
+                    {"name": "active_cases", "type": "number", "description": "number of active cases"},
+                ]
             }
         },
     }

@@ -5,7 +5,7 @@ export interface IExternalSource {
     root: string,
     fields: {
         name: string;
-        type: string;
+        type: TExternalSourceFieldType;
         description: string;
     }[],
 }
