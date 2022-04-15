@@ -84,7 +84,7 @@ export class GenericSelector extends React.Component<
                 return <p>Loading data from the API, please wait...</p>;
             } else {
                 const T = allGenericWidgets[this.state.generic];
-                return <T axes={this.state.axes} />;
+                return <T axes={this.state.axes} axisNames={this.state.fields} />;
             }
         }
         return (

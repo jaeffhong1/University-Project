@@ -4,6 +4,7 @@ import { TExternalSourceFieldType } from "../../sources/ExternalSource";
 
 interface Props {
     axes: any[][];
+    axisNames: string[];
 }
 
 export class GenericScatter extends React.Component<Props> {
@@ -30,7 +31,11 @@ export class GenericScatter extends React.Component<Props> {
                         mode: "markers",
                     },
                 ]}
-                layout={{ autosize: true }}
+                layout={{
+                    autosize: true,
+                    xaxis: { title: this.props.axisNames[0] },
+                    yaxis: { title: this.props.axisNames[1] },
+                }}
             />
         );
     }

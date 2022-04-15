@@ -88,9 +88,9 @@ export default class SourceSelector extends React.Component<Props, State> {
                     onSubmit={(e) => e.preventDefault()}
                     className="source-selector"
                 >
-                    {/* @ts-ignore */}
                     <div
                         onChange={(e) =>
+                            // @ts-ignore
                             this.setState({ sourceName: e.target.value })
                         }
                     >
