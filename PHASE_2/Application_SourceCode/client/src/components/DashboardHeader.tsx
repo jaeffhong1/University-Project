@@ -71,17 +71,19 @@ export default class DashboardHeader extends React.Component<IProps, IState> {
                 subTitle="Welcome to your dashboard"
                 extra={[
                     <DatePicker.RangePicker 
+                        className="date_picker"
                         key="1" 
                         showTime={true} 
                         defaultValue={this.getMomentTimes()}
                         onCalendarChange={this.handleCalendarChange}
                     />,
-                    <Button key="2">Key terms</Button>,
+                    <Button className="key_terms" key="2">Key terms</Button>,
                     <DataSourceSelect key="3" datastore={this.props.datastore} />
                 ]}
             />
         )
     }
+    
 }
 
 

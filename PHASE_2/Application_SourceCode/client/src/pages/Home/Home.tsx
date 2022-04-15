@@ -1,5 +1,7 @@
 import React from 'react';
 import DataStore from '../../datastore';
+import { Button, Layout, Menu, Typography } from 'antd';
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
 interface IProps {
     datastore: DataStore,
@@ -27,10 +29,45 @@ export default class Home extends React.Component<IProps, IState> {
         }
     }
 
+    handlePageChangeDashboard() {
+        window.location.href = "/dashboardOnboard";
+    }
+
+    handlePageChangeMarket() {
+        window.location.href = "/marketPlaceOnboardUpload";
+    }
+
     render() {
         return (
             <main className='main' style={{padding: '1em'}}>
                 <h2>Welcome to the Disease Dashboard</h2>
+                <p>
+                    If you are familiar with our website, please proceed to the Dashboard page directly
+                </p>
+                <strong>Below are links to demos for our various functions!</strong>
+                <p>
+
+                </p>
+                <Button
+                id="DashboardOnboard"
+                type="primary"
+                size="large"
+                shape="round"
+                onClick={this.handlePageChangeDashboard}>
+                Dashboard Brief Demo
+                </Button>
+                <p>
+
+                </p>
+                <Button
+                id="MarketPlaceOnboard"
+                type="primary"
+                size="large"
+                shape="round"
+                onClick={this.handlePageChangeMarket}>
+                MarketPlace Demo
+                </Button>
+
                 <p>
                     Testing to see if datastore changes propagate to children: 
                 </p>

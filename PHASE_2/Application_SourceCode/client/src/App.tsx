@@ -14,6 +14,9 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import Breadcrumb from './components/Breadcrumb';
 import { DataSourceSelect } from './components/DataSourceSelect';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
+import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
+import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
+import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
 import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
@@ -83,6 +86,9 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route path="/" element={<Home datastore={this.state.datastore}/>} />
+                                    <Route path="/dashboardOnboard" element={<DashboardRootOnboard datastore={this.state.datastore}/>}/>
+                                    <Route path="/marketPlaceOnboardUpload" element={<MarketPlaceOnboardUpload datastore={this.state.datastore}/>}/>
+                                    <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
                                     <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
                                         <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />

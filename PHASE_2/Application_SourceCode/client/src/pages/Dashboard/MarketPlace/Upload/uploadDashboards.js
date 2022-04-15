@@ -25,6 +25,7 @@ export default function Upload() {
         {
           title: 'Your dashboards',
           dataIndex: 'dashboard',
+          className: 'uploadDashboards',
           key: 'dashboard',
           render: (value, record, rowIndex) => (
             <Link to="/dashboard">{currentState[rowIndex]["dashboard"]}
@@ -34,6 +35,7 @@ export default function Upload() {
         {
           title: 'Description',
           dataIndex: 'description',
+          className: 'uploadDescriptions',
           key: 'description',
           render: (text, record, rowIndex) => (
             <Input
@@ -46,6 +48,7 @@ export default function Upload() {
         {
           title: 'To upload',
           dataIndex: 'upload',
+          className: 'uploadUpload',
           key: 'upload',
           render: (value, record, rowIndex) => (
             <Button
@@ -75,7 +78,7 @@ export default function Upload() {
 
     return (
         <div className="main">
-            <Table columns={columns} dataSource={currentState} pagination={false}/>
+            <Table className="uploadTable" columns={columns} dataSource={currentState} pagination={false}/>
         </div>
     );
 }

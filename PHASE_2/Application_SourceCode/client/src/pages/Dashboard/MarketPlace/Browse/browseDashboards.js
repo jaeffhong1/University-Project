@@ -6,6 +6,7 @@ export const all_uploads = [];
 
 const columns = [
     {
+      className: 'browseDashboards',
       title: 'Dashboards',
       dataIndex: 'dashboards',
       key: 'dashboards',
@@ -15,11 +16,13 @@ const columns = [
       ),
     },
     {
+      className: 'browseDescriptions',
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
     },
     {
+      className: 'browseAdd',
       title: 'To add',
       dataIndex: 'add',
       key: 'add',
