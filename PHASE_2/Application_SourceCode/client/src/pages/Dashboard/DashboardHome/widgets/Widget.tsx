@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { TReactComponent, TSource } from "../DashboardHome";
+import { TExternalSources } from "../sources/ExternalSource";
 import WidgetSelector from "./WidgetSelector";
 
 interface Props {
@@ -9,11 +10,13 @@ interface Props {
         titleMap: Record<string, string>
     },
     source: TSource | null,
+    externalSources: TExternalSources,
     allWidgets: {[key: string]: TReactComponent }
 }
 
 export interface WidgetProps {
     source: TSource;
+    externalSources: TExternalSources;
 }
 
 export default function Widget(props: Props): JSX.Element {
@@ -27,6 +30,6 @@ export default function Widget(props: Props): JSX.Element {
         if (T === undefined) {
             return <p>Unknown widget type <code>{type}</code></p>
         }
-        return <T source={props.source} />
+        return <T source={props.source} externalSources={props.externalSources} />
     }
 }

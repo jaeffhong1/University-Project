@@ -15,7 +15,7 @@ import Breadcrumb from './components/Breadcrumb';
 // import datastore
 import DataStore from "./datastore";
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
-import { IExternalSource } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
+import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
 import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
@@ -53,7 +53,7 @@ export type TSource = {
 interface IProps {}
 interface IState {
     datastore: DataStore;
-    externalSources: IExternalSource[],
+    externalSources: {[key: string]: IExternalSource},
 }
 
 export class App extends React.Component<IProps, IState> {
@@ -63,7 +63,23 @@ export class App extends React.Component<IProps, IState> {
 
     state: IState = {
         datastore: new DataStore(this),
-        externalSources: [],
+        externalSources: {
+            "foo": {
+                url: "http://foo.org",
+                fields: [
+                    {name: "first", description: "the first field", type: "string"},
+                    {name: "second", description: "the second field", type: "string"},
+                    {name: "hello", description: "the blah field", type: "string"},
+                    {name: "world", description: "woooooo", type: "string"},
+                ],
+                root: "data",
+            },
+            "bar": {
+                url: "http://bar.org",
+                fields: [{name: "firstbar", description: "the first field", type: "string"}],
+                root: "data",
+            }
+        },
     }
 
     datastoreUpdate() {
@@ -72,7 +88,7 @@ export class App extends React.Component<IProps, IState> {
         this.setState({});
     }
 
-    setExternalSources(externalSources: IExternalSource[]) {
+    setExternalSources(externalSources: TExternalSources) {
         this.setState({ externalSources })
     }
 
@@ -99,7 +115,7 @@ export class App extends React.Component<IProps, IState> {
                                     <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
                                     <Route path="/diseaseBrowseOnboard" element={<DiseaseBrowseOnboard datastore={this.state.datastore}/>}/>
                                     <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
-                                        <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore}/>} />
+                                        <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
                                         <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                         <Route path="/dashboard/market-place/browse" element={<Browse />} />

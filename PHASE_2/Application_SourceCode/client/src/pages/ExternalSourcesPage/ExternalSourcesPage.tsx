@@ -11,10 +11,10 @@ function validateExternalSource(externalSource: any): string | null {
 }
 
 export class ExternalSourcesPage extends React.Component<{
-    externalSources: IExternalSource[],
-    setExternalSources: (s: IExternalSource[]) => void
+    externalSources: {[name: string]: IExternalSource},
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
-    onFinish(values: {json: string}) {
+    onFinish(values: {json: string, name: string}) {
         let es: IExternalSource;
         try {
             es = JSON.parse(values.json)
@@ -31,7 +31,7 @@ export class ExternalSourcesPage extends React.Component<{
             return
         }
 
-        this.props.setExternalSources([...this.props.externalSources, es])
+        this.props.setExternalSources({...this.props.externalSources, [values.name]: es})
     }
     
 
@@ -43,7 +43,7 @@ export class ExternalSourcesPage extends React.Component<{
     render() {
         const dataSource = []
         let i = 0;
-        for (let es of this.props.externalSources) {
+        for (let es of Object.values(this.props.externalSources)) {
             dataSource.push({
                 key: '' + (i++),
                 json: JSON.stringify(es),
@@ -65,11 +65,18 @@ export class ExternalSourcesPage extends React.Component<{
                 autoComplete="off"
                 >
                 <Form.Item
+                    label="Name"
+                    name="name"
+                    rules={[{ required: true, message: 'Please enter the name' }]}
+                >
+                    <TextArea />
+                </Form.Item>
+                <Form.Item
                     label="Information (JSON)"
                     name="json"
                     rules={[{ required: true, message: 'Please enter the information' }]}
                 >
-                    <TextArea />
+                    <TextArea placeholder="grep code base for IExternalSource to see the expected structure" />
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
