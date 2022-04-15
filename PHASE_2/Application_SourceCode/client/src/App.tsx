@@ -120,7 +120,7 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route path="/" element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="/dashboardOnboard" element={<DashboardRootOnboard datastore={this.state.datastore}/>}/>
+                                    <Route path="/dashboardOnboard" element={<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/>}/>
                                     <Route path="/marketPlaceOnboardUpload" element={<MarketPlaceOnboardUpload datastore={this.state.datastore}/>}/>
                                     <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
                                     <Route path="/diseaseBrowseOnboard" element={<DiseaseBrowseOnboard datastore={this.state.datastore}/>}/>
