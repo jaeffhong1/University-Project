@@ -1,9 +1,8 @@
 .js-plotly-plot,
 .plot-container.plotly,
-.svg-container 
-.treemaplayer {
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0em;
-  padding: 0em;
+.svg-container .treemaplayer {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0em;
+    padding: 0em;
 }

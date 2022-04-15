@@ -7,19 +7,62 @@ import { WidgetProps } from "./Widget";
 
 const hardcoded_data: any[] = [
     {
-        type: 'treemap',
-        ids: ['1COVID-19', '1Cough', '1Fever', '1Dengue', '2Cough', '2Fever', '1Botulism', '1Hantavirus', '1Rubella', '1Zika', '1Monkeypox', '1Listeriosis', '1Smallpox'],
-        labels: ['COVID-19', 'Cough', 'Fever', 'Dengue', 'Cough', 'Botulism', 'Hantavirus', 'Rubella', 'Zika', 'Monkeypox', 'Listeriosis', 'Smallpox'],
-        parents: ['', '1COVID-19', '1COVID-19', '', '1Dengue', '1Dengue', '', '', '', '', '', '', ''],
+        type: "treemap",
+        ids: [
+            "1COVID-19",
+            "1Cough",
+            "1Fever",
+            "1Dengue",
+            "2Cough",
+            "2Fever",
+            "1Botulism",
+            "1Hantavirus",
+            "1Rubella",
+            "1Zika",
+            "1Monkeypox",
+            "1Listeriosis",
+            "1Smallpox",
+        ],
+        labels: [
+            "COVID-19",
+            "Cough",
+            "Fever",
+            "Dengue",
+            "Cough",
+            "Botulism",
+            "Hantavirus",
+            "Rubella",
+            "Zika",
+            "Monkeypox",
+            "Listeriosis",
+            "Smallpox",
+        ],
+        parents: [
+            "",
+            "1COVID-19",
+            "1COVID-19",
+            "",
+            "1Dengue",
+            "1Dengue",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ],
 
-        values: [12324, 10000, 2324, 6000, 1443, 0, 10, 2, 1231, 321, 1321, 1, 11],
-        branchvalues: 'total', // not remainder 
-    }
+        values: [
+            12324, 10000, 2324, 6000, 1443, 0, 10, 2, 1231, 321, 1321, 1, 11,
+        ],
+        branchvalues: "total", // not remainder
+    },
 ];
 
 const layout: any = {
     autosize: true,
-    title: 'Disease Distribution TreeMap',
+    title: "Disease Distribution TreeMap",
     showlegend: false,
     margin: {
         autoexpand: false,
@@ -28,19 +71,19 @@ const layout: any = {
         l: 15,
         r: 15, // right margin
         pad: 4,
-    }
+    },
 };
 
 interface State {
-    data: Data[],
+    data: Data[];
 }
 
 export class TreeMap extends React.Component<WidgetProps, State> {
     constructor(props: WidgetProps) {
-        super(props)
+        super(props);
         this.state = {
             data: [], // array of reports
-        }
+        };
     }
 
     static getDerivedStateFromProps(props: WidgetProps, currentState: State) {
@@ -49,8 +92,8 @@ export class TreeMap extends React.Component<WidgetProps, State> {
         for (let report of props.source.reports) {
             console.log(report.diseases);
             for (let disease of report.diseases) {
-                let val: number|undefined = diseaseCounts.get(disease);
-                if (typeof val == 'undefined') {
+                let val: number | undefined = diseaseCounts.get(disease);
+                if (typeof val == "undefined") {
                     diseaseCounts.set(disease, 1);
                 } else {
                     diseaseCounts.set(disease, val + 1);
@@ -66,22 +109,21 @@ export class TreeMap extends React.Component<WidgetProps, State> {
 
         let data: Data[] = [
             {
-                type: 'treemap',
+                type: "treemap",
                 labels: Array.from(diseaseCounts.keys()),
                 parents: parents,
                 values: values,
-                branchvalues: 'total', // not remainder 
-            }
-        ]
+                branchvalues: "total", // not remainder
+            },
+        ];
 
         //console.log(data);
         return {
-            data: data
-        }
+            data: data,
+        };
     }
 
     render() {
-
         let data: Data[];
         //data = hardcoded_data
         data = this.state.data;
@@ -89,11 +131,8 @@ export class TreeMap extends React.Component<WidgetProps, State> {
 
         return (
             <React.Fragment>
-                <Plot 
-                    data={data}
-                    layout={layout}
-                />
+                <Plot data={data} layout={layout} />
             </React.Fragment>
-        )
+        );
     }
 }

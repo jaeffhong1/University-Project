@@ -7,7 +7,7 @@ export interface IExternalSource {
         name: string;
         type: TExternalSourceFieldType;
         description: string;
-    }[],
+    }[];
 }
 
-export type TExternalSources = {[name: string]: IExternalSource}
+export type TExternalSources = { [name: string]: IExternalSource };
