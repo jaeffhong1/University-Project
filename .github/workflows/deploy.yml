@@ -21,6 +21,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
+          command_timeout: 60m
           script_stop: true
           script: |
             # this server has read-only access to our GitHub repository, using its SSH key
