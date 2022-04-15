@@ -17,7 +17,7 @@ export class GenericScatter extends React.Component<Props> {
 
     render() {
         return <Plot
-            data={[{ type: "scatter", x: this.props.axes[0], y: this.props.axes[1] }]}
+            data={[{ type: "scatter", x: this.props.axes[0], y: this.props.axes[1], mode: "markers" }]}
             layout={{autosize: true}}
          />
     }
