@@ -1,23 +1,25 @@
 //import Plot from "react-plotly.js";
-import React, { useState, useEffect } from 'react';
 // mosaic
 import "@blueprintjs/core/lib/css/blueprint.css";
+import React, { useEffect, useState } from 'react';
 //import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
+// data
+import DataStore from '../../../datastore';
+import SourceAdaptorEpiWatch from "./sources/epiwatch";
+import { TExternalSources } from "./sources/ExternalSource";
+import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 // widgets
 //import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from './widgets/CasesAgainstTime';
 import CountReports from './widgets/CountReports';
+import { GenericSelector } from "./widgets/GenericsSelector";
 import { HeatMap } from './widgets/HeatMap';
-import { TreeMap } from './widgets/TreeMap';
 import { Tally } from './widgets/Tally';
+import { TreeMap } from './widgets/TreeMap';
 import Twitter from './widgets/Twitter';
 import Widget, { WidgetProps } from "./widgets/Widget";
-// data
-import DataStore from '../../../datastore';
-import SourceAdaptorEpiWatch from "./sources/epiwatch";
-import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 
 export type TReport = {
     diseases: string[],
@@ -51,6 +53,7 @@ const allWidgets: {[key: string]: TReactComponent } = {
   'TreeMap': TreeMap,
   'Twitter': Twitter,
   'Tally': Tally,
+  'GenericSelector': GenericSelector,
 }
 
 interface SourceAdaptor {
@@ -97,7 +100,7 @@ function dateToString(date: Date): string {
     return `${date.getUTCFullYear()}-${String(date.getUTCMonth()).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}T00:00:00`;
 }
 
-const DashboardHome = (props: {datastore: DataStore}) => {
+const DashboardHome = (props: {datastore: DataStore, externalSources: TExternalSources}) => {
 
     const [source, setSource] = useState<TSource|null>(null)
 
@@ -163,7 +166,7 @@ const DashboardHome = (props: {datastore: DataStore}) => {
                             }} 
                             title={titleMap[id]}
                         >
-                            <Widget source={source} mosaic={{titleMap, id}} allWidgets={allWidgets} />
+                            <Widget source={source} mosaic={{ titleMap, id }} allWidgets={allWidgets} externalSources={props.externalSources} />
                         </MosaicWindow>
                     )}
                     // @ts-ignore
