@@ -18,7 +18,7 @@ export default function WidgetSelector(props: Props) {
                 {
                     Object.keys(props.allWidgets).map((value, index) => {
                         return (
-                            <Col className="gutter-row" span={12}>
+                            <Col className="gutter-row" span={12} key={index}>
                                 <Button type="dashed" size="large" block onClick={(e: React.MouseEvent) => {
                                     props.setType(value)
                                 }}>
