@@ -15,6 +15,7 @@ interface Props {
 }
 
 export interface WidgetProps {
+    allWidgets: {[key: string]: TReactComponent },
     source: TSource;
     externalSources: TExternalSources;
 }
@@ -30,6 +31,6 @@ export default function Widget(props: Props): JSX.Element {
         if (T === undefined) {
             return <p>Unknown widget type <code>{type}</code></p>
         }
-        return <T source={props.source} externalSources={props.externalSources} />
+        return <T source={props.source} externalSources={props.externalSources} allWidgets={props.allWidgets} />
     }
 }
