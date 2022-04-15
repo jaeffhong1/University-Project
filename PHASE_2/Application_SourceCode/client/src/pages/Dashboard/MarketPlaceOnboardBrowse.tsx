@@ -6,7 +6,7 @@ import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/
 
 import './dashboard.css';
 import DashboardHeader from '../../components/DashboardHeader';
-import Browse from '../../pages/Dashboard/MarketPlace/Browse/browseDashboards';
+import Browse from '../../pages/Dashboard/MarketPlace/Browse/browseDashboardsOnboard';
 
 import DataStore from '../../datastore';
 
@@ -52,6 +52,14 @@ export default class MarketPlaceOnboardBrowse extends React.Component<IProps, IS
                     element: ".browseAdd",
                     intro: "This column contains the button to add the dashboard to your dashboard brief"
                 },
+                {
+                    element: ".browseTable",
+                    intro: "An example of an uploaded dashboard"
+                },
+                {
+                    element: ".Dashboard",
+                    intro: "Any newly added dashboards will show up in your dashboard brief. Good luck!"
+                }
             ],
             hintsEnabled: false,
             hints: [
@@ -124,9 +132,6 @@ export default class MarketPlaceOnboardBrowse extends React.Component<IProps, IS
 
                     <Content>
                         <Browse/>
-                        <div style={{ minHeight: 280 }}>
-                            <Outlet />
-                        </div>
                     </Content>
                 </Layout>
             </main>

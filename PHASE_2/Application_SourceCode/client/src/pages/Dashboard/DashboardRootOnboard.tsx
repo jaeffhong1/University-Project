@@ -104,7 +104,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                     initialStep={this.state.initialStep}
                     options={{
                         showProgress: true,
-                        disableInteraction: false,
+                        disableInteraction: true,
                         showBullets: false,
                         exitOnOverlayClick: false,
                         doneLabel: "Finish"
@@ -143,9 +143,6 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                     <Content>
                         <DashboardHeader datastore={this.props.datastore} />
                         <DashboardHome datastore={this.props.datastore} />
-                        <div style={{ minHeight: 280 }}>
-                            <Outlet />
-                        </div>
                     </Content>
                 </Layout>
             </main>

@@ -5,8 +5,7 @@ import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 
 import './dashboard.css';
-import DashboardHeader from '../../components/DashboardHeader';
-import Upload from './MarketPlace/Upload/uploadDashboards';
+import Upload from './MarketPlace/Upload/uploadDashboardsOnboard';
 
 import DataStore from '../../datastore';
 
@@ -133,9 +132,6 @@ export default class MarketPlaceOnboardUpload extends React.Component<IProps, IS
 
                     <Content>
                         <Upload/>
-                        <div style={{ minHeight: 280 }}>
-                            <Outlet />
-                        </div>
                     </Content>
                 </Layout>
             </main>
