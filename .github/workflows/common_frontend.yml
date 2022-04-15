@@ -20,8 +20,4 @@ jobs:
       - name: Install packages
         run: yarn install
         working-directory: ./PHASE_2/Application_SourceCode/client
-      
-      - name: Ensure successful yarn build
-        run: if CI='' yarn run build; then echo "yarn build passed"; else exit 1; fi
-        working-directory: ./PHASE_2/Application_SourceCode/client
 

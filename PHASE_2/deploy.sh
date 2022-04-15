@@ -10,6 +10,4 @@ CI='' yarn run build
 
 popd
 
-systemctl restart nginx
-
 echo "Frontend deployed!"
