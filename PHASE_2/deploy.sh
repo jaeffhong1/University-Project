@@ -4,11 +4,10 @@ echo "$(whoami) deploying"
 
 pushd PHASE_2/Application_SourceCode/client
 
-# bundle the app into static files for production
-yarn install
+# remove old build folder
 rm -rf build
-CI='' yarn run build
+yarn install
 
 popd
 
-echo "Frontend deployed!"
+echo "Frontend package installed!"
