@@ -1,6 +1,7 @@
 export type TExternalSourceFieldType = "string" | "number" | "date";
 
 export interface IExternalSource {
+    name: string,
     url: string;
     root: string,
     fields: {

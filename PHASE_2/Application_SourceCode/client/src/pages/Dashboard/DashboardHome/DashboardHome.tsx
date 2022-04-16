@@ -146,7 +146,7 @@ const DashboardHome = (props: {datastore: DataStore, externalSources: TExternalS
 
     return (
         <main className='main' style={{ height: '100%'}}>
-            <div id="mosaic" style={{height: '100%'}}>
+            <div className="widgetWindow" id="mosaic" style={{height: '100%'}}>
                 <Mosaic<string>
                     resize={{}}
                     onRelease={(newNode: MosaicNode<string> | null) => {

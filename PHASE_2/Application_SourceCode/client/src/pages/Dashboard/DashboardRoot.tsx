@@ -49,7 +49,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
                             selectedKeys={['DashboardHome']}//[this.getCurrentPage()]}
                         >
                             <Menu.Item key="dashboard" style={{marginTop: 0}}><Link to="/dashboard">Dashboard Brief</Link></Menu.Item>
-                            <Menu.Item key="external-sources"><Link to="/dashboard/external-sources">External Sources</Link></Menu.Item>
+                            <Menu.Item key="external-sources"><Link to="/dashboard/all-external-sources">External Sources</Link></Menu.Item>
                             <SubMenu key="sub1" icon={<UserOutlined />} title="Disease Cases">
                                 <Menu.Item key="diseases"><Link to="/dashboard/disease-cases/diseases">Diseases</Link></Menu.Item>
                                 <Menu.Item key="syndromes">Syndromes</Menu.Item>
@@ -63,6 +63,10 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
                                 <Menu.Item key="7">option10</Menu.Item>
                                 <Menu.Item key="8">option11</Menu.Item>
                                 <Menu.Item key="9">option12</Menu.Item>
+                            </SubMenu>
+                            <SubMenu className="marketPlace" key="sub4" icon={<LaptopOutlined />} title="MarketPlace">
+                                <Menu.Item className="marketUpload" key="upload"><Link to="/dashboard/market-place/upload">Upload Dashboards</Link></Menu.Item>
+                                <Menu.Item className="marketBrowse" key="browse"><Link to="/dashboard/market-place/browse">Browse Dashboards</Link></Menu.Item>
                             </SubMenu>
                         </Menu>
                     </Sider>

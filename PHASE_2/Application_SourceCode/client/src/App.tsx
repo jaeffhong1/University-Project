@@ -14,11 +14,19 @@ import './App.css'; // custom styles
 import Breadcrumb from './components/Breadcrumb';
 // import datastore
 import DataStore from "./datastore";
+import { DataSourceSelect } from './components/DataSourceSelect';
+import DashboardRoot from './pages/Dashboard/DashboardRoot';
+import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
+import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
+import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
+import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
-import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
 import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
+import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
+import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
+import Browse from './pages/Dashboard/MarketPlace/Browse/browseDashboards';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
@@ -59,6 +67,7 @@ export class App extends React.Component<IProps, IState> {
         datastore: new DataStore(this),
         externalSources: {
             "foo": {
+                name: "foo",
                 url: "http://foo.org",
                 fields: [
                     {name: "first", description: "the first field", type: "string"},
@@ -69,11 +78,13 @@ export class App extends React.Component<IProps, IState> {
                 root: "data",
             },
             "bar": {
+                name: "bar",
                 url: "http://bar.org",
                 fields: [{name: "firstbar", description: "the first field", type: "string"}],
                 root: "data",
             },
             "NSW": {
+                name: "NSW",
                 url: "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
                 root: "data",
                 fields: [
@@ -114,12 +125,21 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route path="/" element={<Home datastore={this.state.datastore}/>} />
+                                    <Route path="/dashboardOnboard" element={<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/>}/>
+                                    <Route path="/marketPlaceOnboardUpload" element={<MarketPlaceOnboardUpload datastore={this.state.datastore}/>}/>
+                                    <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
+                                    <Route path="/diseaseBrowseOnboard" element={<DiseaseBrowseOnboard datastore={this.state.datastore}/>}/>
                                     <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
                                         <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
                                         <Route path="/dashboard/external-sources" element={
                                             <ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
                                             } />
+                                        <Route path="/dashboard/all-external-sources" element={
+                                            <AllExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            } />
+                                        <Route path="/dashboard/market-place/upload" element={<Upload />} />
+                                        <Route path="/dashboard/market-place/browse" element={<Browse />} />
                                     </Route>
                                     <Route path="*" element={<PageNotFound/>}/>
                                 </Routes>
