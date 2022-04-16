@@ -14,23 +14,13 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from geoid import find_geo_id
 from idToHierarchy import find_hierarchy2
-from marketplace import marketplace
+from marketplace import marketplace, db_conn
 from mysql.connector import errorcode
 from scrapy.selector import Selector
 from werkzeug.exceptions import HTTPException, BadRequest
 
 app = Flask(__name__)
 app.register_blueprint(marketplace)
-
-mydb = None
-mydb = mysql.connector.connect(
-    host="172.105.183.203",
-    user="seng3011",
-    password="@piFethi3011",
-    port=5231,
-    auth_plugin="mysql_native_password",
-    database="marketplace",
-)
 
 logging.basicConfig(
     filename="server.log",
@@ -43,6 +33,22 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per minute"],
 )
+
+# @app.before_first_request
+# def before_first_request():
+#     # configure the connection pool in the global object
+#     app_ctx.sql_pool = pooling.MySQLConnectionPool(
+#         pool_name="dbpool",
+#         pool_size=16,
+#         pool_reset_session=True,
+#         autocommit=False,
+#         host="172.105.183.203",
+#         user="seng3011",
+#         password="@piFethi3011",
+#         port=5231,
+#         auth_plugin="mysql_native_password",
+#         database="marketplace"
+#     )
 
 
 @app.before_request
@@ -213,7 +219,11 @@ def index():
 @app.route("/alive", methods=["GET"])
 @limiter.exempt
 def alive():
-    return {"sql_connected": mydb is not None, "scrapy_online": True}
+    mydb = db_conn()
+    sql_connected = mydb is not None
+    mydb.close()
+
+    return {"sql_connected": sql_connected, "scrapy_online": True}
 
 
 @app.route("/article/filter", methods=["GET"])

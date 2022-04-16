@@ -1,19 +1,9 @@
 import flask
-from flask import Blueprint, render_template, session, abort, jsonify
-from werkzeug.exceptions import HTTPException
 import mysql.connector
+from flask import Blueprint, render_template, session, abort, jsonify, g as app_ctx
+from werkzeug.exceptions import HTTPException
 
 marketplace = Blueprint("marketplace", __name__)
-
-mydb = None
-mydb = mysql.connector.connect(
-    host="172.105.183.203",
-    user="seng3011",
-    password="@piFethi3011",
-    port=5231,
-    auth_plugin="mysql_native_password",
-    database="marketplace",
-)
 
 
 class InputError(HTTPException):
@@ -104,6 +94,19 @@ def get_fields_from_body(**fields_type):
             raise InputError(f"invalid parameter: {key} is unused")
 
 
+# Yes this isn't a nice way to do it, but this is an MVP and I'm not willing to delve down
+# the thread safe SQL connection rabbit hole for an hour longer...
+def db_conn():
+    return mysql.connector.connect(
+        host="172.105.183.203",
+        user="seng3011",
+        password="@piFethi3011",
+        port=5231,
+        auth_plugin="mysql_native_password",
+        database="marketplace",
+    )
+
+
 def insert_parameters(cur, params, apiID, param_type):
     # Inefficient, but it works
     for param in params:
@@ -133,7 +136,8 @@ def add_api():
     if fields is None:
         abort(400)
 
-    cursor = mydb.cursor()
+    conn = db_conn()
+    cursor = conn.cursor()
 
     try:
         # Insert API
@@ -165,8 +169,9 @@ def add_api():
         cursor.close()
         abort(69)
 
-    mydb.commit()
+    conn.commit()
     cursor.close()
+    conn.close()
 
     return jsonify({"status": "success"})
 
@@ -175,14 +180,13 @@ def get_params(cur, api, param_type):
     params = []
 
     # Get all linked params of {type}
-    cursor = mydb.cursor()
     query = """
     SELECT name, type, description
     FROM parameters p
     WHERE p.api = %s
     AND p.param_type = %s
     """
-    cursor.execute(query, (api, param_type))
+    cur.execute(query, (api, param_type))
     result = cursor.fetchall()
 
     for row in result:
@@ -201,7 +205,9 @@ def get_api():
     returnAPIs = dict()
 
     # Gets all APIs in the marketplace
-    cursor = mydb.cursor()
+    conn = db_conn()
+    cursor = conn.cursor()
+
     query = """
     SELECT id, name, url, root
     FROM apis
@@ -221,6 +227,9 @@ def get_api():
 
         returnAPIs[name] = api
 
+    cursor.close()
+    conn.close()
+
     return jsonify(returnAPIs)
 
 
@@ -230,7 +239,9 @@ def get_types():
     returnTypes = []
 
     # Gets all APIs in the marketplace
-    cursor = mydb.cursor()
+    conn = db_conn()
+    cursor = conn.cursor()
+
     query = """
     SELECT * from types
     """
@@ -240,5 +251,8 @@ def get_types():
     # Iterate over marketplace
     for dataType in result:
         returnTypes.append(dataType[0])
+
+    cursor.close()
+    conn.close()
 
     return jsonify(returnTypes)
