@@ -1,30 +1,26 @@
-import logging
-from flask import Flask, jsonify, request, make_response, current_app, g as app_ctx
-import mysql.connector
-from mysql.connector import errorcode
-from apscheduler.schedulers.background import BackgroundScheduler
-import subprocess
 import json
-from werkzeug.exceptions import HTTPException, BadRequest
-import requests
+import logging
+import mysql.connector
 import os
+import pytz
 import re
+import requests
+import subprocess
+import time
+from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+from flask import Flask, jsonify, request, make_response, current_app, g as app_ctx
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import time
 from geoid import find_geo_id
 from idToHierarchy import find_hierarchy2
-import pytz
-
+from marketplace import marketplace
+from mysql.connector import errorcode
 from scrapy.selector import Selector
+from werkzeug.exceptions import HTTPException, BadRequest
 
 app = Flask(__name__)
-logging.basicConfig(
-    filename="server.log",
-    level=logging.DEBUG,
-    format="[%(asctime)s] [%(levelname)s] [%(message)s]",
-)
+app.register_blueprint(marketplace)
 
 mydb = None
 mydb = mysql.connector.connect(
@@ -33,6 +29,13 @@ mydb = mysql.connector.connect(
     password="@piFethi3011",
     port=5231,
     auth_plugin="mysql_native_password",
+    database="marketplace",
+)
+
+logging.basicConfig(
+    filename="server.log",
+    level=logging.DEBUG,
+    format="[%(asctime)s] [%(levelname)s] [%(message)s]",
 )
 
 limiter = Limiter(
@@ -654,3 +657,4 @@ if __name__ == "__main__":
     scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
     scheduler.start()
     app.run(host="0.0.0.0", port=36042)
+    # app.run(host="0.0.0.0", port=36042, debug=True)
