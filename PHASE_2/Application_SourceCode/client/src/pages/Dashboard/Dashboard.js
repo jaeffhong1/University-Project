@@ -40,6 +40,10 @@ export default function Home() {
                             <Menu.Item key="8">option11</Menu.Item>
                             <Menu.Item key="9">option12</Menu.Item>
                         </SubMenu>
+                        <SubMenu key="sub4" icon={<LaptopOutlined />} title="MarketPlace">
+                            <Menu.Item key="upload"><Link to="/dashboard/market-place/upload">Upload Dashboards</Link></Menu.Item>
+                            <Menu.Item key="browse"><Link to="/dashboard/market-place/browse">Browse Dashboards</Link></Menu.Item>
+                        </SubMenu>
                     </Menu>
                 </Sider>
 

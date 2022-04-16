@@ -3,27 +3,32 @@ import { Table, Tag, Space } from 'antd';
 const columns = [
     {
       title: 'Disease Name',
+      className: 'diseaseNames',
       dataIndex: 'name',
       key: 'name',
       render: text => <a>{text}</a>,
     },
     {
       title: 'Location',
+      className: 'diseaseLocations',
       dataIndex: 'location',
       key: 'location',
     },
     {
       title: 'Start date',
+      className: 'diseaseStarts',
       dataIndex: 'start_date',
       key: 'start_date',
     },
     {
         title: 'Finish date',
+        className: 'diseaseEnds',
         dataIndex: 'finish_date',
         key: 'finish_date',
     },
     {
       title: 'Tags',
+      className: 'diseaseTags',
       key: 'tags',
       dataIndex: 'tags',
       render: tags => (
@@ -103,7 +108,7 @@ const data = [
 export default function Diseases() {
     return (
         <div className="main">
-            <Table columns={columns} dataSource={data} pagination={false}/>
+            <Table className="diseaseTable" columns={columns} dataSource={data} pagination={false}/>
         </div>
     );
 }

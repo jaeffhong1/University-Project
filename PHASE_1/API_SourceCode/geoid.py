@@ -1,7 +1,7 @@
 import os
 
 path_to_locations = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "db2", "CountryToGeoID2-sorted.txt"
+    os.path.dirname(os.path.abspath(__file__)), "db2", "CountryToGeoID2-sorted3.txt"
 )
 
 
