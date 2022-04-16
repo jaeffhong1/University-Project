@@ -14,11 +14,10 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from geoid import find_geo_id
 from idToHierarchy import find_hierarchy2
-from marketplace import marketplace
-from mysql.connector import errorcode, pooling
+from marketplace import marketplace, db_conn
+from mysql.connector import errorcode
 from scrapy.selector import Selector
 from werkzeug.exceptions import HTTPException, BadRequest
-from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 app.register_blueprint(marketplace)
@@ -220,7 +219,11 @@ def index():
 @app.route("/alive", methods=["GET"])
 @limiter.exempt
 def alive():
-    return {"sql_connected": mydb is not None, "scrapy_online": True}
+    mydb = db_conn()
+    sql_connected = mydb is not None
+    mydb.close()
+
+    return {"sql_connected": sql_connected, "scrapy_online": True}
 
 
 @app.route("/article/filter", methods=["GET"])
@@ -444,6 +447,154 @@ def get_country_by_geoid():
     return jsonify(result)
 
 
+@app.route("/location/who", methods=["GET"])
+def turn_who_location_to_id():
+
+    start_date = request.values.get("start_date")
+    end_date = request.values.get("end_date")
+    key_terms = request.values.get("key_terms")
+    location = request.values.get("location")
+    timezone = request.values.get("timezone")
+
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
+
+    check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+    api_url = "http://epidemicscraper-env.eba-t2stx6uv.us-east-1.elasticbeanstalk.com/"
+    api_url_2 = (
+        api_url
+        + "search?start_date="
+        + (start_date)
+        + "&end_date="
+        + (end_date)
+        + "&key_terms="
+        + (key_terms)
+        + "&location="
+        + (location)
+    )
+    res = requests.get(api_url_2)
+    response = json.loads(res.text)
+    articles = response["articles"]
+    all_reports = []
+    for article in articles:
+        for report in article["reports"]:
+            new_date = report["event_date"]
+            days, times = new_date.split("T")
+            times = times.replace("-", ":")
+            new_date = days + "T" + times
+            report["event_date"] = new_date
+            relevant_locations = []
+            for location in report["locations"]:
+                name = ""
+                if location["location"] != "":
+                    name = location["location"]
+                else:
+                    name = location["country"]
+
+                geoid = find_geo_id(name)
+                location_hierarchy = find_hierarchy2(int(geoid))
+                rel_location = ""
+                if len(location_hierarchy) == 4:
+                    rel_location = {
+                        "location": convert_geo_tup(location_hierarchy[0]),
+                        "state": convert_geo_tup(location_hierarchy[1]),
+                        "country": convert_geo_tup(location_hierarchy[2]),
+                        "continent": convert_geo_tup(location_hierarchy[3]),
+                    }
+                elif len(location_hierarchy) == 3:
+                    rel_location = {
+                        "location": convert_geo_tup(location_hierarchy[0]),
+                        "state": "",
+                        "country": convert_geo_tup(location_hierarchy[1]),
+                        "continent": convert_geo_tup(location_hierarchy[2]),
+                    }
+                elif len(location_hierarchy) == 2:
+                    rel_location = {
+                        "location": convert_geo_tup(location_hierarchy[0]),
+                        "state": "",
+                        "country": "",
+                        "continent": convert_geo_tup(location_hierarchy[1]),
+                    }
+
+                relevant_locations.append(rel_location)
+            report["locations"] = relevant_locations
+            all_reports.append(report)
+    return jsonify(all_reports)
+
+
+@app.route("/location/global", methods=["GET"])
+def turn_global_location_to_id():
+
+    start_date = request.values.get("start_date")
+    end_date = request.values.get("end_date")
+    key_terms = request.values.get("key_terms")
+    location = request.values.get("location")
+    timezone = request.values.get("timezone")
+
+    if timezone is None:
+        timezone = CIDRAP_TIMEZONE
+
+    check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+    api_url = "https://iheartteams.ts.r.appspot.com/"
+    api_url_2 = (
+        api_url
+        + "articles/?start_date="
+        + (start_date)
+        + "&end_date="
+        + (end_date)
+        + "&key_terms="
+        + (key_terms)
+        + "&location="
+        + (location)
+    )
+    res = requests.get(api_url_2)
+    response = json.loads(res.text)
+    all_reports = []
+    for article in response:
+        for report in article["reports"]:
+            new_date = report["event_date"]
+            new_date = new_date.replace(" ", "T")
+            report["event_date"] = new_date
+
+            relevant_locations = []
+            for location in report["locations"]:
+                name = ""
+                if location["location"] != "":
+                    name = location["location"]
+                else:
+                    name = location["country"]
+
+                geoid = find_geo_id(name)
+                location_hierarchy = find_hierarchy2(int(geoid))
+                rel_location = ""
+                if len(location_hierarchy) == 4:
+                    rel_location = {
+                        "location": convert_geo_tup(location_hierarchy[0]),
+                        "state": convert_geo_tup(location_hierarchy[1]),
+                        "country": convert_geo_tup(location_hierarchy[2]),
+                        "continent": convert_geo_tup(location_hierarchy[3]),
+                    }
+                elif len(location_hierarchy) == 3:
+                    rel_location = {
+                        "location": convert_geo_tup(location_hierarchy[0]),
+                        "state": "",
+                        "country": convert_geo_tup(location_hierarchy[1]),
+                        "continent": convert_geo_tup(location_hierarchy[2]),
+                    }
+                elif len(location_hierarchy) == 2:
+                    rel_location = {
+                        "location": convert_geo_tup(location_hierarchy[0]),
+                        "state": "",
+                        "country": "",
+                        "continent": convert_geo_tup(location_hierarchy[1]),
+                    }
+
+                relevant_locations.append(rel_location)
+            report["locations"] = relevant_locations
+            all_reports.append(report)
+    return jsonify(all_reports)
+
+
 def convert_geo_tup(geo_tuple):
     location_info = {}
     location_info["geoid"] = geo_tuple[0]
@@ -511,7 +662,7 @@ def convert_main_text_article(article):
 
 
 if __name__ == "__main__":
-    # test_scrape()
+    test_scrape()
     scheduler = BackgroundScheduler()
     scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
     scheduler.start()

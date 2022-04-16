@@ -2,19 +2,19 @@ import os
 
 path_to_locations = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "Locations",
+    "db2",
     "allCountries-sorted.txt",
 )
 
 path_to_hierarchy = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "Locations",
+    "db2",
     "hierarchy-sorted2.txt",
 )
 
 path_to_locations2 = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "Locations",
+    "db2",
     "allCountriesCode-sorted4.txt",
 )
 global_hierarchy_list = []
@@ -29,6 +29,8 @@ def find_hierarchy(geoid):
 
 
 def find_hierarchy2(geoid):
+    if global_hierarchy_list:
+        global_hierarchy_list.clear()
     hierarchy_list = []
     hierarchy_list.append(geoid)
     f_codes = ["ADM5", "ADM4", "ADM3", "ADM2", "ADM1", "PCLI"]

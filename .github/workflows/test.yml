@@ -5,3 +5,5 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/common.yml
+  test_frontend:
+    uses: ./.github/workflows/common_frontend.yml

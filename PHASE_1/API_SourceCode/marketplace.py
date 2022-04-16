@@ -5,6 +5,7 @@ from werkzeug.exceptions import HTTPException
 
 marketplace = Blueprint("marketplace", __name__)
 
+
 class InputError(HTTPException):
     code = 400
     message = "Input Error"
@@ -91,6 +92,7 @@ def get_fields_from_body(**fields_type):
     for key in body:
         if key not in fields_type:
             raise InputError(f"invalid parameter: {key} is unused")
+
 
 # Yes this isn't a nice way to do it, but this is an MVP and I'm not willing to delve down
 # the thread safe SQL connection rabbit hole for an hour longer...
