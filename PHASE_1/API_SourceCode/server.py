@@ -15,22 +15,13 @@ from flask_limiter.util import get_remote_address
 from geoid import find_geo_id
 from idToHierarchy import find_hierarchy2
 from marketplace import marketplace
-from mysql.connector import errorcode
+from mysql.connector import errorcode, pooling
 from scrapy.selector import Selector
 from werkzeug.exceptions import HTTPException, BadRequest
+from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 app.register_blueprint(marketplace)
-
-mydb = None
-mydb = mysql.connector.connect(
-    host="172.105.183.203",
-    user="seng3011",
-    password="@piFethi3011",
-    port=5231,
-    auth_plugin="mysql_native_password",
-    database="marketplace",
-)
 
 logging.basicConfig(
     filename="server.log",
@@ -43,6 +34,22 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per minute"],
 )
+
+# @app.before_first_request
+# def before_first_request():
+#     # configure the connection pool in the global object
+#     app_ctx.sql_pool = pooling.MySQLConnectionPool(
+#         pool_name="dbpool",
+#         pool_size=16,
+#         pool_reset_session=True,
+#         autocommit=False,
+#         host="172.105.183.203",
+#         user="seng3011",
+#         password="@piFethi3011",
+#         port=5231,
+#         auth_plugin="mysql_native_password",
+#         database="marketplace"
+#     )
 
 
 @app.before_request
@@ -504,7 +511,7 @@ def convert_main_text_article(article):
 
 
 if __name__ == "__main__":
-    test_scrape()
+    # test_scrape()
     scheduler = BackgroundScheduler()
     scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
     scheduler.start()
