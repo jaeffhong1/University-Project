@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `parameters` (
     `description` text NOT NULL,
     `type` varchar(32) NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`api`) REFERENCES apis(`id`),
+    FOREIGN KEY (`api`) REFERENCES apis(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`type`) REFERENCES types(`name`)
 );
 

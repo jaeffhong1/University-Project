@@ -9,7 +9,7 @@ try:
         user="seng3011",
         password="@piFethi3011",
         port=5231,
-        auth_plugin='mysql_native_password'
+        auth_plugin="mysql_native_password",
     )
 
 except mysql.connector.Error as err:
@@ -19,7 +19,7 @@ except mysql.connector.Error as err:
         print("Database does not exist")
     else:
         print(err)
-    exit('Yikes!')
+    exit("Yikes!")
 
 print(mydb)
 
