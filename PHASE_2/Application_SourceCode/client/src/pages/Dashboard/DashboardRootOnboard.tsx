@@ -19,7 +19,7 @@ const { Content, Sider } = Layout;
 
 interface IProps {
     datastore: DataStore
-    externalSources: TExternalSources;
+    externalSources: TExternalSources | null;
 }
 
 interface IState {
@@ -96,7 +96,9 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
     };
 
 
-    public render() {;
+    public render() {
+        if (!this.props.externalSources)
+            <p>Loading external sources, please wait</p>
 
         return (
             <main className='main'>

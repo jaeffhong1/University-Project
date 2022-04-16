@@ -118,10 +118,10 @@ function dateToString(date: Date): string {
     )}-${String(date.getUTCDate()).padStart(2, "0")}T00:00:00`;
 }
 
-const DashboardHome = (props: {
+export function DashboardHomeb(props: {
     datastore: DataStore;
     externalSources: TExternalSources;
-}) => {
+}) {
     const [source, setSource] = useState<TSource | null>(null);
 
     // choose what happens when the props have changed
@@ -158,6 +158,7 @@ const DashboardHome = (props: {
         splitPercentage: 80,
     };
     const [mos, setMos] = useState(val);
+    console.log("called");
 
     const titleMap: Record<string, string> = {
         window0: "Select a widget",
@@ -171,11 +172,11 @@ const DashboardHome = (props: {
             <div id="mosaic" style={{ height: "100%" }}>
                 <Mosaic<string>
                     resize={{}}
-                    onRelease={(newNode: MosaicNode<string> | null) => {
-                        if (newNode !== null)
-                            // @ts-ignore
-                            setMos(newNode);
-                    }}
+                    // onRelease={(newNode: MosaicNode<string> | null) => {
+                    //     if (newNode !== null)
+                    //         // @ts-ignore
+                    //         setMos(newNode);
+                    // }}
                     renderTile={(id, path) => (
                         <MosaicWindow<string>
                             path={path}
@@ -187,20 +188,121 @@ const DashboardHome = (props: {
                             }}
                             title={titleMap[id]}
                         >
-                            <Widget
+                            <p>
+                                Foo {id} {path}
+                            </p>
+                            {/* <Widget
                                 source={source}
                                 mosaic={{ titleMap, id }}
                                 allWidgets={allWidgets}
                                 externalSources={props.externalSources}
-                            />
+                            /> */}
                         </MosaicWindow>
                     )}
                     // @ts-ignore
-                    initialValue={mos}
+                    value={mos}
+                    onRelease={(m: MosaicNode<string> | null) => {
+                        if (m)
+                            // @ts-ignore
+                            setMos(m);
+                    }}
                 />
             </div>
         </main>
     );
-};
+}
 
-export default DashboardHome;
+interface Props {
+    datastore: DataStore;
+    externalSources: TExternalSources | null;
+}
+interface State {
+    source: TSource | null;
+    mos: MosaicNode<string>;
+}
+
+export default class DashboardHome extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        this.state = {
+            source: null,
+            mos: {
+                direction: "row",
+                first: "window0",
+                second: "window1",
+                splitPercentage: 80,
+            },
+        }
+        console.log("called!")
+    }
+
+    componentDidMount() {
+        if (
+            this.state.source == null ||
+            this.props.datastore.GetDataSource() != this.state.source.meta.dataSource ||
+            this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
+            this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
+        ) {
+            // get the data source, times and reports
+            const sourcePromise: Promise<TSource> = fetchSource(
+                this.props.datastore.GetDataSource(),
+                this.props.datastore.GetStartTime(),
+                this.props.datastore.GetEndTime(),
+                "Sydney",
+                "COVID-19,Fever,Cough,Dengue"
+            );
+            // set the source when we retrieve the values
+            sourcePromise.then((value) => {
+                this.setState({
+                    source: value
+                })
+            });
+        }
+    }
+
+    render() {
+        if (this.props.externalSources == null)
+            return <p>Loading external sources, please wait</p>
+
+        return (
+            <main className="main" style={{ height: "100%" }}>
+                <div id="mosaic" style={{ height: "100%" }}>
+                    <Mosaic<string>
+                        resize={{}}
+                        // onRelease={(newNode: MosaicNode<string> | null) => {
+                        //     if (newNode !== null)
+                        //         // @ts-ignore
+                        //         setMos(newNode);
+                        // }}
+                        renderTile={(id, path) => {
+                            if (this.props.externalSources == null)
+                                throw new Error("null sources")
+                                
+                            return <MosaicWindow<string>
+                                path={path}
+                                createNode={(id, path) => {
+                                    const name = "window" + id.toString();
+                                    titleMap[name] = name;
+                                    return name;
+                                }}
+                                title={titleMap[id]}
+                            >
+                                <Widget
+                                    source={this.state.source}
+                                    mosaic={{ titleMap, id }}
+                                    allWidgets={allWidgets}
+                                    externalSources={this.props.externalSources}
+                                />
+                            </MosaicWindow>
+                        }}
+                        initialValue={this.state.mos}
+                        onRelease={(mos: MosaicNode<string> | null) => {
+                            if (mos)
+                                this.setState({mos})
+                        }}
+                    />
+                </div>
+            </main>
+        );
+    }
+}

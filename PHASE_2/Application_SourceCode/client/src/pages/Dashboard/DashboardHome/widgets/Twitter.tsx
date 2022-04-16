@@ -21,6 +21,7 @@ async function getCounts(): Promise<Counts> {
     url.searchParams.append("granularity", "day");
     const data = await CacheSystem.fetch(
         "twitter-counts-02",
+        -1,
         url.toString(),
         {}
     );
@@ -49,9 +50,7 @@ export default class Twitter extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        console.log("foobar");
         getCounts().then((c) => {
-            console.log("yo", c);
             this.setState({ ...this.state, counts: c });
         });
     }
