@@ -1,5 +1,6 @@
-import { Select } from "antd";
+import { Button, Select } from "antd";
 import React from "react";
+import CacheSystem from "../CacheSystem";
 import { TExternalSourceFieldType } from "../sources/ExternalSource";
 import { GenericScatter } from "./generics/GenericScatter";
 import { WidgetProps } from "./Widget";
@@ -52,12 +53,12 @@ export class GenericSelector extends React.Component<
                 "http://seng3011.duckdns.org:8086/front-end/forward"
             );
             url.searchParams.append("url", src.url);
-            const resp = await fetch(url.toString());
-            if (resp.status !== 200) {
+            const resp = await CacheSystem.fetch(url.toString() + "-01", 60 * 60, url.toString());
+            if (typeof resp !== "string") {
                 alert("response != 200:" + (await resp.text()));
                 return;
             }
-            let items = await resp.json();
+            let items = JSON.parse(resp)
             if (src.root !== null && src.root != "") {
                 const parts = src.root.split('.')
                 for (let part of parts) {
@@ -88,7 +89,7 @@ export class GenericSelector extends React.Component<
             for (let field of Object.values(axesDict)) {
                 axes.push(field);
             }
-            console.log(axes)
+
             this.setState({ axes });
         })();
     }
@@ -99,7 +100,10 @@ export class GenericSelector extends React.Component<
                 return <p>Loading data from the API, please wait...</p>;
             } else {
                 const T = allGenericWidgets[this.state.generic];
-                return <T axes={this.state.axes} axisNames={this.state.fields} />;
+                return <>
+                    <Button onClick={() => this.setState({generic: null})} style={{marginBottom: '12px'}}>Re-select</Button>
+                    <T axes={this.state.axes} axisNames={this.state.fields} />;
+                </>
             }
         }
         return (
