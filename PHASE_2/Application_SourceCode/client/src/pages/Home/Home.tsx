@@ -74,7 +74,7 @@ export default class Home extends React.Component<IProps, IState> {
                     <strong style={{ color:"red" }} className="familiarMessage">
                         If you are familiar with our website, please proceed to the Dashboard page directly.
                     </strong>
-                    <p style={{ color:"white" }} className="introMessage">Harness the power of AI and open-source data to capture early epidemic signals globally and rapid epidemic detection, leading to the prevention of global spread.</p>
+                    <p style={{ color:"white" }} className="introMessage">Website for creating widgets, monitering diseases and browsing reports.</p>
                 </div>
                 <div className='features'>
                     <h2 style={{color:"white"}} className="services">Our features</h2>
