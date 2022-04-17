@@ -1,13 +1,10 @@
 import React from "react";
 import Plot from "react-plotly.js";
 import { TExternalSourceFieldType } from "../../sources/ExternalSource";
+import { GenericWidgetProps } from "./GenericWidget";
 
-interface Props {
-    axes: any[][];
-    axisNames: string[];
-}
 
-export class GenericScatter extends React.Component<Props> {
+export class GenericScatter extends React.Component<GenericWidgetProps> {
     static supports(
         fields: { [fieldName: string]: TExternalSourceFieldType },
         axes: string[]
