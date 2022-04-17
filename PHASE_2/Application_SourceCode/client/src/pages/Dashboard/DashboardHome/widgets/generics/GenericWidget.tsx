@@ -1,5 +1,9 @@
 import { TExternalSourceFieldType } from "../../sources/ExternalSource";
 
+export interface GenericWidgetProps {
+    axes: any[][];
+    axisNames: string[];
+}
 export interface GenericWidget {
     /**
      * Takes a list of fields to plot, and returns whether this widget can plot them

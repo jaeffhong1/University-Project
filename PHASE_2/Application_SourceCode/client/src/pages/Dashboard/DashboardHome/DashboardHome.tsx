@@ -1,7 +1,7 @@
 //import Plot from "react-plotly.js";
 // mosaic
 import "@blueprintjs/core/lib/css/blueprint.css";
-import React, { useEffect, useState } from "react";
+import React from "react";
 //import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Mosaic, MosaicNode, MosaicWindow } from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
@@ -72,11 +72,6 @@ const sourceAdaptors: { [key: string]: SourceAdaptor } = {
     Epiwatch: new SourceAdaptorEpiWatch(),
 };
 
-// callback method to call when the DashboardHome's source should be updated
-interface SourceSetter {
-    (source: TSource): void;
-}
-
 async function fetchSource(
     sourceName: string,
     startDate: string,
@@ -118,89 +113,97 @@ function dateToString(date: Date): string {
     )}-${String(date.getUTCDate()).padStart(2, "0")}T00:00:00`;
 }
 
-const DashboardHome = (props: {
+interface Props {
     datastore: DataStore;
-    externalSources: TExternalSources;
-}) => {
-    const [source, setSource] = useState<TSource | null>(null);
+    externalSources: TExternalSources | null;
+}
+interface State {
+    source: TSource | null;
+    mos: MosaicNode<string>;
+}
 
-    // choose what happens when the props have changed
-    useEffect(() => {
+export default class DashboardHome extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        this.state = {
+            source: null,
+            mos: {
+                direction: "row",
+                first: "window0",
+                second: "window1",
+                splitPercentage: 80,
+            },
+        }
+        console.log("called!")
+    }
+
+    componentDidMount() {
         if (
-            source == null ||
-            props.datastore.GetDataSource() != source.meta.dataSource ||
-            props.datastore.GetStartTime() != dateToString(source.meta.start) ||
-            props.datastore.GetEndTime() != dateToString(source.meta.end)
+            this.state.source == null ||
+            this.props.datastore.GetDataSource() != this.state.source.meta.dataSource ||
+            this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
+            this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
         ) {
             // get the data source, times and reports
             const sourcePromise: Promise<TSource> = fetchSource(
-                props.datastore.GetDataSource(),
-                props.datastore.GetStartTime(),
-                props.datastore.GetEndTime(),
+                this.props.datastore.GetDataSource(),
+                this.props.datastore.GetStartTime(),
+                this.props.datastore.GetEndTime(),
                 "Sydney",
                 "COVID-19,Fever,Cough,Dengue"
             );
             // set the source when we retrieve the values
             sourcePromise.then((value) => {
-                setSource(value);
+                this.setState({
+                    source: value
+                })
             });
         }
-    }, [
-        props.datastore.GetDataSource(),
-        props.datastore.GetStartTime(),
-        props.datastore.GetEndTime(),
-    ]);
+    }
 
-    const val: MosaicNode<string> = {
-        direction: "row",
-        first: "window0",
-        second: "window1",
-        splitPercentage: 80,
-    };
-    const [mos, setMos] = useState(val);
+    render() {
+        if (this.props.externalSources == null)
+            return <p>Loading external sources, please wait</p>
 
-    const titleMap: Record<string, string> = {
-        window0: "Select a widget",
-        window1: "Select a widget",
-    };
-
-    const [count, setCount] = useState(5);
-
-    return (
-        <main className="main" style={{ height: "100%" }}>
-            <div id="mosaic" style={{ height: "100%" }}>
-                <Mosaic<string>
-                    resize={{}}
-                    onRelease={(newNode: MosaicNode<string> | null) => {
-                        if (newNode !== null)
-                            // @ts-ignore
-                            setMos(newNode);
-                    }}
-                    renderTile={(id, path) => (
-                        <MosaicWindow<string>
-                            path={path}
-                            createNode={() => {
-                                setCount(count + 1);
-                                const name = "window" + count.toString();
-                                titleMap[name] = name;
-                                return name;
-                            }}
-                            title={titleMap[id]}
-                        >
-                            <Widget
-                                source={source}
-                                mosaic={{ titleMap, id }}
-                                allWidgets={allWidgets}
-                                externalSources={props.externalSources}
-                            />
-                        </MosaicWindow>
-                    )}
-                    // @ts-ignore
-                    initialValue={mos}
-                />
-            </div>
-        </main>
-    );
-};
-
-export default DashboardHome;
+        return (
+            <main className="main" style={{ height: "100%" }}>
+                <div id="mosaic" style={{ height: "100%" }}>
+                    <Mosaic<string>
+                        resize={{}}
+                        // onRelease={(newNode: MosaicNode<string> | null) => {
+                        //     if (newNode !== null)
+                        //         // @ts-ignore
+                        //         setMos(newNode);
+                        // }}
+                        renderTile={(id, path) => {
+                            if (this.props.externalSources == null)
+                                throw new Error("null sources")
+                                
+                            return <MosaicWindow<string>
+                                path={path}
+                                createNode={(id, path) => {
+                                    const name = "window" + id.toString();
+                                    titleMap[name] = name;
+                                    return name;
+                                }}
+                                title={titleMap[id]}
+                            >
+                                <Widget
+                                    source={this.state.source}
+                                    mosaic={{ titleMap, id }}
+                                    allWidgets={allWidgets}
+                                    externalSources={this.props.externalSources}
+                                />
+                            </MosaicWindow>
+                        }}
+                        initialValue={this.state.mos}
+                        onRelease={(mos: MosaicNode<string> | null) => {
+                            if (mos)
+                                this.setState({mos})
+                        }}
+                    />
+                </div>
+            </main>
+        );
+    }
+}
