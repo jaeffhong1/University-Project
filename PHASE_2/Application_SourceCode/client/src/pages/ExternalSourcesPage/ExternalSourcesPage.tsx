@@ -17,11 +17,12 @@ export class ExternalSourcesPage extends React.Component<{
 }> {
 
     static fieldState: {name: string, description: string, type: TExternalSourceFieldType}[] = []
+    static paramState: {name: string, description: string, type: TExternalSourceFieldType}[] = []
 
     onFinish(values: {root: string, url: string, name: string}) {
         let es: IExternalSource;
         try {
-            es = {"name": values.name, "url": values.url, "root": values.root, "fields": ExternalSourcesPage.fieldState};
+            es = {"name": values.name, "url": values.url, "root": values.root, "fields": ExternalSourcesPage.fieldState, "params": ExternalSourcesPage.paramState};
         } catch (e) {
             // FIXME: show good looking modal
             alert("error: " + e + "\n\n" + values.url)
@@ -46,7 +47,6 @@ export class ExternalSourcesPage extends React.Component<{
     }
 
     handleAddField(e: any) {
-        console.log(e)
         const domElement = e.domEvent.target.innerText;
         var fieldTypes: TExternalSourceFieldType = "string"; 
         switch (domElement) {
@@ -59,12 +59,39 @@ export class ExternalSourcesPage extends React.Component<{
             case ("Number"):
                 fieldTypes = "number";
                 break;
+            case ("Boolean"):
+                fieldTypes = "boolean";
+                break;
         }
         const newField = {'name': '', 'type': fieldTypes, 'description': ''};
         const newFieldsState = ExternalSourcesPage.fieldState;
         newFieldsState.push(newField);
 
         this.setState({fields: newFieldsState});
+    }
+
+    handleAddParam(e: any) {
+        const domElement = e.domEvent.target.innerText;
+        var paramTypes: TExternalSourceFieldType = "string"; 
+        switch (domElement) {
+            case ("Date"):
+                paramTypes = "date";
+                break;
+            case ("String"):
+                paramTypes = "string";
+                break;
+            case ("Number"):
+                paramTypes = "number";
+                break;
+            case ("Boolean"):
+                paramTypes = "boolean";
+                break;
+        }
+        const newParam = {'name': '', 'type': paramTypes, 'description': ''};
+        const newParamsState = ExternalSourcesPage.paramState;
+        newParamsState.push(newParam);
+
+        this.setState({params: newParamsState});
     }
 
 
@@ -74,10 +101,29 @@ export class ExternalSourcesPage extends React.Component<{
         this.setState({fields: newFieldsState});
     }
 
+    handleRemoveParam(x: any, index: number) {
+        const newParamsState = ExternalSourcesPage.paramState;
+        newParamsState.splice(index, 1);
+        this.setState({params: newParamsState});
+    }
+    
+
     handleStringChange(index: number, e: any): void {
         const newFieldsState = ExternalSourcesPage.fieldState;
         newFieldsState[index]["name"] = e.target.value;
         this.setState({fields: newFieldsState});
+    }
+
+    handleParamStringChange(index: number, e: any): void {
+        const newParamsState = ExternalSourcesPage.paramState;
+        newParamsState[index]["name"] = e.target.value;
+        this.setState({params: newParamsState});
+    }
+
+    handleParamExampleChange(index: number, e: any): void {
+        const newParamsState = ExternalSourcesPage.paramState;
+        newParamsState[index]["description"] = e.target.value;
+        this.setState({params: newParamsState});
     }
 
     handleDateChange(index: number, e: any): void {
@@ -92,7 +138,7 @@ export class ExternalSourcesPage extends React.Component<{
         this.setState({fields: newFieldsState});
     }
     
-    dataSources: string[] = ["string", "number", "date"];// boolean, array, dictioanry
+    dataSources: string[] = ["string", "number", "date", "boolean"];// boolean, array, dictioanry
     render() {
         const dataSource = []
         let i = 0;
@@ -102,9 +148,6 @@ export class ExternalSourcesPage extends React.Component<{
                 json: JSON.stringify(es),
             })
         }
-        const columns = [
-            { key: 'json', dataIndex: 'json', title: "JSON" },
-        ]
 
         const menu = (
             <Menu onClick={this.handleAddField.bind(this)}>
@@ -117,9 +160,29 @@ export class ExternalSourcesPage extends React.Component<{
                 <Menu.Item key="3">
                 Number
                 </Menu.Item>
+                <Menu.Item key="4">
+                Boolean
+                </Menu.Item>
             </Menu>
         );
-        const types = ['date', 'string', 'number']
+
+        const param_menu = (
+            <Menu onClick={this.handleAddParam.bind(this)}>
+                <Menu.Item key="1">
+                Date
+                </Menu.Item>
+                <Menu.Item key="2">
+                String
+                </Menu.Item>
+                <Menu.Item key="3">
+                Number
+                </Menu.Item>
+                <Menu.Item key="4">
+                Boolean
+                </Menu.Item>
+            </Menu>
+        );
+
         return <div style={{padding: '12px'}}>
             <Form
                 style={{marginTop: 24}}
@@ -145,6 +208,128 @@ export class ExternalSourcesPage extends React.Component<{
                 >
                     <Input addonAfter="API Url" size="large" placeholder="Input the url of the API" />
                 </Form.Item>
+                <Form.Item
+                    label="Information (PARAMS)"
+                >
+                    {ExternalSourcesPage.paramState.map((x:any, index:any) =>  {
+                        switch(x["type"]) {
+                            case "date":
+                                return (
+                                    <div key={index} className="ParamEntry">
+                                        <Input.Group compact>
+                                                <Input
+                                                    style={{ width: '30%' }}
+                                                    className="DateEntryParam"
+                                                    size="large"
+                                                    placeholder={x["type"]}
+                                                    onChange = {this.handleParamStringChange.bind(this, index)}
+
+                                                />
+                                                <Input
+                                                    style={{ width: '65.5%' }}
+                                                    className="DateEntryParam"
+                                                    size="large"
+                                                    placeholder="Examples, seperated with commas"
+                                                    onChange = {this.handleParamExampleChange.bind(this, index)}
+
+                                                />
+                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                                <MinusCircleOutlined />
+                                            </Button>
+                                        </Input.Group>
+                                    </div>
+                                )
+                            case "string":
+                                return (
+                                    <div key={index} className="ParamEntry">
+                                        <Input.Group compact>
+                                                <Input
+                                                    style={{ width: '30%' }}
+                                                    className="StringEntryParam"
+                                                    size="large"
+                                                    placeholder={x["type"]}
+                                                    onChange = {this.handleParamStringChange.bind(this, index)}
+
+                                                />
+                                                <Input
+                                                    style={{ width: '65.5%' }}
+                                                    className="DateEntryParam"
+                                                    size="large"
+                                                    placeholder="Examples, seperated with commas"
+                                                    onChange = {this.handleParamExampleChange.bind(this, index)}
+
+                                                />
+                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                                <MinusCircleOutlined />
+                                            </Button>
+                                        </Input.Group>
+                                    </div>
+                                )
+                            case "number":
+                                return (
+                                    <div key={index} className="ParamEntry">
+                                        <Input.Group compact>
+                                                <Input
+                                                    bordered={true}
+                                                    style={{ width: '30%' }}
+                                                    className="NumberEntryParam"
+                                                    size="large"
+                                                    placeholder={x["type"]}
+                                                    onChange = {this.handleParamStringChange.bind(this, index)}
+                                                />
+                                                <Input
+                                                    style={{ width: '65.5%' }}
+                                                    className="DateEntryParam"
+                                                    size="large"
+                                                    placeholder="Examples, seperated with commas"
+                                                    onChange = {this.handleParamExampleChange.bind(this, index)}
+
+                                                />
+                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                                <MinusCircleOutlined />
+                                            </Button>
+                                        </Input.Group>
+                                        
+                                    </div>
+                                )
+                            case "boolean":
+                                return (
+                                    <div key={index} className="FieldEntry">
+                                        <Input.Group compact>
+                                                <Input
+                                                    bordered={true}
+                                                    style={{ width: '30%' }}
+                                                    className="BooleanEntryParam"
+                                                    size="large"
+                                                    placeholder={x["type"]}
+                                                    onChange = {this.handleParamStringChange.bind(this, index)}
+                                                />
+                                                <Input
+                                                    style={{ width: '65.5%' }}
+                                                    className="DateEntryParam"
+                                                    size="large"
+                                                    placeholder="Examples, seperated with commas"
+                                                    onChange = {this.handleParamExampleChange.bind(this, index)}
+
+                                                />
+                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                                <MinusCircleOutlined />
+                                            </Button>
+                                        </Input.Group>
+                                        
+                                    </div>
+                                )
+                        }
+                    })}
+                    <Dropdown 
+                        className="DropDownParam"
+                        overlay={param_menu}>
+                        <Button size="large" className="paramSelector">
+                            Add a param
+                            <DownOutlined />
+                        </Button>
+                    </Dropdown>
+                </Form.Item>
                 <h2 className="ApiStructure">
                     Enter in the structure of the JSON returned by the API
                 </h2>
@@ -154,7 +339,6 @@ export class ExternalSourcesPage extends React.Component<{
                 >
                     <Input
                         className="SourceRootStart"
-                        addonAfter=":[{"
                         size="large"
                         placeholder="Root"
                     />
@@ -168,20 +352,20 @@ export class ExternalSourcesPage extends React.Component<{
                                 return (
                                     <div key={index} className="DateEntry">
                                         <Input.Group compact>
-                                                <Input
-                                                    style={{ width: '27.7%' }}
-                                                    className="dateEntry"
-                                                    size="large"
-                                                    placeholder={x["type"]}
-                                                    onChange = {this.handleDateChange.bind(this, index)}
-                                                />
-                                                <Input
-                                                    style={{ width: '27.7%' }}
-                                                    className="dateEntryFormat"
-                                                    size="large"
-                                                    placeholder="date format (Y:M:D:t:m:s)"
-                                                    onChange = {this.handleFormatChange.bind(this, index)}
-                                                />
+                                            <Input
+                                                style={{ width: '27.7%' }}
+                                                className="dateEntry"
+                                                size="large"
+                                                placeholder={x["type"]}
+                                                onChange = {this.handleDateChange.bind(this, index)}
+                                            />
+                                            <Input
+                                                style={{ width: '27.7%' }}
+                                                className="dateEntryFormat"
+                                                size="large"
+                                                placeholder="date format (Y:M:D:t:m:s)"
+                                                onChange = {this.handleFormatChange.bind(this, index)}
+                                            />
                                             <Button size="large" className="RemoveField" onClick={this.handleRemoveField.bind(this, x, index)}>
                                                 <MinusCircleOutlined />
                                             </Button>
@@ -226,6 +410,26 @@ export class ExternalSourcesPage extends React.Component<{
                                         
                                     </div>
                                 )
+                            case "boolean":
+                                return (
+                                    <div key={index} className="FieldEntry">
+                                        <Input.Group compact>
+                                                <Input
+                                                    bordered={true}
+                                                    style={{ width: '55.4%' }}
+                                                    className="NumberEntry"
+                                                    size="large"
+                                                    placeholder={x["type"]}
+                                                    onChange = {this.handleStringChange.bind(this, index)}
+                                                />
+                                            
+                                            <Button size="large" className="RemoveFieldWeird" onClick={this.handleRemoveField.bind(this, x, index)}>
+                                                <MinusCircleOutlined />
+                                            </Button>
+                                        </Input.Group>
+                                        
+                                    </div>
+                                )
                         }
                     })}
                     <Dropdown 
@@ -239,12 +443,6 @@ export class ExternalSourcesPage extends React.Component<{
                 </Form.Item>
                 <p>
                 </p>
-                <Input
-                    className="SourceRootEnd"
-                    addonAfter=" }]"
-                    size="large"
-                    disabled={true}
-                />
                 <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
                     <Button size="large" className="SubmitButton" type="primary" htmlType="submit">
                     Submit

@@ -78,12 +78,14 @@ export class App extends React.Component<IProps, IState> {
                     {name: "world", description: "woooooo", type: "string"},
                 ],
                 root: "data",
+                params: []
             },
             "bar": {
                 name: "bar",
                 url: "http://bar.org",
                 fields: [{name: "firstbar", description: "the first field", type: "string"}],
                 root: "data",
+                params: []
             },
             "NSW": {
                 name: "NSW",
@@ -94,7 +96,8 @@ export class App extends React.Component<IProps, IState> {
                     {"name": "postcode", "type": "string", "description": "the postcode"},
                     {"name": "total_cases", "type": "number", "description": "total number of cases"},
                     {"name": "active_cases", "type": "number", "description": "number of active cases"},
-                ]
+                ],
+                params: []
             }
         },
     }

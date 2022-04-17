@@ -1,17 +1,7 @@
 
 .SourceRootStart {
-    font-family: Arial;
-    font-size: 60px;
     position: relative;
     width: 150px;
-}
-
-.SourceRootEnd {
-    font-family: Arial;
-    font-size: 60px;
-    position: relative;
-    width: 150px;
-    left: 16.5%;
 }
 
 .DropDown {
@@ -48,6 +38,11 @@
 .RemoveFieldWeird {
     position: relative;
     left: 16%;
+}
+
+.RemoveFieldWeirdParam {
+    position: relative;
+    left:0.1%;
 }
 
 .StringEntry {

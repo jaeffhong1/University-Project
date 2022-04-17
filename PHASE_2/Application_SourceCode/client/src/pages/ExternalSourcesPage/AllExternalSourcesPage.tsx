@@ -16,7 +16,7 @@ export class AllExternalSourcesPage extends React.Component<{
 
     addApi(name: string, object: IExternalSource) {
         let es: IExternalSource;
-        es = {"name": object.name, "url": object.url, "fields": object.fields, "root": object.root};
+        es = {"name": object.name, "url": object.url, "fields": object.fields, "root": object.root, "params":[]};
         this.props.setExternalSources({...this.props.externalSources, [name]: es})
     }
 
@@ -49,12 +49,12 @@ export class AllExternalSourcesPage extends React.Component<{
         }
 
         var fieldTypes: TExternalSourceFieldType = "string"; 
-        const newField = {'name': 'example', 'type': fieldTypes, 'description': 'examplle'};
-        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data"}
+//        const newField = {'name': 'example', 'type': fieldTypes, 'description': 'examplle'};
+ //       const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data"}
 
-        if (!(this.containsObject(example, allDataSources))) {
-            allDataSources.push(example)
-        }
+  //      if (!(this.containsObject(example, allDataSources))) {
+  //          allDataSources.push(example)
+  //      }
         const columns = [
             { key: 'json', dataIndex: 'json', title: "JSON" },
         ]

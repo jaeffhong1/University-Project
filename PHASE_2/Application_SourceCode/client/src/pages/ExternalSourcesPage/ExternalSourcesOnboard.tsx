@@ -34,6 +34,11 @@ interface IState {
         type: TExternalSourceFieldType;
         description: string;
     }[],
+    params: {
+        name: string;
+        type: TExternalSourceFieldType;
+        description: string;
+    }[]
 }
 export default class ExternalSourcesPageOnboard extends React.Component<IProps, IState> {
 
@@ -46,6 +51,7 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
             url: "",
             root: "",
             fields: [],
+            params: [],
             stepsEnabled: true,
             initialStep: 0,
             steps: [
@@ -111,7 +117,7 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
     onFinish(values: {root: string, url: string, name: string}) {
         let es: IExternalSource;
         try {
-            es = {"name": values.name, "url": values.url, "root": values.root, "fields": ExternalSourcesPageOnboard.fieldState};
+            es = {"name": values.name, "url": values.url, "root": values.root, "fields": ExternalSourcesPageOnboard.fieldState, "params": []};
         } catch (e) {
             // FIXME: show good looking modal
             alert("error: " + e + "\n\n" + values.url)
@@ -197,7 +203,7 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
 
         var fieldTypes: TExternalSourceFieldType = "string"; 
         const newField = {'name': 'example', 'type': fieldTypes, 'description': 'examplle'};
-        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data"}
+        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data", "params": []}
 
         const newData = {key: '0', json: JSON.stringify(example)}
         dataSource.push(newData)

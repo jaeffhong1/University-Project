@@ -69,7 +69,7 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
 
         var fieldTypes: TExternalSourceFieldType = "string"; 
         const newField = {'name': 'example', 'type': fieldTypes, 'description': 'examplle'};
-        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data"}
+        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data", "params":[]}
 
         const newData = {key: '0', json: JSON.stringify(example)}
         dataSource.push(newData)
