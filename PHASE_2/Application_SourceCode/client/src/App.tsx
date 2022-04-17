@@ -15,20 +15,20 @@ import Breadcrumb from './components/Breadcrumb';
 // import datastore
 import DataStore from "./datastore";
 import { DataSourceSelect } from './components/DataSourceSelect';
+import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
-import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
-import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
 import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
 import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExternalSourceOnboard';
 import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
-import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
 import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
 import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
 import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
 import Browse from './pages/Dashboard/MarketPlace/Browse/browseDashboards';
+import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
+import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
@@ -57,47 +57,74 @@ export type TSource = {
 interface IProps {}
 interface IState {
     datastore: DataStore;
-    externalSources: {[key: string]: IExternalSource},
+    externalSources: TExternalSources | null,
 }
 
 export class App extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props); 
+        (async () => {
+            // const resp = await CacheSystem.fetch("external-apis-000", 10, "http://seng3011.duckdns.org/marketplace/api/get")
+            // if (typeof resp !== "string") {
+            //     console.error(resp)
+            //     throw new Error("fetching external sources failed")
+            // }
+            // const externalSources = JSON.parse(resp) as TExternalSources;
+            // for (let es of Object.values(externalSources)) {
+            //     // @ts-ignore
+            //     es.fields = es.params; // they're swapped in the db rn
+            // }
+            // this.setState({externalSources: externalSources})
+        })()
     }
 
     state: IState = {
         datastore: new DataStore(this),
         externalSources: {
-            "foo": {
-                name: "foo",
-                url: "http://foo.org",
-                fields: [
-                    {name: "first", description: "the first field", type: "string"},
-                    {name: "second", description: "the second field", type: "string"},
-                    {name: "hello", description: "the blah field", type: "string"},
-                    {name: "world", description: "woooooo", type: "string"},
+            "covidtracking": {
+                "name": "covidtracking",
+                "url": "https://api.covidtracking.com/v1/us/daily.json",
+                "fields": [
+                    {"name": "date", "type": "date-concatenated-number", "description": "date as a number"},
+                    {"name": "states", "type": "number", "description": "unknown"},
+                    {"name": "positive", "type": "number", "description": "positive tests"},
+                    {"name": "negative", "type": "number", "description": "negative tests"},
+                    {"name": "pending", "type": "number", "description": "pending tests"},
+                    {"name": "hospitalizedCurrently", "type": "number", "description": "Number of people hospitalized during this period"},
+                    {"name": "hospitalizedCumulative", "type": "number", "description": "Number of people hospitalized"},
+                    {"name": "inIcuCurrently", "type": "number", "description": "TODO"},
+                    {"name": "inIcuCumulative", "type": "number", "description": "TODO"},
+                    {"name": "onVentilatorCurrently", "type": "number", "description": "TODO"},
+                    {"name": "onVentilatorCumulative", "type": "number", "description": "TODO"},
+                    {"name": "death", "type": "number", "description": "TODO"},
+                    {"name": "hospitalized", "type": "number", "description": "TODO"},
+                    {"name": "totalTestResults", "type": "number", "description": "TODO"},
+                    {"name": "total", "type": "number", "description": "TODO"},
+                    {"name": "posNeg", "type": "number", "description": "TODO"},
+                    {"name": "deathIncrease", "type": "number", "description": "TODO"},
+                    {"name": "hospitalizedIncrease", "type": "number", "description": "TODO"},
+                    {"name": "negativeIncrease", "type": "number", "description": "TODO"},
+                    {"name": "positiveIncrease", "type": "number", "description": "TODO"},
+                    {"name": "totalTestResultsIncrease", "type": "number", "description": "TODO"},
+
+                    {"name": "hash", "type": "string", "description": "TODO"},
+                    {"name": "dateChecked", "type": "date", "description": "TODO"},
+                    {"name": "lastModified", "type": "date", "description": "TODO"},
                 ],
-                root: "data",
-                params: []
-            },
-            "bar": {
-                name: "bar",
-                url: "http://bar.org",
-                fields: [{name: "firstbar", description: "the first field", type: "string"}],
-                root: "data",
-                params: []
+                "root": "",
+                "params": []
             },
             "NSW": {
-                name: "NSW",
-                url: "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
-                root: "data",
-                fields: [
-                    {"name": "date", "type": "date", "description": "the date, format YYYY-MM-DD"},
+                "name": "NSW",
+                "url": "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
+                "root": "data",
+                "fields": [
+                    {"name": "date", "type": "date", "description": "the date"},
                     {"name": "postcode", "type": "string", "description": "the postcode"},
                     {"name": "total_cases", "type": "number", "description": "total number of cases"},
                     {"name": "active_cases", "type": "number", "description": "number of active cases"},
                 ],
-                params: []
+                "params": []
             }
         },
     }
@@ -147,6 +174,9 @@ export class App extends React.Component<IProps, IState> {
                                             } />
                                         <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                         <Route path="/dashboard/market-place/browse" element={<Browse />} />
+                                        <Route path="/dashboard/external-sources" element={
+                                            <ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            } />
                                     </Route>
                                     <Route path="*" element={<PageNotFound/>}/>
                                 </Routes>

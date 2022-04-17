@@ -1,38 +1,31 @@
-import logging
-from flask import Flask, jsonify, request, make_response, current_app, g as app_ctx
-import mysql.connector
-from mysql.connector import errorcode
-from apscheduler.schedulers.background import BackgroundScheduler
-import subprocess
 import json
-from werkzeug.exceptions import HTTPException, BadRequest
-import requests
+import logging
+import mysql.connector
 import os
+import pytz
 import re
+import requests
+import subprocess
+import time
+from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+from flask import Flask, jsonify, request, make_response, current_app, g as app_ctx
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import time
 from geoid import find_geo_id
 from idToHierarchy import find_hierarchy2
-import pytz
-
+from marketplace import marketplace, db_conn
+from mysql.connector import errorcode
 from scrapy.selector import Selector
+from werkzeug.exceptions import HTTPException, BadRequest
 
 app = Flask(__name__)
+app.register_blueprint(marketplace)
+
 logging.basicConfig(
     filename="server.log",
     level=logging.DEBUG,
     format="[%(asctime)s] [%(levelname)s] [%(message)s]",
-)
-
-mydb = None
-mydb = mysql.connector.connect(
-    host="172.105.183.203",
-    user="seng3011",
-    password="@piFethi3011",
-    port=5231,
-    auth_plugin="mysql_native_password",
 )
 
 limiter = Limiter(
@@ -40,6 +33,22 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per minute"],
 )
+
+# @app.before_first_request
+# def before_first_request():
+#     # configure the connection pool in the global object
+#     app_ctx.sql_pool = pooling.MySQLConnectionPool(
+#         pool_name="dbpool",
+#         pool_size=16,
+#         pool_reset_session=True,
+#         autocommit=False,
+#         host="172.105.183.203",
+#         user="seng3011",
+#         password="@piFethi3011",
+#         port=5231,
+#         auth_plugin="mysql_native_password",
+#         database="marketplace"
+#     )
 
 
 @app.before_request
@@ -210,7 +219,11 @@ def index():
 @app.route("/alive", methods=["GET"])
 @limiter.exempt
 def alive():
-    return {"sql_connected": mydb is not None, "scrapy_online": True}
+    mydb = db_conn()
+    sql_connected = mydb is not None
+    mydb.close()
+
+    return {"sql_connected": sql_connected, "scrapy_online": True}
 
 
 @app.route("/article/filter", methods=["GET"])
@@ -654,3 +667,4 @@ if __name__ == "__main__":
     scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
     scheduler.start()
     app.run(host="0.0.0.0", port=36042)
+    # app.run(host="0.0.0.0", port=36042, debug=True)

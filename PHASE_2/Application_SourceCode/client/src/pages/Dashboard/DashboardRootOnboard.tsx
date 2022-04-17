@@ -1,25 +1,23 @@
+import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
+import { Steps } from 'intro.js-react';
 import React from 'react';
-import { Routes, Route, Link, Outlet, useLocation } from 'react-router-dom';
-
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
-
-import './dashboard.css';
+import { Link } from 'react-router-dom';
 import DashboardHeader from '../../components/DashboardHeader';
-import DashboardHome from '../../pages/Dashboard/DashboardHome/DashboardHome';
-import { TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
-
 import DataStore from '../../datastore';
+import './dashboard.css';
+import DashboardHome from './DashboardHome/DashboardHome';
+import { TExternalSources } from './DashboardHome/sources/ExternalSource';
 
-import { Steps } from 'intro.js-react'
+
 
 // extract styled components from import 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
 interface IProps {
-    datastore: DataStore,
-    externalSources: TExternalSources
+    datastore: DataStore
+    externalSources: TExternalSources | null;
 }
 
 interface IState {
@@ -96,7 +94,9 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
     };
 
 
-    public render() {;
+    public render() {
+        if (!this.props.externalSources)
+            <p>Loading external sources, please wait</p>
 
         return (
             <main className='main'>
@@ -145,7 +145,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
 
                     <Content>
                         <DashboardHeader datastore={this.props.datastore} />
-                        <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources}/>
+                        <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources} />
                     </Content>
                 </Layout>
             </main>

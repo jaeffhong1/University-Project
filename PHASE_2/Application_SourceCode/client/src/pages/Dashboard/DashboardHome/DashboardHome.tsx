@@ -22,159 +22,188 @@ import Twitter from './widgets/Twitter';
 import Widget, { WidgetProps } from "./widgets/Widget";
 
 export type TReport = {
-    diseases: string[],
-    syndromes: string[],
-    event_date: Date,
+    diseases: string[];
+    syndromes: string[];
+    event_date: Date;
     location: {
-      lat: number,
-      long: number,
-    }
-  }
-  
+        lat: number;
+        long: number;
+    };
+};
+
 export type TSource = {
     meta: {
-        start: Date,
-        end: Date,
-        dataSource: string
-    },
-    reports: TReport[]
-}
+        start: Date;
+        end: Date;
+        dataSource: string;
+    };
+    reports: TReport[];
+};
 
 const titleMap: Record<string, string> = {
     window0: "Select a widget",
     SourceSelector: "Source selector",
 };
-export type TReactComponent = typeof React.Component | ((p: WidgetProps) => JSX.Element)
+export type TReactComponent =
+    | typeof React.Component
+    | ((p: WidgetProps) => JSX.Element);
 
-const allWidgets: {[key: string]: TReactComponent } = {
-  'Cases against time': CasesAgainstTime,
-  'Count reports': CountReports,
-  'Heat Map': HeatMap,
-  'TreeMap': TreeMap,
-  'Twitter': Twitter,
-  'Tally': Tally,
-  'GenericSelector': GenericSelector,
-}
+const allWidgets: { [key: string]: TReactComponent } = {
+    "Cases against time": CasesAgainstTime,
+    "Count reports": CountReports,
+    "Heat Map": HeatMap,
+    TreeMap: TreeMap,
+    Twitter: Twitter,
+    Tally: Tally,
+    GenericSelector: GenericSelector,
+};
 
 interface SourceAdaptor {
-    fetch: (start: string, end: string, location: string, keyTerms: string) => Promise<TReport[]>
+    fetch: (
+        start: string,
+        end: string,
+        location: string,
+        keyTerms: string
+    ) => Promise<TReport[]>;
 }
 
-const sourceAdaptors: {[key: string]: SourceAdaptor} = {
-    "f0b5": new SourceAdaptorf0b5(),
-    "Epiwatch": new SourceAdaptorEpiWatch(),
-}
+const sourceAdaptors: { [key: string]: SourceAdaptor } = {
+    f0b5: new SourceAdaptorf0b5(),
+    Epiwatch: new SourceAdaptorEpiWatch(),
+};
 
-// callback method to call when the DashboardHome's source should be updated
-interface SourceSetter {
-    (source: TSource): void
-}
+async function fetchSource(
+    sourceName: string,
+    startDate: string,
+    endDate: string,
+    location: string,
+    keyTerms: string
+): Promise<TSource> {
+    const reports = await sourceAdaptors[sourceName].fetch(
+        startDate,
+        endDate,
+        location,
+        keyTerms
+    );
 
-async function fetchSource(sourceName: string, startDate: string, endDate: string, location: string, keyTerms: string): Promise<TSource> {
-
-    const reports = await sourceAdaptors[sourceName].fetch(startDate, endDate, location, keyTerms)
-    
     const meta = {
         start: parseDate(startDate),
         end: parseDate(endDate),
-        dataSource: sourceName
-    }
+        dataSource: sourceName,
+    };
     const source = {
         meta: meta,
         reports: reports.filter((report: TReport) => {
-            if (!report.event_date)
-                return false;
+            if (!report.event_date) return false;
             if (report.event_date.valueOf() < meta.start.valueOf())
                 return false;
-            if (report.event_date.valueOf() > meta.end.valueOf())
-                return false;
+            if (report.event_date.valueOf() > meta.end.valueOf()) return false;
             return true;
         }),
-    }
+    };
 
     // call the callback
-    return source
+    return source;
 }
 
 function dateToString(date: Date): string {
-    return `${date.getUTCFullYear()}-${String(date.getUTCMonth()).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}T00:00:00`;
+    return `${date.getUTCFullYear()}-${String(date.getUTCMonth()).padStart(
+        2,
+        "0"
+    )}-${String(date.getUTCDate()).padStart(2, "0")}T00:00:00`;
 }
 
-const DashboardHome = (props: {datastore: DataStore, externalSources: TExternalSources}) => {
+interface Props {
+    datastore: DataStore;
+    externalSources: TExternalSources | null;
+}
+interface State {
+    source: TSource | null;
+    mos: MosaicNode<string>;
+}
 
-    const [source, setSource] = useState<TSource|null>(null)
+export default class DashboardHome extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props)
+        this.state = {
+            source: null,
+            mos: {
+                direction: "row",
+                first: "window0",
+                second: "window1",
+                splitPercentage: 80,
+            },
+        }
+        console.log("called!")
+    }
 
-    // choose what happens when the props have changed
-    useEffect(() => {
-
-        if (source == null 
-         || props.datastore.GetDataSource() != source.meta.dataSource 
-         || props.datastore.GetStartTime() != dateToString(source.meta.start)
-         || props.datastore.GetEndTime() != dateToString(source.meta.end)) {
-
+    componentDidMount() {
+        if (
+            this.state.source == null ||
+            this.props.datastore.GetDataSource() != this.state.source.meta.dataSource ||
+            this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
+            this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
+        ) {
             // get the data source, times and reports
             const sourcePromise: Promise<TSource> = fetchSource(
-                props.datastore.GetDataSource(), 
-                props.datastore.GetStartTime(),
-                props.datastore.GetEndTime(),
+                this.props.datastore.GetDataSource(),
+                this.props.datastore.GetStartTime(),
+                this.props.datastore.GetEndTime(),
                 "Sydney",
                 "COVID-19,Fever,Cough,Dengue"
             );
             // set the source when we retrieve the values
-            sourcePromise.then(value => {
-                setSource(value);
-            })
+            sourcePromise.then((value) => {
+                this.setState({
+                    source: value
+                })
+            });
         }
-
-        
-    }, [props.datastore.GetDataSource(), props.datastore.GetStartTime(), props.datastore.GetEndTime()]);
-
-    const val: MosaicNode<string> = {
-        direction: 'row',
-        first: 'window0',
-        second: 'window1',
-        splitPercentage: 80
     }
-    const [mos, setMos] = useState(val)
 
-    const titleMap: Record<string, string> = {
-        window0: "Select a widget",
-        window1: "Select a widget",
-    };
+    render() {
+        if (this.props.externalSources == null)
+            return <p>Loading external sources, please wait</p>
 
-    const [count, setCount] = useState(5);
-
-    return (
-        <main className='main' style={{ height: '100%'}}>
-            <div className="widgetWindow" id="mosaic" style={{height: '100%'}}>
-                <Mosaic<string>
-                    resize={{}}
-                    onRelease={(newNode: MosaicNode<string> | null) => {
-                        if (newNode !== null)
-                            // @ts-ignore
-                            setMos(newNode)
-                        }
-                    }
-                    renderTile={(id, path) => (
-                        <MosaicWindow<string> 
-                            path={path} 
-                            createNode={() => {
-                                setCount(count + 1)
-                                const name = 'window' + count.toString()
-                                titleMap[name] = name
-                                return name
-                            }} 
-                            title={titleMap[id]}
-                        >
-                            <Widget source={source} mosaic={{ titleMap, id }} allWidgets={allWidgets} externalSources={props.externalSources} />
-                        </MosaicWindow>
-                    )}
-                    // @ts-ignore
-                    initialValue={mos}
-                />
-            </div>
-        </main>
-    );
+        return (
+            <main className="main" style={{ height: "100%" }}>
+                <div id="mosaic" style={{ height: "100%" }}>
+                    <Mosaic<string>
+                        resize={{}}
+                        // onRelease={(newNode: MosaicNode<string> | null) => {
+                        //     if (newNode !== null)
+                        //         // @ts-ignore
+                        //         setMos(newNode);
+                        // }}
+                        renderTile={(id, path) => {
+                            if (this.props.externalSources == null)
+                                throw new Error("null sources")
+                                
+                            return <MosaicWindow<string>
+                                path={path}
+                                createNode={(id, path) => {
+                                    const name = "window" + id.toString();
+                                    titleMap[name] = name;
+                                    return name;
+                                }}
+                                title={titleMap[id]}
+                            >
+                                <Widget
+                                    source={this.state.source}
+                                    mosaic={{ titleMap, id }}
+                                    allWidgets={allWidgets}
+                                    externalSources={this.props.externalSources}
+                                />
+                            </MosaicWindow>
+                        }}
+                        initialValue={this.state.mos}
+                        onRelease={(mos: MosaicNode<string> | null) => {
+                            if (mos)
+                                this.setState({mos})
+                        }}
+                    />
+                </div>
+            </main>
+        );
+    }
 }
-
-export default DashboardHome;

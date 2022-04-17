@@ -6,10 +6,18 @@ export default class CacheSystem {
      * @param init parameters
      * @returns string on success (response), Response object on error code != 200 (body not consumed)
      */
-    static async fetch(name: string, resource: RequestInfo, init?: RequestInit): Promise<string | Response> {
-        const value = localStorage.getItem(name)
-        if (value != null) {
-            return value
+    static async fetch(
+        name: string,
+        durationSeconds: number,
+        resource: RequestInfo,
+        init?: RequestInit
+    ): Promise<string | Response> {
+        name += '-v1.0.0'
+        const data = localStorage.getItem(name);
+        if (data != null) {
+            const {content, at} = JSON.parse(data)
+            if (durationSeconds > 0 && Math.floor(Date.now() / 1000) < at + durationSeconds)
+                return content
         }
 
         const response = await fetch(resource, init);
@@ -17,8 +25,12 @@ export default class CacheSystem {
             return response;
         }
 
-        const str = await response.text()
-        localStorage.setItem(name, str)
-        return str
+        const str = await response.text();
+        const obj = {
+            content: str,
+            at: Math.floor(Date.now() / 1000),
+        }
+        localStorage.setItem(name, JSON.stringify(obj));
+        return str;
     }
 }

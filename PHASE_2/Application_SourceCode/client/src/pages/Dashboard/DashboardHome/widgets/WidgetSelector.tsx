@@ -1,36 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TReactComponent } from "../DashboardHome";
-import { Card, Button, Row, Col } from 'antd';
+import { Card, Button, Row, Col } from "antd";
 
 interface Props {
     setType: (type: string) => void;
-    allWidgets: {[key: string]: TReactComponent }
+    allWidgets: { [key: string]: TReactComponent };
 }
 
 export default function WidgetSelector(props: Props) {
-    //const [type, setType] = useState(Object.keys(props.allWidgets)[0]);
+    
+    const [colWidth, setColWidth] = useState(12);
+    const [buttonSize, setButtonSize] = useState("large");
+    const [buttonTextSize, setButtonTextSize] = useState("16px");
 
-    console.log(Object.keys(props.allWidgets));
+    // get a reference to this component
+    const ref = useRef(null);
+
+    // check for changes in widget width
+    useEffect(() => {
+        if (ref?.current != null && ref?.current['clientWidth'] < 350) {
+            setColWidth(24);
+
+            // even smaller? also reduce button size and font
+            if (ref?.current['clientWidth'] < 200) {
+                setButtonSize("small");
+                setButtonTextSize("10px");
+            } else {
+                setButtonSize("large");
+                setButtonTextSize("16px");
+            }
+        } else {
+            // normal settings
+            setColWidth(12); // two cols per row
+            setButtonSize("large");
+            setButtonTextSize("16px");
+        }
+    }, [ref?.current != null ? ref?.current['clientWidth'] : ref]);
 
     return (
-        <div style={{padding: '2em'}}>
+        <div style={{ padding: "2em" }}>
             <Row gutter={[12, { xs: 4, sm: 8, md: 16, lg: 32 }]}>
-                {
-                    Object.keys(props.allWidgets).map((value, index) => {
-                        return (
-                            <Col className="gutter-row" span={12} key={index}>
-                                <Button type="dashed" size="large" block onClick={(e: React.MouseEvent) => {
-                                    props.setType(value)
-                                }}>
-                                    {value}
-                                </Button>
-                            </Col>
-                        )
-                    })
-                }
+                {Object.keys(props.allWidgets).map((value, index) => {
+                    return (
+                        <Col className="gutter-row" span={12} key={index}>
+                            <Button
+                                type="dashed"
+                                size="large"
+                                block
+                                onClick={(e: React.MouseEvent) => {
+                                    props.setType(value);
+                                }}
+                            >
+                                {value}
+                            </Button>
+                        </Col>
+                    );
+                })}
             </Row>
         </div>
-
-        
-    )
+    );
 }

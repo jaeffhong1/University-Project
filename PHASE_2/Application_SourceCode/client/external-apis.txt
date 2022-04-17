@@ -1,4 +1,5 @@
 {
+    "name: "NSW",
     "url": "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
     "root": "data",
     "fields": [
@@ -6,5 +7,41 @@
         {"name": "postcode", "type": "string", "description": "the postcode"},
         {"name": "total_cases", "type": "number", "description": "total number of cases"},
         {"name": "active_cases", "type": "number", "description": "number of active cases"},
-    ]
+    ],
+    "params": []
+},
+
+{
+    "name": "covidtracking",
+    "url": "https://api.covidtracking.com/v1/us/daily.json",
+    "docs": "https://covidtracking.com/data/api",
+    "fields": [
+        {"name": "date", "type": "date-concatenated-number", "description": "date as a number"},
+        {"name": "states", "type": "number", "description": "unknown"},
+        {"name": "positive", "type": "number", "description": "positive tests"},
+        {"name": "negative", "type": "number", "description": "negative tests"},
+        {"name": "pending", "type": "number", "description": "pending tests"},
+        {"name": "hospitalizedCurrently", "type": "number", "description": "Number of people hospitalized during this period"},
+        {"name": "hospitalizedCumulative", "type": "number", "description": "Number of people hospitalized"},
+        {"name": "inIcuCurrently", "type": "number", "description": "TODO"},
+        {"name": "inIcuCumulative", "type": "number", "description": "TODO"},
+        {"name": "onVentilatorCurrently", "type": "number", "description": "TODO"},
+        {"name": "onVentilatorCumulative", "type": "number", "description": "TODO"},
+        {"name": "death", "type": "number", "description": "TODO"},
+        {"name": "hospitalized", "type": "number", "description": "TODO"},
+        {"name": "totalTestResults", "type": "number", "description": "TODO"},
+        {"name": "total", "type": "number", "description": "TODO"},
+        {"name": "posNeg", "type": "number", "description": "TODO"},
+        {"name": "deathIncrease", "type": "number", "description": "TODO"},
+        {"name": "hospitalizedIncrease", "type": "number", "description": "TODO"},
+        {"name": "negativeIncrease", "type": "number", "description": "TODO"},
+        {"name": "positiveIncrease", "type": "number", "description": "TODO"},
+        {"name": "totalTestResultsIncrease", "type": "number", "description": "TODO"},
+
+        {"name": "hash", "type": "string", "description": "TODO"},
+        {"name": "dateChecked", "type": "date", "description": "TODO"},
+        {"name": "lastModified", "type": "date", "description": "TODO"},
+    ],
+    "root": "",
+    "params": []
 }

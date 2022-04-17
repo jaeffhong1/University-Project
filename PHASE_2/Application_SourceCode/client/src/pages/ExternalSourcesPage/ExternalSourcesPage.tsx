@@ -1,6 +1,6 @@
 import { Button, Form, Table, Input, Dropdown, Menu, Checkbox, Tooltip, message } from "antd";
 import React from "react";
-import { IExternalSource, TExternalSourceFieldType } from "../Dashboard/DashboardHome/sources/ExternalSource";
+import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './ExternalSourcesPage.css'
 import { DownOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
@@ -12,7 +12,7 @@ function validateExternalSource(externalSource: any): string | null {
 }
 
 export class ExternalSourcesPage extends React.Component<{
-    externalSources: {[name: string]: IExternalSource},
+    externalSources: TExternalSources | null,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
 
@@ -43,7 +43,7 @@ export class ExternalSourcesPage extends React.Component<{
 
     onFinishFailed() {
         // FIXME
-        //alert("failed for some reason")
+        alert("failed for some reason")
     }
 
     handleAddField(e: any) {
@@ -140,6 +140,8 @@ export class ExternalSourcesPage extends React.Component<{
     
     dataSources: string[] = ["string", "number", "date", "boolean"];// boolean, array, dictioanry
     render() {
+        if (!this.props.externalSources)
+            return <p>Loading external sources, please wait...</p>
         const dataSource = []
         let i = 0;
         for (let es of Object.values(this.props.externalSources)) {

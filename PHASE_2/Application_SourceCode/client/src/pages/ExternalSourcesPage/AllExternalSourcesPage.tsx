@@ -1,12 +1,12 @@
 import { Button, Form, Table, Input, Dropdown, Menu, Checkbox, Tooltip, Space } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, {useState} from "react";
-import { IExternalSource, TExternalSourceFieldType } from "../Dashboard/DashboardHome/sources/ExternalSource";
+import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { format } from "path";
 import './AllExternalSources.css'
 export class AllExternalSourcesPage extends React.Component<{
-    externalSources: {[name: string]: IExternalSource},
+    externalSources: TExternalSources | null,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
 
@@ -16,7 +16,7 @@ export class AllExternalSourcesPage extends React.Component<{
 
     addApi(name: string, object: IExternalSource) {
         let es: IExternalSource;
-        es = {"name": object.name, "url": object.url, "fields": object.fields, "root": object.root, "params":[]};
+        es = {"name": object.name, "url": object.url, "fields": object.fields, "root": object.root, "params":object.params};
         this.props.setExternalSources({...this.props.externalSources, [name]: es})
     }
 
@@ -32,6 +32,8 @@ export class AllExternalSourcesPage extends React.Component<{
     }
 
     render() {
+        if (!this.props.externalSources)
+            return <p>Loading external sources, please wait...</p>
         const dataSource = []
         let i = 0;
         for (let es of Object.values(this.props.externalSources)) {

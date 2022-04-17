@@ -1,22 +1,25 @@
-import { Select } from "antd";
+import { Button, Select } from "antd";
 import React from "react";
-import { TReactComponent } from "../DashboardHome";
+import CacheSystem from "../CacheSystem";
 import { TExternalSourceFieldType } from "../sources/ExternalSource";
+import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
 import { WidgetProps } from "./Widget";
 
 const { Option } = Select;
 
-const allGenericWidgets: {[key: string]: TReactComponent} = {
-    'Scatter Plot': GenericScatter,
-}
+const allGenericWidgets: { [key: string]: typeof React.Component } = {
+    "Scatter Plot": GenericScatter,
+    "Histogram": GenericHistogram,
+};
 
 export class GenericSelector extends React.Component<
     WidgetProps,
     {
         externalSourceName: string | null;
         fields: string[];
-        generic: string | null
+        generic: string | null;
+        axes: any[][] | null; // data fetched from the external source, formatted by axis
     }
 > {
     constructor(props: WidgetProps) {
@@ -25,23 +28,86 @@ export class GenericSelector extends React.Component<
             externalSourceName: null,
             fields: [],
             generic: null,
+            axes: null,
         };
     }
 
     handleNameChange(value: string) {
-        this.setState({ externalSourceName: value, fields: [], generic: null });
+        this.setState({
+            externalSourceName: value,
+            fields: [],
+            generic: null,
+            axes: null,
+        });
     }
 
     handleFieldsChange(fields: string[]) {
-        // this.setState({externalSourceName: value})
-        this.setState({ fields, generic: null });
+        this.setState({ fields, generic: null, axes: null });
     }
 
     handleGenericChange(value: string) {
-        this.setState({ generic: value });
+        this.setState({ generic: value, axes: null });
+        (async () => {
+            if (!this.state.externalSourceName) throw new Error("assertion");
+            const src =
+                this.props.externalSources[this.state.externalSourceName];
+            const url = new URL(
+                "http://seng3011.duckdns.org:8086/front-end/forward"
+            );
+            url.searchParams.append("url", src.url);
+            const resp = await CacheSystem.fetch(url.toString() + "-01", 60 * 60, url.toString());
+            if (typeof resp !== "string") {
+                alert("response != 200:" + (await resp.text()));
+                return;
+            }
+            let items = JSON.parse(resp)
+            if (src.root !== null && src.root != "") {
+                const parts = src.root.split('.')
+                for (let part of parts) {
+                    items = items[part]
+                }
+            }
+            // FIXME: ensure items is in the right format
+
+            const axesDict: { [field: string]: any[] } = {};
+            for (let item of items) {
+                for (let field of this.state.fields) {
+                    if (!axesDict[field]) axesDict[field] = [];
+                    let v = item[field];
+                    // @ts-ignore
+                    const type = src.fields.find(e => e.name == field).type
+                    if (type == "date-concatenated-number") {
+                        // date is number like: 20210307
+                        const year = Math.floor(v / 1e4)
+                        const month = (v - year) / 1e2
+                        const day = v % 100;
+                        v = (new Date(year, month, day)).toDateString()
+                    }
+                    axesDict[field].push(v);
+                }
+            }
+
+            const axes = [];
+            for (let field of Object.values(axesDict)) {
+                axes.push(field);
+            }
+
+            this.setState({ axes });
+        })();
     }
 
     render() {
+        if (this.state.generic) {
+            if (this.state.axes === null) {
+                return <p>Loading data from the API, please wait...</p>;
+            } else {
+                const T = allGenericWidgets[this.state.generic];
+                return <>
+                    <Button onClick={() => this.setState({generic: null})} style={{marginBottom: '12px'}}>Re-select</Button>
+                    <T axes={this.state.axes} axisNames={this.state.fields} />;
+                </>
+            }
+        }
         return (
             <>
                 <Select
@@ -85,16 +151,19 @@ export class GenericSelector extends React.Component<
                     >
                         {Object.keys(allGenericWidgets)
                             .filter((name: string) => {
-                                const wid = allGenericWidgets[name]
+                                const wid = allGenericWidgets[name];
                                 // @ts-ignore
-                                const supports = wid.supports
-                                if (!supports)
-                                    return false;
+                                const supports = wid.supports;
+                                if (!supports) return false;
                                 if (this.state.externalSourceName === null)
-                                    throw new Error("assertion error") // help typescript a little
-                                const fieldTypes: {[key:string]: TExternalSourceFieldType} = {}
-                                for (let field of this.props.externalSources[this.state.externalSourceName].fields) {
-                                    fieldTypes[field.name] = field.type
+                                    throw new Error("assertion error"); // help typescript a little
+                                const fieldTypes: {
+                                    [key: string]: TExternalSourceFieldType;
+                                } = {};
+                                for (let field of this.props.externalSources[
+                                    this.state.externalSourceName
+                                ].fields) {
+                                    fieldTypes[field.name] = field.type;
                                 }
                                 return supports(fieldTypes, this.state.fields);
                             })
