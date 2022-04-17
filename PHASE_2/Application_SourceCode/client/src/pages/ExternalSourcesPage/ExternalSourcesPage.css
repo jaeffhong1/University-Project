@@ -70,3 +70,9 @@
     position: relative;
     left:30%;
 }
+
+.OnboardLayout {
+    position: relative;
+    top: -300px;
+    left: 10%;
+}

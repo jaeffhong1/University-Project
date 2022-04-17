@@ -1,6 +1,6 @@
 import React from 'react';
 import DataStore from '../../datastore';
-import { Button, Layout, Menu, Typography } from 'antd';
+import { Button, Layout, Menu, Space } from 'antd';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import './Home.css'
 
@@ -42,6 +42,10 @@ export default class Home extends React.Component<IProps, IState> {
         window.location.href = "/diseaseBrowseOnboard";
     }
 
+    handlePageChangeExternal() {
+        window.location.href = "/externalOnboard";
+    }
+
     handlePageDashboard() {
         window.location.href = "/dashboard";
     }
@@ -58,6 +62,9 @@ export default class Home extends React.Component<IProps, IState> {
         window.location.href = "/dashboard/disease-cases/diseases";
     }
 
+    handleApiBrowse() {
+        window.location.href = "/dashboard/all-external-sources";
+    }
     render() {
         return (
             <main style={{padding: '1em'}}>
@@ -71,79 +78,94 @@ export default class Home extends React.Component<IProps, IState> {
                 </div>
                 <div className='features'>
                     <h2 style={{color:"white"}} className="services">Our features</h2>
-                    <Button 
-                    className="DashboardHome"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageDashboard}>
-                    Customisable widgets
-                    </Button>
+                    <Space className="FirstFeatures" size={[50,100]} wrap>
+                        <Button 
+                        className="DashboardHome"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageDashboard}>
+                        Customisable widgets
+                        </Button>
 
-                    <Button 
-                    className="MarketPlaceUpload"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageMarketUpload}>
-                    Uploading dashboards
-                    </Button>
+                        <Button 
+                        className="MarketPlaceUpload"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageMarketUpload}>
+                        Uploading dashboards
+                        </Button>
 
-                    <Button 
-                    className="MarketPlaceBrowse"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageMarketBrowse}>
-                    Browsing dashboards
-                    </Button>
+                        <Button 
+                        className="MarketPlaceBrowse"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageMarketBrowse}>
+                        Browsing dashboards
+                        </Button>
+                    </Space>
 
-                    <Button 
-                    className="InputApi"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageMarketBrowse}>
-                    Input your own API
-                    </Button>
+                    <Space className="MoreFeatures" size={[50,100]} wrap>
+                        <Button 
+                        className="InputApi"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handleApiBrowse}>
+                        Browse/Add API
+                        </Button>
 
-                    <Button 
-                    className="BrowseDisease"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageDiseaseBrowse}>
-                    Browse all reports
-                    </Button>
+                        <Button 
+                        className="BrowseDisease"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageDiseaseBrowse}>
+                        Browse all reports
+                        </Button>
+                    </Space>
     
                     <h2 style={{color:"white"}} className="demos">Our demos</h2>
-            
-                    <Button
-                    className="MarketPlaceOnboard"
-                    type="default"
-                    shape="round"
-                    size="large"
-                    onClick={this.handlePageChangeMarket}>
-                    MarketPlace Demo
-                    </Button>
 
-                    <Button
-                    className="DashboardOnboard"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageChangeDashboard}>
-                    Dashboard Brief Demo
-                    </Button>
+                    <Space align="center" className="allDemos" size={[50,100]} wrap>
+                        <Button
+                        className="MarketPlaceOnboard"
+                        type="default"
+                        shape="round"
+                        size="large"
+                        onClick={this.handlePageChangeMarket}>
+                        MarketPlace Demo
+                        </Button>
 
-                    <Button
-                    className="DiseaseOnboard"
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={this.handlePageChangeDisease}>
-                    Disease Demo
-                    </Button>
+                        <Button
+                        className="DashboardOnboard"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageChangeDashboard}>
+                        Dashboard Brief Demo
+                        </Button>
+
+                        <Button
+                        className="DiseaseOnboard"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageChangeDisease}>
+                        Disease Demo
+                        </Button>
+
+                        <Button
+                        className="ExternalOnboard"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageChangeExternal}>
+                        External API Demo
+                        </Button>
+                    </Space>
                 </div>
             </main>
         );

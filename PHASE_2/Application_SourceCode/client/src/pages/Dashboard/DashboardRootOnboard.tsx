@@ -121,6 +121,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                             selectedKeys={['DashboardHome']}//[this.getCurrentPage()]}
                         >
                             <Menu.Item className="Dashboard" key="dashboard" style={{marginTop: 0}}><Link to="/dashboard">Dashboard Brief</Link></Menu.Item>
+                            <Menu.Item key="external-sources"><Link to="/dashboard/all-external-sources">External Sources</Link></Menu.Item>
                             <SubMenu key="sub1" icon={<UserOutlined />} title="Disease Cases">
                                 <Menu.Item key="diseases"><Link to="/dashboard/disease-cases/diseases">Diseases</Link></Menu.Item>
                                 <Menu.Item key="syndromes">Syndromes</Menu.Item>

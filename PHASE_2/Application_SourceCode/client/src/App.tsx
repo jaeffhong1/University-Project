@@ -20,6 +20,8 @@ import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
 import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
 import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
 import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
+import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExternalSourceOnboard';
+import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
@@ -129,6 +131,8 @@ export class App extends React.Component<IProps, IState> {
                                     <Route path="/marketPlaceOnboardUpload" element={<MarketPlaceOnboardUpload datastore={this.state.datastore}/>}/>
                                     <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
                                     <Route path="/diseaseBrowseOnboard" element={<DiseaseBrowseOnboard datastore={this.state.datastore}/>}/>
+                                    <Route path="/externalOnboard" element={<AllExternalSourcesPageOnboard/>}/>
+                                    <Route path="/external-sourcesOnboard" element={<ExternalSourcesPageOnboard/>}/>
                                     <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
                                         <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
