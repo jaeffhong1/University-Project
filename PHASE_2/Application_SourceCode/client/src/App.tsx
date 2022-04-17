@@ -14,7 +14,6 @@ import './App.css'; // custom styles
 import Breadcrumb from './components/Breadcrumb';
 // import datastore
 import DataStore from "./datastore";
-import CacheSystem from './pages/Dashboard/DashboardHome/CacheSystem';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
 import { TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
@@ -61,23 +60,65 @@ export class App extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props); 
         (async () => {
-            const resp = await CacheSystem.fetch("external-apis-000", 10, "http://seng3011.duckdns.org/marketplace/api/get")
-            if (typeof resp !== "string") {
-                console.error(resp)
-                throw new Error("fetching external sources failed")
-            }
-            const externalSources = JSON.parse(resp) as TExternalSources;
-            for (let es of Object.values(externalSources)) {
-                // @ts-ignore
-                es.fields = es.params; // they're swapped in the db rn
-            }
-            this.setState({externalSources: externalSources})
+            // const resp = await CacheSystem.fetch("external-apis-000", 10, "http://seng3011.duckdns.org/marketplace/api/get")
+            // if (typeof resp !== "string") {
+            //     console.error(resp)
+            //     throw new Error("fetching external sources failed")
+            // }
+            // const externalSources = JSON.parse(resp) as TExternalSources;
+            // for (let es of Object.values(externalSources)) {
+            //     // @ts-ignore
+            //     es.fields = es.params; // they're swapped in the db rn
+            // }
+            // this.setState({externalSources: externalSources})
         })()
     }
 
     state: IState = {
         datastore: new DataStore(this),
-        externalSources: null,
+        externalSources: {
+            "covidtracking": {
+                "url": "https://api.covidtracking.com/v1/us/daily.json",
+                "fields": [
+                    {"name": "date", "type": "date-concatenated-number", "description": "date as a number"},
+                    {"name": "states", "type": "number", "description": "unknown"},
+                    {"name": "positive", "type": "number", "description": "positive tests"},
+                    {"name": "negative", "type": "number", "description": "negative tests"},
+                    {"name": "pending", "type": "number", "description": "pending tests"},
+                    {"name": "hospitalizedCurrently", "type": "number", "description": "Number of people hospitalized during this period"},
+                    {"name": "hospitalizedCumulative", "type": "number", "description": "Number of people hospitalized"},
+                    {"name": "inIcuCurrently", "type": "number", "description": "TODO"},
+                    {"name": "inIcuCumulative", "type": "number", "description": "TODO"},
+                    {"name": "onVentilatorCurrently", "type": "number", "description": "TODO"},
+                    {"name": "onVentilatorCumulative", "type": "number", "description": "TODO"},
+                    {"name": "death", "type": "number", "description": "TODO"},
+                    {"name": "hospitalized", "type": "number", "description": "TODO"},
+                    {"name": "totalTestResults", "type": "number", "description": "TODO"},
+                    {"name": "total", "type": "number", "description": "TODO"},
+                    {"name": "posNeg", "type": "number", "description": "TODO"},
+                    {"name": "deathIncrease", "type": "number", "description": "TODO"},
+                    {"name": "hospitalizedIncrease", "type": "number", "description": "TODO"},
+                    {"name": "negativeIncrease", "type": "number", "description": "TODO"},
+                    {"name": "positiveIncrease", "type": "number", "description": "TODO"},
+                    {"name": "totalTestResultsIncrease", "type": "number", "description": "TODO"},
+
+                    {"name": "hash", "type": "string", "description": "TODO"},
+                    {"name": "dateChecked", "type": "date", "description": "TODO"},
+                    {"name": "lastModified", "type": "date", "description": "TODO"},
+                ],
+                "root": "",
+            },
+            "NSW": {
+                "url": "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
+                "root": "data",
+                "fields": [
+                    {"name": "date", "type": "date", "description": "the date"},
+                    {"name": "postcode", "type": "string", "description": "the postcode"},
+                    {"name": "total_cases", "type": "number", "description": "total number of cases"},
+                    {"name": "active_cases", "type": "number", "description": "number of active cases"},
+                ]
+            }
+        },
     }
 
     datastoreUpdate() {

@@ -1,4 +1,4 @@
-export type TExternalSourceFieldType = "string" | "number" | "date";
+export type TExternalSourceFieldType = "string" | "number" | "date" | "date-concatenated-number";
 
 export interface IExternalSource {
     url: string;

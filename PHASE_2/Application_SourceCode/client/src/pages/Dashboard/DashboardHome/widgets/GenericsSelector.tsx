@@ -45,7 +45,6 @@ export class GenericSelector extends React.Component<
     handleGenericChange(value: string) {
         this.setState({ generic: value, axes: null });
         (async () => {
-            console.log("going!");
             if (!this.state.externalSourceName) throw new Error("assertion");
             const src =
                 this.props.externalSources[this.state.externalSourceName];
@@ -59,21 +58,37 @@ export class GenericSelector extends React.Component<
                 return;
             }
             let items = await resp.json();
-            if (src.root !== null) {
-                items = items[src.root];
+            if (src.root !== null && src.root != "") {
+                const parts = src.root.split('.')
+                for (let part of parts) {
+                    items = items[part]
+                }
             }
-            // FIXME: ensure data is in the right format
+            // FIXME: ensure items is in the right format
+
             const axesDict: { [field: string]: any[] } = {};
             for (let item of items) {
                 for (let field of this.state.fields) {
                     if (!axesDict[field]) axesDict[field] = [];
-                    axesDict[field].push(item[field]);
+                    let v = item[field];
+                    // @ts-ignore
+                    const type = src.fields.find(e => e.name == field).type
+                    if (type == "date-concatenated-number") {
+                        // date is number like: 20210307
+                        const year = Math.floor(v / 1e4)
+                        const month = (v - year) / 1e2
+                        const day = v % 100;
+                        v = (new Date(year, month, day)).toDateString()
+                    }
+                    axesDict[field].push(v);
                 }
             }
+
             const axes = [];
             for (let field of Object.values(axesDict)) {
                 axes.push(field);
             }
+            console.log(axes)
             this.setState({ axes });
         })();
     }

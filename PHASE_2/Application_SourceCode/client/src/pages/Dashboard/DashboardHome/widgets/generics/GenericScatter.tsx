@@ -15,7 +15,7 @@ export class GenericScatter extends React.Component<Props> {
         if (axes.length !== 2) return false;
         const [xaxis, yaxis] = axes;
         return (
-            (fields[xaxis] == "number" || fields[xaxis] == "date") &&
+            (fields[xaxis] == "number" || fields[xaxis].startsWith("date")) &&
             fields[yaxis] == "number"
         );
     }
