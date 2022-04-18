@@ -28,19 +28,8 @@ print(mydb)
 cursor = mydb.cursor()
 
 query = """
-SELECT a.name AS name, a.url AS url, a.root AS root, params, fields
-FROM apis a
-WHERE a.id = %s
-JOIN has_params hp
-ON a.id = hp.api
-JOIN parameters p
-ON hp.parameter = p.id
-JOIN has_fields hf
-ON a.id = hf.api
-JOIN p
-ON hf.field = p.id
-JOIN types t
-ON p.type = t.id
+INSERT INTO types (name)
+VALUES ("date-concatenated-number")
 """
 
 cursor.execute(query)
