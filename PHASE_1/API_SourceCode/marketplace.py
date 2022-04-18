@@ -150,7 +150,7 @@ def add_api():
     except:
         mydb.rollback()
         cursor.close()
-        abort(69)
+        raise
 
     try:
         # Get API id
@@ -167,7 +167,34 @@ def add_api():
     except:
         mydb.rollback()
         cursor.close()
-        abort(69)
+        raise
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"status": "success"})
+
+
+@marketplace.route("/marketplace/api/delete", methods=["POST"])
+def delete_api():
+    (api_id,) = get_fields_from_body(
+        api_id=int,
+    )
+
+    api_id = int(api_id)
+
+    conn = db_conn()
+    cursor = conn.cursor()
+
+    # Insert API
+    query = """
+    DELETE FROM apis
+    WHERE id = %s
+    LIMIT 1
+    """
+    data = (api_id,)
+    cursor.execute(query, data)
 
     conn.commit()
     cursor.close()
@@ -233,7 +260,7 @@ def get_api():
     return jsonify(returnAPIs)
 
 
-@marketplace.route("/marketplace/types", methods=["GET"])
+@marketplace.route("/marketplace/types/get", methods=["GET"])
 def get_types():
 
     returnTypes = []
@@ -256,3 +283,26 @@ def get_types():
     conn.close()
 
     return jsonify(returnTypes)
+
+
+@marketplace.route("/marketplace/types/add", methods=["POST"])
+def add_type():
+
+    (new_type,) = get_fields_from_body(new_type=str)
+
+    conn = db_conn()
+    cursor = conn.cursor()
+
+    # Insert type
+    query = """
+    INSERT INTO types(name)
+    VALUES (%s)
+    """
+    data = (new_type,)
+    cursor.execute(query, data)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"status": "success"})
