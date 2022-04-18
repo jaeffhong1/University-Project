@@ -1,14 +1,19 @@
-export type TExternalSourceFieldType = "string" | "number" | "date" | "date-concatenated-number";
+export type TExternalSourceFieldType = "string" | "number" | "date" | "boolean" | "date-concatenated-number";
 
 export interface IExternalSource {
+    name: string,
     url: string;
-    root: string | null;
-    params?: {}[], // unused for now
+    root: string,
     fields: {
         name: string;
         type: TExternalSourceFieldType;
         description: string;
-    }[];
+    }[],
+    params: {
+        name: string;
+        type: TExternalSourceFieldType;
+        description: string;
+    }[],
 }
 
-export type TExternalSources = { [name: string]: IExternalSource };
+export type TExternalSources = {[name: string]: IExternalSource}

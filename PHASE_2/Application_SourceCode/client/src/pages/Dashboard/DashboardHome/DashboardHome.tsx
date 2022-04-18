@@ -1,24 +1,24 @@
 //import Plot from "react-plotly.js";
 // mosaic
 import "@blueprintjs/core/lib/css/blueprint.css";
-import React from "react";
+import React, { useEffect, useState } from 'react';
 //import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import { Mosaic, MosaicNode, MosaicWindow } from "react-mosaic-component";
-import "react-mosaic-component/react-mosaic-component.css";
+import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
+import 'react-mosaic-component/react-mosaic-component.css';
 // data
-import DataStore from "../../../datastore";
+import DataStore from '../../../datastore';
 import SourceAdaptorEpiWatch from "./sources/epiwatch";
 import { TExternalSources } from "./sources/ExternalSource";
 import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 // widgets
 //import SourceSelector from "./SourceSelectors";
-import { CasesAgainstTime } from "./widgets/CasesAgainstTime";
-import CountReports from "./widgets/CountReports";
+import { CasesAgainstTime } from './widgets/CasesAgainstTime';
+import CountReports from './widgets/CountReports';
 import { GenericSelector } from "./widgets/GenericsSelector";
-import { HeatMap } from "./widgets/HeatMap";
-import { Tally } from "./widgets/Tally";
-import { TreeMap } from "./widgets/TreeMap";
-import Twitter from "./widgets/Twitter";
+import { HeatMap } from './widgets/HeatMap';
+import { Tally } from './widgets/Tally';
+import { TreeMap } from './widgets/TreeMap';
+import Twitter from './widgets/Twitter';
 import Widget, { WidgetProps } from "./widgets/Widget";
 
 export type TReport = {

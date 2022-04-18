@@ -55,9 +55,6 @@
 .DashboardHome {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:29.5%;
-    top: 30px;
     background-color: white;
     width: 200px;
 }
@@ -65,9 +62,6 @@
 .MarketPlaceUpload {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:33.5%;
-    top: 30px;
     background-color: white;
     width: 200px;
 }
@@ -75,9 +69,6 @@
 .MarketPlaceBrowse {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:37.5%;
-    top: 30px;
     background-color: white;
     width: 200px;
 }
@@ -85,9 +76,6 @@
 .InputApi {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:-60px;
-    top: 100px;
     background-color: white;
     width: 200px;
 }
@@ -95,20 +83,31 @@
 .BrowseDisease {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:15px;
-    top: 100px;
     background-color: white;
     width: 200px;
 }
 
+.FirstFeatures {
+    position: relative;
+    left: 30.6%;
+    top: 7%;
+}
+.MoreFeatures {
+    position: relative;
+    left: -1%;
+    top: 24%;
+}
+
+
+.allDemos {
+    position: relative;
+    left: 30.8%;
+    top: 30%;
+}
 
 .MarketPlaceOnboard {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:29.5%;
-    top: 130px;
     background-color: white;
     width: 200px;
 }
@@ -116,9 +115,7 @@
 .DashboardOnboard {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:33.5%;
-    top: 130px;
+
     background-color: white;
     width: 200px;
 }
@@ -126,9 +123,16 @@
 .DiseaseOnboard {
     font-family: Cochin, Georgia;
     font-size: 40px;
-    position: relative;
-    left:37.5%;
-    top: 130px;
     background-color: white;
     width: 200px;
+}
+
+.ExternalOnboard {
+    font-family: Cochin, Georgia;
+    font-size: 40px;
+    background-color: white;
+    width: 200px;
+    position: relative;
+    top: 75px;
+    left: -375%;
 }

@@ -14,17 +14,21 @@ import './App.css'; // custom styles
 import Breadcrumb from './components/Breadcrumb';
 // import datastore
 import DataStore from "./datastore";
+import { DataSourceSelect } from './components/DataSourceSelect';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
-import { TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
 import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
+import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExternalSourceOnboard';
+import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
+import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
-import Browse from './pages/Dashboard/MarketPlace/Browse/browseDashboards';
+import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
+import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
 import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
+import Browse from './pages/Dashboard/MarketPlace/Browse/browseDashboards';
 import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
 import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
-import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
@@ -78,6 +82,7 @@ export class App extends React.Component<IProps, IState> {
         datastore: new DataStore(this),
         externalSources: {
             "covidtracking": {
+                "name": "covidtracking",
                 "url": "https://api.covidtracking.com/v1/us/daily.json",
                 "fields": [
                     {"name": "date", "type": "date-concatenated-number", "description": "date as a number"},
@@ -107,8 +112,10 @@ export class App extends React.Component<IProps, IState> {
                     {"name": "lastModified", "type": "date", "description": "TODO"},
                 ],
                 "root": "",
+                "params": []
             },
             "NSW": {
+                "name": "NSW",
                 "url": "https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json",
                 "root": "data",
                 "fields": [
@@ -116,7 +123,8 @@ export class App extends React.Component<IProps, IState> {
                     {"name": "postcode", "type": "string", "description": "the postcode"},
                     {"name": "total_cases", "type": "number", "description": "total number of cases"},
                     {"name": "active_cases", "type": "number", "description": "number of active cases"},
-                ]
+                ],
+                "params": []
             }
         },
     }
@@ -153,9 +161,17 @@ export class App extends React.Component<IProps, IState> {
                                     <Route path="/marketPlaceOnboardUpload" element={<MarketPlaceOnboardUpload datastore={this.state.datastore}/>}/>
                                     <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
                                     <Route path="/diseaseBrowseOnboard" element={<DiseaseBrowseOnboard datastore={this.state.datastore}/>}/>
+                                    <Route path="/externalOnboard" element={<AllExternalSourcesPageOnboard/>}/>
+                                    <Route path="/external-sourcesOnboard" element={<ExternalSourcesPageOnboard/>}/>
                                     <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
                                         <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
+                                        <Route path="/dashboard/external-sources" element={
+                                            <ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            } />
+                                        <Route path="/dashboard/all-external-sources" element={
+                                            <AllExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            } />
                                         <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                         <Route path="/dashboard/market-place/browse" element={<Browse />} />
                                         <Route path="/dashboard/external-sources" element={
