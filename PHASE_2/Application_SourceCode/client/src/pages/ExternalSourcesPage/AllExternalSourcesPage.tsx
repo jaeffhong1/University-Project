@@ -1,10 +1,8 @@
-import { Button, Form, Table, Input, Dropdown, Menu, Checkbox, Tooltip, Space } from "antd";
-import TextArea from "antd/lib/input/TextArea";
-import React, {useState} from "react";
-import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { format } from "path";
-import './AllExternalSources.css'
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Space, Table } from "antd";
+import React from "react";
+import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
+import './AllExternalSources.css';
 export class AllExternalSourcesPage extends React.Component<{
     externalSources: TExternalSources | null,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
@@ -34,46 +32,48 @@ export class AllExternalSourcesPage extends React.Component<{
     render() {
         if (!this.props.externalSources)
             return <p>Loading external sources, please wait...</p>
+
         const dataSource = []
         let i = 0;
         for (let es of Object.values(this.props.externalSources)) {
             dataSource.push({
                 key: '' + (i++),
-                json: JSON.stringify(es),
+                name: es.name,
+                url: es.url,
+                root: <code>'{es.root}'</code>,
+                fields: <Table dataSource={es.fields} columns={[
+                    { key: 'name', dataIndex: 'name', title: "Name" },
+                    { key: 'description', dataIndex: 'description', title: "Description" }
+                ]} />
             })
         }
 
-
-        const allDataSources:any = []
-        for (let es of dataSource) {
-            const dataDict = JSON.parse(es.json);
-            allDataSources.push(dataDict);
-        }
-
-        var fieldTypes: TExternalSourceFieldType = "string"; 
-//        const newField = {'name': 'example', 'type': fieldTypes, 'description': 'examplle'};
- //       const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data"}
-
-  //      if (!(this.containsObject(example, allDataSources))) {
-  //          allDataSources.push(example)
-  //      }
         const columns = [
-            { key: 'json', dataIndex: 'json', title: "JSON" },
+            { key: 'name', dataIndex: 'name', title: "API Name" },
+            { key: 'url', dataIndex: 'url', title: "URL" },
+            { key: 'root', dataIndex: 'root', title: "Root" },
+            { key: 'fields', dataIndex: 'fields', title: "Fields" },
         ]
 
-        const types = ['date', 'string', 'number']
+
         return <div style={{padding: '12px'}}>
-            <Table dataSource={dataSource} columns={columns} />
+            {Object.values(this.props.externalSources).map(es => (
+                <>
+                    <h2>{es.name} <small><a href={es.url}>{es.url}</a> <code style={{marginLeft: 12}}>root='{es.root}'</code></small></h2>
+                    
+                    <Table dataSource={es.fields} columns={[
+                        { key: 'name', dataIndex: 'name', title: "Name" },
+                        { key: 'type', dataIndex: 'type', title: "Type" },
+                        { key: 'description', dataIndex: 'description', title: "Description" },
+                    ]} />
+                </>
+            ))}
 
             <Space size={[50,100]} wrap>
                 <Button size="large" className="addAPI" onClick={this.handleAddApi}>
                     Add an API
                     <PlusOutlined style={{color: "blue"}} className="plusIcon"/>
                 </Button>
-
-                {allDataSources.map((data:any, index:any) => (
-                    <Button size="large" className="DifferentAPI" onClick={this.addApi.bind(this, data.name, allDataSources[index])} key={index}>{data.name} <PlusOutlined className="plusIcon"/> </Button>
-                ))}
             </Space>
         </div>
     }
