@@ -1,6 +1,8 @@
-import { Select } from "antd";
+import { Button, Select } from "antd";
 import React from "react";
+import CacheSystem from "../CacheSystem";
 import { TExternalSourceFieldType } from "../sources/ExternalSource";
+import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
 import { WidgetProps } from "./Widget";
 
@@ -8,6 +10,7 @@ const { Option } = Select;
 
 const allGenericWidgets: { [key: string]: typeof React.Component } = {
     "Scatter Plot": GenericScatter,
+    "Histogram": GenericHistogram,
 };
 
 export class GenericSelector extends React.Component<
@@ -45,7 +48,6 @@ export class GenericSelector extends React.Component<
     handleGenericChange(value: string) {
         this.setState({ generic: value, axes: null });
         (async () => {
-            console.log("going!");
             if (!this.state.externalSourceName) throw new Error("assertion");
             const src =
                 this.props.externalSources[this.state.externalSourceName];
@@ -53,27 +55,43 @@ export class GenericSelector extends React.Component<
                 "http://seng3011.duckdns.org:8086/front-end/forward"
             );
             url.searchParams.append("url", src.url);
-            const resp = await fetch(url.toString());
-            if (resp.status !== 200) {
+            const resp = await CacheSystem.fetch(url.toString() + "-01", 60 * 60, url.toString());
+            if (typeof resp !== "string") {
                 alert("response != 200:" + (await resp.text()));
                 return;
             }
-            let items = await resp.json();
-            if (src.root !== null) {
-                items = items[src.root];
+            let items = JSON.parse(resp)
+            if (src.root !== null && src.root != "") {
+                const parts = src.root.split('.')
+                for (let part of parts) {
+                    items = items[part]
+                }
             }
-            // FIXME: ensure data is in the right format
+            // FIXME: ensure items is in the right format
+
             const axesDict: { [field: string]: any[] } = {};
             for (let item of items) {
                 for (let field of this.state.fields) {
                     if (!axesDict[field]) axesDict[field] = [];
-                    axesDict[field].push(item[field]);
+                    let v = item[field];
+                    // @ts-ignore
+                    const type = src.fields.find(e => e.name == field).type
+                    if (type == "date-concatenated-number") {
+                        // date is number like: 20210307
+                        const year = Math.floor(v / 1e4)
+                        const month = (v - year) / 1e2
+                        const day = v % 100;
+                        v = (new Date(year, month, day)).toDateString()
+                    }
+                    axesDict[field].push(v);
                 }
             }
+
             const axes = [];
             for (let field of Object.values(axesDict)) {
                 axes.push(field);
             }
+
             this.setState({ axes });
         })();
     }
@@ -84,7 +102,10 @@ export class GenericSelector extends React.Component<
                 return <p>Loading data from the API, please wait...</p>;
             } else {
                 const T = allGenericWidgets[this.state.generic];
-                return <T axes={this.state.axes} axisNames={this.state.fields} />;
+                return <>
+                    <Button onClick={() => this.setState({generic: null})} style={{marginBottom: '12px'}}>Re-select</Button>
+                    <T axes={this.state.axes} axisNames={this.state.fields} />;
+                </>
             }
         }
         return (

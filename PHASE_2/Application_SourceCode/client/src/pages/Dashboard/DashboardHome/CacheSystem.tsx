@@ -8,12 +8,16 @@ export default class CacheSystem {
      */
     static async fetch(
         name: string,
+        durationSeconds: number,
         resource: RequestInfo,
         init?: RequestInit
     ): Promise<string | Response> {
-        const value = localStorage.getItem(name);
-        if (value != null) {
-            return value;
+        name += '-v1.0.0'
+        const data = localStorage.getItem(name);
+        if (data != null) {
+            const {content, at} = JSON.parse(data)
+            if (durationSeconds > 0 && Math.floor(Date.now() / 1000) < at + durationSeconds)
+                return content
         }
 
         const response = await fetch(resource, init);
@@ -22,7 +26,11 @@ export default class CacheSystem {
         }
 
         const str = await response.text();
-        localStorage.setItem(name, str);
+        const obj = {
+            content: str,
+            at: Math.floor(Date.now() / 1000),
+        }
+        localStorage.setItem(name, JSON.stringify(obj));
         return str;
     }
 }

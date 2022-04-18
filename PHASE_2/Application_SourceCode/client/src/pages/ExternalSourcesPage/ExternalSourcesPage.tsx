@@ -1,7 +1,7 @@
 import { Button, Form, Table } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React from "react";
-import { IExternalSource } from "../Dashboard/DashboardHome/sources/ExternalSource";
+import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 
 function validateExternalSource(externalSource: any): string | null {
     if (!('url' in externalSource))
@@ -11,7 +11,7 @@ function validateExternalSource(externalSource: any): string | null {
 }
 
 export class ExternalSourcesPage extends React.Component<{
-    externalSources: {[name: string]: IExternalSource},
+    externalSources: TExternalSources | null;
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
     onFinish(values: {json: string, name: string}) {
@@ -41,6 +41,9 @@ export class ExternalSourcesPage extends React.Component<{
     }
 
     render() {
+        if (!this.props.externalSources)
+            return <p>Loading external sources, please wait...</p>
+
         const dataSource = []
         let i = 0;
         for (let es of Object.values(this.props.externalSources)) {

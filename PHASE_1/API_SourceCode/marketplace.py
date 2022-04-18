@@ -214,6 +214,7 @@ def get_params(cur, api, param_type):
     AND p.param_type = %s
     """
     cur.execute(query, (api, param_type))
+
     result = cur.fetchall()
 
     for row in result:
