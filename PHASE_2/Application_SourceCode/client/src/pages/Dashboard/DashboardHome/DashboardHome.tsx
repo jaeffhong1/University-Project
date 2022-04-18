@@ -38,10 +38,6 @@ export type TSource = {
     reports: TReport[]
 }
 
-const titleMap: Record<string, string> = {
-    window0: "Select a widget",
-    SourceSelector: "Source selector",
-};
 export type TReactComponent = typeof React.Component | ((p: WidgetProps) => JSX.Element)
 
 const allWidgets: {[key: string]: TReactComponent } = {
@@ -128,15 +124,15 @@ const DashboardHome = (props: {datastore: DataStore}) => {
 
     const val: MosaicNode<string> = {
         direction: 'row',
-        first: 'window0',
-        second: 'window1',
-        splitPercentage: 80
+        first: 'WidgetSelector',
+        second: 'HiddenWidget',
+        splitPercentage: 70
     }
     const [mos, setMos] = useState(val)
 
     const titleMap: Record<string, string> = {
-        window0: "Select a widget",
-        window1: "Select a widget",
+        SourceSelector: "Select a widget",
+        HiddenWidget: "Hidden Widget",
     };
 
     const [count, setCount] = useState(5);
@@ -152,20 +148,23 @@ const DashboardHome = (props: {datastore: DataStore}) => {
                             setMos(newNode)
                         }
                     }
-                    renderTile={(id, path) => (
-                        <MosaicWindow<string> 
-                            path={path} 
-                            createNode={() => {
-                                setCount(count + 1)
-                                const name = 'window' + count.toString()
-                                titleMap[name] = name
-                                return name
-                            }} 
-                            title={titleMap[id]}
-                        >
-                            <Widget source={source} mosaic={{titleMap, id}} allWidgets={allWidgets} />
-                        </MosaicWindow>
-                    )}
+                    renderTile={(id, path) => {
+                        console.log("id:", id);
+                        return (
+                            <MosaicWindow<string> 
+                                path={path} 
+                                createNode={() => {
+                                    setCount(count + 1)
+                                    const name = 'window' + count.toString()
+                                    titleMap[name] = name
+                                    return name
+                                }} 
+                                title={titleMap[id]}
+                            >
+                                <Widget initialWidgetType={id} source={source} mosaic={{titleMap, id}} allWidgets={allWidgets} />
+                            </MosaicWindow>
+                        )
+                    }}
                     // @ts-ignore
                     initialValue={mos}
                 />

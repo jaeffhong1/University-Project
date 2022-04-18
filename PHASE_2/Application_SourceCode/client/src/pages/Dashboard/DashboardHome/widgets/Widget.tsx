@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { TReactComponent, TSource } from "../DashboardHome";
 import WidgetSelector from "./WidgetSelector";
+import HiddenWidget from './HiddenWidget';
 
 interface Props {
     mosaic: {
@@ -9,7 +10,8 @@ interface Props {
         titleMap: Record<string, string>
     },
     source: TSource | null,
-    allWidgets: {[key: string]: TReactComponent }
+    allWidgets: {[key: string]: TReactComponent },
+    initialWidgetType: string
 }
 
 export interface WidgetProps {
@@ -17,15 +19,19 @@ export interface WidgetProps {
 }
 
 export default function Widget(props: Props): JSX.Element {
-    const [type, setType] = useState("select");
-    if (type === "select") {
-        return <WidgetSelector setType={setType} allWidgets={props.allWidgets} />
+    // initialise the widget type
+    const [widgetType, setWidgetType] = useState(props.initialWidgetType);
+
+    if (widgetType === "WidgetSelector") {
+        return <WidgetSelector setType={setWidgetType} allWidgets={props.allWidgets} />
+    } else if (widgetType === "HiddenWidget") {
+        return <HiddenWidget></HiddenWidget>
     } else if (props.source == null) {
         return <p>Loading sources, please wait...</p>
     } else {
-        const T = props.allWidgets[type];
+        const T = props.allWidgets[widgetType];
         if (T === undefined) {
-            return <p>Unknown widget type <code>{type}</code></p>
+            return <p>Unknown widget type <code>{widgetType}</code></p>
         }
         return <T source={props.source} />
     }
