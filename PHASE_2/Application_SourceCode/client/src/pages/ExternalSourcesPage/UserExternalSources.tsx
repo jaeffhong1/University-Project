@@ -1,11 +1,9 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Space, Table } from "antd";
+import { PlusOutlined ,MinusOutlined } from '@ant-design/icons';
+import { Button, Space, Table } from "antd";
 import React from "react";
-import { IExternalSource, TExternalSources, TExternalSourceFieldType } from "../Dashboard/DashboardHome/sources/ExternalSource";
+import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
-import { UserExternalSourcesPage } from './UserExternalSources';
-export class AllExternalSourcesPage extends React.Component<{
-    userExternalSources: TExternalSources | null,
+export class UserExternalSourcesPage extends React.Component<{
     externalSources: TExternalSources | null,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
@@ -14,14 +12,11 @@ export class AllExternalSourcesPage extends React.Component<{
         window.location.href = "/dashboard/external-sources";
     }
 
-    addApi(name: string, object: IExternalSource) {
+    removeApi(name: string, object: IExternalSource) {
         let es: IExternalSource;
-        es = {"name": object.name, "url": object.url, "fields": object.fields, "root": object.root, "params":object.params};
-        if (this.props.userExternalSources != null && name in this.props.userExternalSources) {
-            message.info("API already in your external sources!");
-            return;
-        }
-        this.props.setExternalSources({...this.props.userExternalSources, [name]: es})
+        let new_es: TExternalSources = {...this.props.externalSources};
+        delete new_es[name];
+        this.props.setExternalSources(new_es);
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -51,7 +46,6 @@ export class AllExternalSourcesPage extends React.Component<{
                 params: es.params
             })
         }
-
         const columns = [
             { key: 'name', dataIndex: 'name', title: "API Name" },
             { key: 'url', dataIndex: 'url', title: "URL" },
@@ -74,8 +68,13 @@ export class AllExternalSourcesPage extends React.Component<{
             ))}
 
             <Space size={[50,100]} wrap>
+                <Button size="large" className="addAPI" onClick={this.handleAddApi}>
+                    Add an API
+                    <PlusOutlined style={{color: "blue"}} className="plusIcon"/>
+                </Button>
+
                 {dataSource.map((data:any, index:any) => (
-                    <Button size="large" className="DifferentAPI" onClick={this.addApi.bind(this, data.name, dataSource[index])} key={index}>{data.name} <PlusOutlined className="plusIcon"/> </Button>
+                    <Button size="large" className="DifferentAPI" onClick={this.removeApi.bind(this, data.name, dataSource[index])} key={index}>{data.name} <MinusOutlined className="plusIcon"/> </Button>
                 ))}
             </Space>
         </div>

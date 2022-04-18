@@ -12,7 +12,9 @@ function validateExternalSource(externalSource: any): string | null {
 }
 
 export class ExternalSourcesPage extends React.Component<{
+    userExternalSources: TExternalSources | null,
     externalSources: TExternalSources | null,
+    setUserExternalSources: (s: {[name: string]: IExternalSource}) => void,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
 
@@ -37,6 +39,7 @@ export class ExternalSourcesPage extends React.Component<{
         }
 
         this.props.setExternalSources({...this.props.externalSources, [values.name]: es})
+        this.props.setUserExternalSources({...this.props.userExternalSources, [values.name]: es})
         message.info("Your API has successfully been added")
     }
     

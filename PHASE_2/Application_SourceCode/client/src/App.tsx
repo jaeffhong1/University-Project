@@ -29,6 +29,7 @@ import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExtern
 import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
 import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
 import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
+import { UserExternalSourcesPage } from './pages/ExternalSourcesPage/UserExternalSources';
 // import my pages
 import Home from './pages/Home/Home';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
@@ -58,6 +59,7 @@ interface IProps {}
 interface IState {
     datastore: DataStore;
     externalSources: TExternalSources | null,
+    userExternalSources: TExternalSources | null
 }
 
 export class App extends React.Component<IProps, IState> {
@@ -73,6 +75,9 @@ export class App extends React.Component<IProps, IState> {
                 throw new Error("fetching external sources failed")
             }
             const externalSources = JSON.parse(resp) as TExternalSources;
+            externalSources["NSW COVID LGA"]["name"] = "NSW COVID LGA";
+            externalSources["SA COVID"]["name"] = "SA COVID";
+            externalSources["covidtracking"]["name"] = "covidtracking";
             this.setState({externalSources: externalSources})
         })()
     }
@@ -80,6 +85,7 @@ export class App extends React.Component<IProps, IState> {
     state: IState = {
         datastore: new DataStore(this),
         externalSources: null,
+        userExternalSources: {},
         // externalSources: {
         //     "covidtracking": {
         //         "name": "covidtracking",
@@ -139,6 +145,10 @@ export class App extends React.Component<IProps, IState> {
         this.setState({ externalSources })
     }
 
+    setUserExternalSources(userExternalSources: TExternalSources) {
+        this.setState({ userExternalSources })
+    }
+
     render() {
         return (
             <div id="app">
@@ -167,16 +177,16 @@ export class App extends React.Component<IProps, IState> {
                                         <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                         <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
                                         <Route path="/dashboard/external-sources" element={
-                                            <ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            <ExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />
                                             } />
                                         <Route path="/dashboard/all-external-sources" element={
-                                            <AllExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
+                                            <AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />
+                                            } />
+                                        <Route path="/dashboard/user-external-sources" element={
+                                            <UserExternalSourcesPage externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)} />
                                             } />
                                         <Route path="/dashboard/market-place/upload" element={<Upload />} />
                                         <Route path="/dashboard/market-place/browse" element={<Browse />} />
-                                        <Route path="/dashboard/external-sources" element={
-                                            <ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />
-                                            } />
                                     </Route>
                                     <Route path="*" element={<PageNotFound/>}/>
                                 </Routes>
