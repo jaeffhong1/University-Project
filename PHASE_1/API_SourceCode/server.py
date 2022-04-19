@@ -447,7 +447,7 @@ def get_country_by_geoid():
     return jsonify(result)
 
 
-@app.route("/location/who", methods=["GET"])
+@app.route("/other-team/who", methods=["GET"])
 def turn_who_location_to_id():
 
     start_date = request.values.get("start_date")
@@ -460,6 +460,11 @@ def turn_who_location_to_id():
         timezone = CIDRAP_TIMEZONE
 
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+
+    # put date in the format they like
+    start_date = start_date[:len("YYYY-MM-DD")]
+    end_date = end_date[:len("YYYY-MM-DD")]
+
     api_url = "http://epidemicscraper-env.eba-t2stx6uv.us-east-1.elasticbeanstalk.com/"
     api_url_2 = (
         api_url
@@ -662,9 +667,9 @@ def convert_main_text_article(article):
 
 
 if __name__ == "__main__":
-    test_scrape()
-    scheduler = BackgroundScheduler()
-    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
-    scheduler.start()
-    app.run(host="0.0.0.0", port=36042)
+    # test_scrape()
+    # scheduler = BackgroundScheduler()
+    # scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
+    # scheduler.start()
+    app.run(host="0.0.0.0", port=36042, debug=True)
     # app.run(host="0.0.0.0", port=36042, debug=True)
