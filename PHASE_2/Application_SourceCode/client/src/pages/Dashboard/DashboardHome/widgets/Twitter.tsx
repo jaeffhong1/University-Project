@@ -14,58 +14,64 @@ interface State {
 type Counts = any;
 
 async function getCounts(): Promise<Counts> {
-    const url = new URL('http://seng3011.duckdns.org:8086/front-end/twitter-counts')
-    url.searchParams.append("query", "sick OR tired")
-    url.searchParams.append("granularity", "day")
-    const data = await CacheSystem.fetch('twitter-counts-02', url.toString(), {})
+    const url = new URL(
+        "http://seng3011.duckdns.org:8086/front-end/twitter-counts"
+    );
+    url.searchParams.append("query", "sick OR tired");
+    url.searchParams.append("granularity", "day");
+    const data = await CacheSystem.fetch(
+        "twitter-counts-02",
+        -1,
+        url.toString(),
+        {}
+    );
     if (typeof data !== "string") {
-        console.error(data)
-        throw new Error()
+        console.error(data);
+        throw new Error();
     }
-    const x = []
-    const y = []
+    const x = [];
+    const y = [];
     for (let item of JSON.parse(data).data) {
-        x.push(item.start)
-        y.push(item.tweet_count)
+        x.push(item.start);
+        y.push(item.tweet_count);
     }
-    return {x, y}
+    return { x, y };
 }
 
 export default class Twitter extends React.Component<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
         this.state = {
             counts: {
                 x: [],
-                y: []
-            }
-        }
+                y: [],
+            },
+        };
     }
 
     componentDidMount() {
-        console.log("foobar")
-        getCounts().then(c => {
-            console.log("yo", c)
-            this.setState({...this.state, counts: c})
-        })
+        getCounts().then((c) => {
+            this.setState({ ...this.state, counts: c });
+        });
     }
 
     render() {
         // return <p><code>{JSON.stringify(this.state)}</code></p>
         return (
-            <Plot 
-                data={
-                    [
-                        {
-                            x: this.state.counts.x,
-                            y: this.state.counts.y,
-                            type: 'bar',
-                            mode: 'lines+markers',
-                        },
-                    ]
-                }
-                layout={{autosize: true, title: 'Twitter counting sick OR tired'}}
+            <Plot
+                data={[
+                    {
+                        x: this.state.counts.x,
+                        y: this.state.counts.y,
+                        type: "bar",
+                        mode: "lines+markers",
+                    },
+                ]}
+                layout={{
+                    autosize: true,
+                    title: "Twitter counting sick OR tired",
+                }}
             />
-        )
+        );
     }
 }

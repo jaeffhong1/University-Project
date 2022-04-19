@@ -22,3 +22,7 @@ PHASE_2/Application_SourceCode/client/node_modules/.yarn-integrity
 
 /**/node_modules/*
 /PHASE_2/app/node_modules/*
+
+.vscode
+
+PHASE_2/Application_SourceCode/client/build

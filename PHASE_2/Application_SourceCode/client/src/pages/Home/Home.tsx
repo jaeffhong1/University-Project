@@ -1,5 +1,8 @@
 import React from 'react';
 import DataStore from '../../datastore';
+import { Button, Layout, Menu, Space } from 'antd';
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import './Home.css'
 
 interface IProps {
     datastore: DataStore,
@@ -27,14 +30,134 @@ export default class Home extends React.Component<IProps, IState> {
         }
     }
 
+    handlePageChangeDashboard() {
+        window.location.href = "/dashboardOnboard";
+    }
+
+    handlePageChangeMarket() {
+        window.location.href = "/marketPlaceOnboardUpload";
+    }
+
+    handlePageChangeDisease() {
+        window.location.href = "/diseaseBrowseOnboard";
+    }
+
+    handlePageChangeExternal() {
+        window.location.href = "/externalOnboard";
+    }
+
+    handlePageDashboard() {
+        window.location.href = "/dashboard";
+    }
+
+    handlePageMarketUpload() {
+        window.location.href = "/dashboard/market-place/upload";
+    }
+
+    handlePageMarketBrowse() {
+        window.location.href = "/dashboard/market-place/browse";
+    }
+
+    handlePageDiseaseBrowse() {
+        window.location.href = "/dashboard/disease-cases/diseases";
+    }
+
+    handleApiBrowse() {
+        window.location.href = "/dashboard/all-external-sources";
+    }
     render() {
         return (
-            <main className='main' style={{padding: '1em'}}>
-                <h2>Welcome to the Disease Dashboard</h2>
-                <p>
-                    Testing to see if datastore changes propagate to children: 
-                </p>
-                <strong>datastore.GetSelectedDataSource() = { this.state.selectedDataSource }</strong>
+            <main style={{padding: '1em'}}>
+                <div className='container'>
+
+                    <h1 style={{ color:"white" }} className="welcomeMessage">Welcome to F0B5 Disease Website</h1>
+                    <strong style={{ color:"red" }} className="familiarMessage">
+                        If you are familiar with our website, please proceed to the Dashboard page directly.
+                    </strong>
+                    <p style={{ color:"white" }} className="introMessage">Website for creating widgets, monitering diseases and browsing reports.</p>
+                </div>
+                <div className='features'>
+                    <h2 style={{color:"white"}} className="services">Our features</h2>
+                    <Space className="FirstFeatures" size={[50,100]} wrap>
+                        <Button 
+                        className="DashboardHome"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageDashboard}>
+                        Customisable widgets
+                        </Button>
+
+                        <Button 
+                        className="MarketPlaceUpload"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageMarketUpload}>
+                        Uploading dashboards
+                        </Button>
+
+                        <Button 
+                        className="MarketPlaceBrowse"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageMarketBrowse}>
+                        Browsing dashboards
+                        </Button>
+                    </Space>
+
+                    <Space className="MoreFeatures" size={[50,100]} wrap>
+                        <Button 
+                        className="InputApi"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handleApiBrowse}>
+                        Browse/Add API
+                        </Button>
+
+                        <Button 
+                        className="BrowseDisease"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageDiseaseBrowse}>
+                        Browse all reports
+                        </Button>
+                    </Space>
+    
+                    <h2 style={{color:"white"}} className="demos">Our demos</h2>
+
+                    <Space align="center" className="allDemos" size={[50,100]} wrap>
+                        <Button
+                        className="MarketPlaceOnboard"
+                        type="default"
+                        shape="round"
+                        size="large"
+                        onClick={this.handlePageChangeMarket}>
+                        MarketPlace Demo
+                        </Button>
+
+                        <Button
+                        className="DashboardOnboard"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageChangeDashboard}>
+                        Dashboard Brief Demo
+                        </Button>
+
+                        <Button
+                        className="ExternalOnboard"
+                        type="default"
+                        size="large"
+                        shape="round"
+                        onClick={this.handlePageChangeExternal}>
+                        External API Demo
+                        </Button>
+                    </Space>
+                </div>
             </main>
         );
     }
