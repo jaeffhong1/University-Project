@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { TReactComponent } from "../DashboardHome";
-import { Card, Button, Row, Col } from "antd";
+import { Card, Button, Row, Col } from 'antd';
 
 interface Props {
     setType: (type: string) => void;
-    allWidgets: { [key: string]: TReactComponent };
+    allWidgets: {[key: string]: TReactComponent }
 }
 
 export default function WidgetSelector(props: Props) {
@@ -38,25 +38,29 @@ export default function WidgetSelector(props: Props) {
     }, [ref?.current != null ? ref?.current['clientWidth'] : ref]);
 
     return (
-        <div style={{ padding: "2em" }}>
-            <Row gutter={[12, { xs: 4, sm: 8, md: 16, lg: 32 }]}>
-                {Object.keys(props.allWidgets).map((value, index) => {
-                    return (
-                        <Col className="gutter-row" span={12} key={index}>
-                            <Button
-                                type="dashed"
-                                size="large"
-                                block
-                                onClick={(e: React.MouseEvent) => {
-                                    props.setType(value);
-                                }}
-                            >
-                                {value}
-                            </Button>
-                        </Col>
-                    );
-                })}
+        <div ref={ref} style={{padding: '1em', paddingTop: '2em'}}>
+            <Row gutter={[16, { xs: 4, sm: 8, md: 16, lg: 32 }]}>
+                {
+                    Object.keys(props.allWidgets).map((value, index) => {
+                        return (
+                            <Col key={index} className="gutter-row" span={colWidth}>
+                                <Button 
+                                    type="dashed" 
+                                    // @ts-ignore - ignore buttonSize: string failing for internal antd "SizeType"
+                                    size={buttonSize}
+                                    block
+                                    onClick={(e: React.MouseEvent) => {
+                                        props.setType(value)
+                                    }}
+                                    style={{fontSize: buttonTextSize}}
+                                >
+                                    {value}
+                                </Button>
+                            </Col>
+                        )
+                    })
+                }
             </Row>
-        </div>
-    );
+        </div> 
+    )
 }

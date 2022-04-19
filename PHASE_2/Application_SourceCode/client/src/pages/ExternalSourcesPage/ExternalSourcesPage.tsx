@@ -1,4 +1,4 @@
-import { Button, Form, Table, Input, Dropdown, Menu, Checkbox, Tooltip, message } from "antd";
+import { Button, Form, Table, Input, Dropdown, Menu, Checkbox, Tooltip, message, Divider } from "antd";
 import React from "react";
 import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './ExternalSourcesPage.css'
@@ -218,47 +218,60 @@ export class ExternalSourcesPage extends React.Component<{
         const param_menu = (
             <Menu onClick={this.handleAddParam.bind(this)}>
                 <Menu.Item key="1">
-                Date
+                    Date
                 </Menu.Item>
                 <Menu.Item key="2">
-                String
+                    String
                 </Menu.Item>
                 <Menu.Item key="3">
-                Number
+                    Number
                 </Menu.Item>
                 <Menu.Item key="4">
-                Boolean
+                    Boolean
                 </Menu.Item>
             </Menu>
         );
 
-        return <div style={{padding: '12px'}}>
+        return <div style={{padding: '0.5em', width: '50%', margin: 'auto'}}>
             <Form
-                style={{marginTop: 24}}
+                style={{marginTop: 24, height:'100%'}}
                 name="basic"
-                labelCol={{ span: 4 }}
+                labelCol={{ span: 3 }}
                 wrapperCol={{ span: 16 }}
                 initialValues={{ remember: true }}
                 onFinish={this.onFinish.bind(this)}
                 onFinishFailed={this.onFinishFailed.bind(this)}
                 autoComplete="off"
-                >
+            >
+                <Form.Item style={{padding: 0}}>
+                    <h3 className="ApiStructure" style={{left: '0%', marginLeft: '0em'}}>
+                        Enter in the API details
+                    </h3>
+                </Form.Item>
                 <Form.Item
                     label="Name"
                     name="name"
                     rules={[{ required: true, message: 'Please enter the API name' }]}
-                >
-                    <Input addonAfter="API Name" size="large" placeholder="Please name your API" />
+                >   
+                    <Input 
+                        //@ts-ignore
+                        size={"default"} 
+                        placeholder="Please name your API" 
+                    />
                 </Form.Item>
                 <Form.Item
-                    label="Information (URL)"
+                    label="API URL"
                     name="url"
                     rules={[{ required: true, message: 'Please enter the API url' }]}
                 >
-                    <Input addonAfter="API Url" size="large" placeholder="Input the url of the API" />
+                    <Input 
+                        //@ts-ignore
+                        size="default" 
+                        placeholder="Input the url of the API" 
+                    />
                 </Form.Item>
                 <Form.Item
-                    label="Information (PARAMS)"
+                    label="Information"
                 >
                     {ExternalSourcesPage.paramState.map((x:any, index:any) =>  {
                         switch(x["type"]) {
@@ -267,22 +280,32 @@ export class ExternalSourcesPage extends React.Component<{
                                     <div key={index} className="ParamEntry">
                                         <Input.Group compact>
                                                 <Input
-                                                    style={{ width: '30%' }}
+                                                    style={{ width: '20%' }}
                                                     className="DateEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleParamStringChange.bind(this, index)}
 
                                                 />
                                                 <Input
-                                                    style={{ width: '65.5%' }}
+                                                    style={{ width: '70%' }}
                                                     className="DateEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder="Examples, seperated with commas"
                                                     onChange = {this.handleParamExampleChange.bind(this, index)}
 
                                                 />
-                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default"
+                                                className="RemoveFieldWeirdParam" 
+                                                onClick={this.handleRemoveParam.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
@@ -293,22 +316,32 @@ export class ExternalSourcesPage extends React.Component<{
                                     <div key={index} className="ParamEntry">
                                         <Input.Group compact>
                                                 <Input
-                                                    style={{ width: '30%' }}
+                                                    style={{ width: '20%' }}
                                                     className="StringEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleParamStringChange.bind(this, index)}
 
                                                 />
                                                 <Input
-                                                    style={{ width: '65.5%' }}
+                                                    style={{ width: '70%' }}
                                                     className="DateEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder="Examples, seperated with commas"
                                                     onChange = {this.handleParamExampleChange.bind(this, index)}
 
                                                 />
-                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default"
+                                                className="RemoveFieldWeirdParam" 
+                                                onClick={this.handleRemoveParam.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
@@ -320,21 +353,31 @@ export class ExternalSourcesPage extends React.Component<{
                                         <Input.Group compact>
                                                 <Input
                                                     bordered={true}
-                                                    style={{ width: '30%' }}
+                                                    style={{ width: '20%' }}
                                                     className="NumberEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleParamStringChange.bind(this, index)}
                                                 />
                                                 <Input
-                                                    style={{ width: '65.5%' }}
+                                                    style={{ width: '70%' }}
                                                     className="DateEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder="Examples, seperated with commas"
                                                     onChange = {this.handleParamExampleChange.bind(this, index)}
 
                                                 />
-                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default"
+                                                className="RemoveFieldWeirdParam" 
+                                                onClick={this.handleRemoveParam.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
@@ -347,21 +390,31 @@ export class ExternalSourcesPage extends React.Component<{
                                         <Input.Group compact>
                                                 <Input
                                                     bordered={true}
-                                                    style={{ width: '30%' }}
+                                                    style={{ width: '20%' }}
                                                     className="BooleanEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleParamStringChange.bind(this, index)}
                                                 />
                                                 <Input
-                                                    style={{ width: '65.5%' }}
+                                                    style={{ width: '70%' }}
                                                     className="DateEntryParam"
-                                                    size="large"
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder="Examples, seperated with commas"
                                                     onChange = {this.handleParamExampleChange.bind(this, index)}
 
                                                 />
-                                            <Button size="large" className="RemoveFieldWeirdParam" onClick={this.handleRemoveParam.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default" 
+                                                className="RemoveFieldWeirdParam" 
+                                                onClick={this.handleRemoveParam.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
@@ -373,131 +426,167 @@ export class ExternalSourcesPage extends React.Component<{
                     <Dropdown 
                         className="DropDownParam"
                         overlay={param_menu}>
-                        <Button size="large" className="paramSelector">
+                        <Button 
+                            //@ts-ignore
+                            size="default"
+                            className="paramSelector"
+                            style={{ width: '100%' }}
+                        >
                             Add a param
                             <DownOutlined />
                         </Button>
                     </Dropdown>
                 </Form.Item>
-                <h2 className="ApiStructure">
-                    Enter in the structure of the JSON returned by the API
-                </h2>
+                <Form.Item style={{padding: 0}}>
+                    <h3 className="ApiStructure" style={{left: '0%', marginLeft: '0em'}}>
+                        Enter in the structure of the JSON returned by the API
+                    </h3>
+                </Form.Item>
                 <Form.Item
-                    label="Information (ROOT)"
+                    label="Root"
                     name="root"
                 >
                     <Input
                         className="SourceRootStart"
-                        size="large"
+                        //@ts-ignore
+                        size="default"
                         placeholder="Root"
                     />
                 </Form.Item>
                 <Form.Item
-                    label="Information (FIELDS)"
+                    label="Fields"
                 >
                     {ExternalSourcesPage.fieldState.map((x:any, index:any) =>  {
                         switch(x["type"]) {
                             case "date":
                                 return (
-                                    <div key={index} className="DateEntry">
-                                        <Input.Group compact>
+                                        <Input.Group key={index} style={{left: '0%'}} compact>
                                             <Input
-                                                style={{ width: '27.7%' }}
+                                                style={{ width: '40%' }}
                                                 className="dateEntry"
-                                                size="large"
+                                                //@ts-ignore
+                                                size="default"
                                                 placeholder={x["type"]}
                                                 onChange = {this.handleDateChange.bind(this, index)}
                                             />
                                             <Input
-                                                style={{ width: '27.7%' }}
-                                                className="dateEntryFormat"
-                                                size="large"
-                                                placeholder="date format (Y:M:D:t:m:s)"
+                                                style={{ width: '50%' }}
+                                                //@ts-ignore
+                                                size="default"
+                                                placeholder="Format: Y:M:D:t:m:s"
                                                 onChange = {this.handleFormatChange.bind(this, index)}
                                             />
-                                            <Button size="large" className="RemoveField" onClick={this.handleRemoveField.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default" 
+                                                danger
+                                                onClick={this.handleRemoveField.bind(this, x, index)}
+                                                type="primary"
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
-                                    </div>
                                 )
                             case "string":
                                 return (
-                                    <div key={index} className="FieldEntry">
-                                        <Input.Group compact>
+                                        <Input.Group key={index} style={{left: '0%'}} compact>
                                                 <Input
-                                                    style={{ width: '55.4%' }}
-                                                    className="StringEntry"
-                                                    size="large"
+                                                    style={{ width: '90%' }}
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
-
                                                 />
-                                            <Button size="large" className="RemoveFieldWeird" onClick={this.handleRemoveField.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default" 
+                                                onClick={this.handleRemoveField.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
-                                    </div>
                                 )
                             case "number":
                                 return (
-                                    <div key={index} className="FieldEntry">
-                                        <Input.Group compact>
+                                        <Input.Group key={index} className="FieldEntry" style={{left: '0%'}} compact>
                                                 <Input
                                                     bordered={true}
-                                                    style={{ width: '55.4%' }}
-                                                    className="NumberEntry"
-                                                    size="large"
+                                                    style={{ width: '90%' }}
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             
-                                            <Button size="large" className="RemoveFieldWeird" onClick={this.handleRemoveField.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default" 
+                                                onClick={this.handleRemoveField.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
-                                        
-                                    </div>
                                 )
                             case "boolean":
                                 return (
-                                    <div key={index} className="FieldEntry">
-                                        <Input.Group compact>
+                                        <Input.Group key={index} className="FieldEntry" style={{left: '0%'}} compact>
                                                 <Input
                                                     bordered={true}
-                                                    style={{ width: '55.4%' }}
-                                                    className="NumberEntry"
-                                                    size="large"
+                                                    style={{ width: '90%' }}
+                                                    //@ts-ignore
+                                                    size="default"
                                                     placeholder={x["type"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             
-                                            <Button size="large" className="RemoveFieldWeird" onClick={this.handleRemoveField.bind(this, x, index)}>
+                                            <Button 
+                                                style={{ width: '10%' }}
+                                                //@ts-ignore
+                                                size="default" 
+                                                onClick={this.handleRemoveField.bind(this, x, index)}
+                                                type="primary"
+                                                danger
+                                            >
                                                 <MinusCircleOutlined />
                                             </Button>
                                         </Input.Group>
-                                        
-                                    </div>
                                 )
                         }
                     })}
                     <Dropdown 
                         className="DropDown"
-                        overlay={menu}>
-                        <Button size="large" className="FieldSelector">
-                            Add a field
+                        overlay={menu}
+                    >
+                        <Button 
+                            //@ts-ignore
+                            size="default" 
+                            className="FieldSelector"
+                            style={{left: '0%', width: '100%'}} 
+                        >
+                                Add a field
                             <DownOutlined />
                         </Button>
                     </Dropdown>
                 </Form.Item>
-                <p>
-                </p>
                 <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-                    <Button size="large" className="SubmitButton" type="primary" htmlType="submit">
+                    <Button 
+                        //@ts-ignore
+                        size="default" 
+                        className="SubmitButton" 
+                        type="primary" 
+                        htmlType="submit"
+                    >
                     Submit
                     </Button>
                 </Form.Item>
-                </Form>
+            </Form>
         </div>
     }
 }

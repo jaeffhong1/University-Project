@@ -10,10 +10,6 @@ export class AllExternalSourcesPage extends React.Component<{
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
 
-    handleAddApi() {
-        window.location.href = "/dashboard/external-sources";
-    }
-
     addApi(name: string, object: IExternalSource) {
         let es: IExternalSource;
         es = {"name": object.name, "url": object.url, "fields": object.fields, "root": object.root, "params":object.params};

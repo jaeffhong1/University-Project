@@ -10,24 +10,16 @@ import 'antd/dist/antd.css';
 import React from 'react';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import './App.css'; // custom styles
-// import components
-import Breadcrumb from './components/Breadcrumb';
 // import datastore
 import DataStore from "./datastore";
 import CacheSystem from './pages/Dashboard/DashboardHome/CacheSystem';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
-import { TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
+import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
-import DiseaseBrowseOnboard from './pages/Dashboard/DiseaseBrowseOnboard';
-import Diseases from './pages/Dashboard/DiseaseCases/Diseases/Diseases';
-import Browse from './pages/Dashboard/MarketPlace/Browse/browseDashboards';
-import Upload from './pages/Dashboard/MarketPlace/Upload/uploadDashboards';
-import MarketPlaceOnboardBrowse from './pages/Dashboard/MarketPlaceOnboardBrowse';
-import MarketPlaceOnboardUpload from './pages/Dashboard/MarketPlaceOnboardUpload';
 import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExternalSourceOnboard';
-import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
 import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
+import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
 import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
 import { UserExternalSourcesPage } from './pages/ExternalSourcesPage/UserExternalSources';
 // import my pages
@@ -159,36 +151,25 @@ export class App extends React.Component<IProps, IState> {
                             <Menu theme="dark" mode="horizontal">
                                 <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                                 <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
+                                <Menu.Item key="3"><Link to="/externalSources">External Sources</Link></Menu.Item>
                             </Menu>
                         </Header>
-
-                        <Content style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}>
-                            <Breadcrumb/>
+                        
+                        <Content style={{minHeight: '58em'}}>
                             <div className='content'>
                                 <Routes>
-                                    <Route path="/" element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="/dashboardOnboard" element={<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/>}/>
-                                    <Route path="/marketPlaceOnboardUpload" element={<MarketPlaceOnboardUpload datastore={this.state.datastore}/>}/>
-                                    <Route path="/marketPlaceOnboardBrowse" element={<MarketPlaceOnboardBrowse datastore={this.state.datastore}/>}/>
-                                    <Route path="/diseaseBrowseOnboard" element={<DiseaseBrowseOnboard datastore={this.state.datastore}/>}/>
-                                    <Route path="/externalOnboard" element={<AllExternalSourcesPageOnboard/>}/>
-                                    <Route path="/external-sourcesOnboard" element={<ExternalSourcesPageOnboard/>}/>
-                                    <Route path="/dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
-                                        <Route path="/dashboard/" element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
-                                        <Route path="/dashboard/disease-cases/diseases" element={<Diseases />} />
-                                        <Route path="/dashboard/external-sources" element={
-                                            <ExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />
-                                            } />
-                                        <Route path="/dashboard/all-external-sources" element={
-                                            <AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />
-                                            } />
-                                        <Route path="/dashboard/user-external-sources" element={
-                                            <UserExternalSourcesPage externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)} />
-                                            } />
-                                        <Route path="/dashboard/market-place/upload" element={<Upload />} />
-                                        <Route path="/dashboard/market-place/browse" element={<Browse />} />
+                                    <Route index element={<Home datastore={this.state.datastore}/>} />
+                                    <Route path="externalSources" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}><AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} /></div>} /> 
+                                    <Route path="externalSources/add" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><ExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} /></div>} />
+                                        
+                                    <Route path="externalSources/add/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><ExternalSourcesPageOnboard/></div>}/>
+                                    <Route path="externalSources/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><AllExternalSourcesPageOnboard/></div>}/>
+                                    
+                                    <Route path="dashboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><DashboardRoot datastore={this.state.datastore}/></div>}>
+                                        <Route index element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                     </Route>
-                                    <Route path="*" element={<PageNotFound/>}/>
+                                    <Route path="dashboard/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/></div>}/>
+                                    <Route path="*" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><PageNotFound/></div>}/>
                                 </Routes>
                             </div>
                         </Content>

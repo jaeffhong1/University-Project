@@ -40,10 +40,6 @@ export type TSource = {
     reports: TReport[];
 };
 
-const titleMap: Record<string, string> = {
-    window0: "Select a widget",
-    SourceSelector: "Source selector",
-};
 export type TReactComponent =
     | typeof React.Component
     | ((p: WidgetProps) => JSX.Element);
@@ -113,6 +109,11 @@ function dateToString(date: Date): string {
     )}-${String(date.getUTCDate()).padStart(2, "0")}T00:00:00`;
 }
 
+const titleMap: Record<string, string> = {
+    window0: "Select a widget",
+    SourceSelector: "Source selector",
+};
+
 interface Props {
     datastore: DataStore;
     externalSources: TExternalSources | null;
@@ -162,12 +163,22 @@ export default class DashboardHome extends React.Component<Props, State> {
         }
     }
 
+    
+
     render() {
+
+        const val: MosaicNode<string> = {
+            direction: 'row',
+            first: 'WidgetSelector',
+            second: 'HiddenWidget',
+            splitPercentage: 70
+        }
+
         if (this.props.externalSources == null)
             return <p>Loading external sources, please wait</p>
 
         return (
-            <main className="main" style={{ height: "100%" }}>
+            <main className="main" style={{ height: "100%", border: '1px solid rgb(235, 237, 240)' }}>
                 <div id="mosaic" style={{ height: "100%" }}>
                     <Mosaic<string>
                         resize={{}}

@@ -58,7 +58,7 @@
 .SubmitButton {
     position: relative;
     left: 27%;
-    top: 50px;
+    top: 1em;
 }
 
 .ApiStructure {
