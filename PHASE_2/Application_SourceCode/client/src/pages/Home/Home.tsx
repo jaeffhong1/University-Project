@@ -105,7 +105,7 @@ export default class Home extends React.Component<IProps, IState> {
                             </Col>
                             <Col span={8}>
                                 <div className="verticallyCentreDiv" style={{}}>
-                                    <Button style={{marginRight: '0.5em'}}>Your Dashboard</Button>
+                                    <Button style={{marginRight: '0.5em'}}><Link to="/dashboard">Your Dashboard</Link></Button>
                                     <Dropdown.Button 
                                         type="primary"
                                         onClick={this.handleGetStartedButtonClick} 
