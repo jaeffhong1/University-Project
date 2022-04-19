@@ -1,8 +1,43 @@
-.container{
-    background-image: url(./disease.jpg);
-    height: 300px;
+.img {
+    width: 100%;
+
+    aspect-ratio: 20 / 5;
+
+    background-position: center 32.5%;
+    background-repeat: no-repeat;
     background-size: cover;
 
+    /*height: 80vh;*/
+    /*background-position: center center;*/
+    /*background-repeat: no-repeat;*/
+}
+.img1 {
+    background-image: url('./1.jpg');
+}
+.img2 {
+    background-image: url('./2.jpg');
+}
+.img3 {
+    background-image: url('./3.jpg');
+    
+}
+
+.verticallyCentreDiv {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.dashboard-img {
+    background-image: url('./dashboard.png');
+
+    width: 25vw;
+    aspect-ratio: 981/823;
+
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .welcomeMessage {
@@ -12,6 +47,7 @@
     left: 20px;
     top: 20px;
 }
+
 
 
 .familiarMessage {
