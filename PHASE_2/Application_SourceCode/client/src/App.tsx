@@ -169,9 +169,9 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route index element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />)} /> 
-                                    <Route path="externalSources/add" element={this.spacedContent(<ExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />)} />
-                                    <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />)} />
+                                    <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} /> 
+                                    <Route path="externalSources/add" element={this.spacedContent(<ExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
+                                    <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} />
                                         
                                     <Route path="externalSources/add/onboard" element={this.spacedContent(<ExternalSourcesPageOnboard/>)}/>
                                     <Route path="externalSources/onboard" element={this.spacedContent(<AllExternalSourcesPageOnboard/>)}/>
