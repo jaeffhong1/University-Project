@@ -31,7 +31,7 @@ export interface WidgetProps {
 
 interface State {
     selectedSourceName: keyof TSources
-    type: string
+    widgetName: string
     source: TSource | 'global'
     selectingLocalSource: boolean
 
@@ -49,7 +49,7 @@ export default class Widget extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            type: 'select',
+            widgetName: 'select',
             selectedSourceName: 'Epiwatch',
             source: 'global',
             selectingLocalSource: false,
@@ -62,33 +62,33 @@ export default class Widget extends React.Component<Props, State> {
     }
 
     render() {
-        if (this.state.type === 'select') {
+        if (this.state.widgetName === 'select') {
             return (
                 <WidgetSelector
-                    setType={(type) => this.setState({ type })}
+                    setType={(type) => this.setState({ widgetName: type })}
                     allWidgets={this.props.allWidgets}
                 />
             )
         } else if (this.props.globalSource == null) {
             return <p>Global source is loading, please wait</p>
         } else {
-            const T = this.props.allWidgets[this.state.type]
+            const T = this.props.allWidgets[this.state.widgetName]
             if (T === undefined) {
                 return (
                     <p>
-                        Unknown widget type <code>{this.state.type}</code>
+                        Unknown widget type <code>{this.state.widgetName}</code>
                     </p>
                 )
             }
             return (
                 <>
-                    <Button
+                    {this.state.widgetName != "Twitter" && this.state.widgetName != "Generic Selector" && <Button
                         onClick={() =>
                             this.setState({ selectingLocalSource: true })
                         }
                     >
                         Select local state
-                    </Button>
+                    </Button>}
                     <Modal
                         visible={this.state.selectingLocalSource}
                         title="Select local source"

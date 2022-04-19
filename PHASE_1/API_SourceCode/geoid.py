@@ -5,10 +5,11 @@ path_to_locations = os.path.join(
 )
 
 
+geoid_db_file = None
 try:
     geoid_db_file = open(path_to_locations, encoding="ISO-8859-1")
 except FileNotFoundError:
-    pass  # we're running on the pipeline
+    print("no geo id file, we assume we are running on the pipeline?")
 
 
 def find_geo_id(location):
