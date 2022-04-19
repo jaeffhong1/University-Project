@@ -1,5 +1,4 @@
 import App from "./App";
-import { parseDate } from "./pages/Dashboard/DashboardHome/sources/f0b5";
 
 export default class DataStore {
 
@@ -25,7 +24,7 @@ export default class DataStore {
         // help calculate today's date
         const today = new Date();
 
-        this.selectedDataSources = ["f0b5"];
+        this.selectedDataSources = ["Epiwatch"];
         this.startTime = "2020-01-01T00:00:00";
         this.endTime = `${today.getUTCFullYear()}-${String(today.getUTCMonth()).padStart(2, '0')}-${String(today.getUTCDate()).padStart(2, '0')}T00:00:00`;
 

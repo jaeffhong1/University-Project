@@ -1,7 +1,7 @@
 //import Plot from "react-plotly.js";
 // mosaic
 import "@blueprintjs/core/lib/css/blueprint.css";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 //import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { Mosaic, MosaicNode, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
@@ -121,6 +121,7 @@ interface Props {
 interface State {
     source: TSource | null;
     mos: MosaicNode<string>;
+    windowCount: number;
 }
 
 export default class DashboardHome extends React.Component<Props, State> {
@@ -134,6 +135,7 @@ export default class DashboardHome extends React.Component<Props, State> {
                 second: "window1",
                 splitPercentage: 80,
             },
+            windowCount: 2,
         }
     }
 
@@ -192,8 +194,10 @@ export default class DashboardHome extends React.Component<Props, State> {
                             return <MosaicWindow<string>
                                 path={path}
                                 createNode={(id, path) => {
-                                    console.log("id:", id);
-                                    const name = "window" + id.toString();
+                                    const name = "window" + this.state.windowCount.toString();
+                                    this.setState({
+                                        windowCount: this.state.windowCount + 1
+                                    })
                                     titleMap[name] = name;
                                     return name;
                                 }}

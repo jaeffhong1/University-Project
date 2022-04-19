@@ -2,6 +2,7 @@ import { Button, Select } from "antd";
 import React from "react";
 import CacheSystem from "../CacheSystem";
 import { TExternalSourceFieldType } from "../sources/ExternalSource";
+import { GenericBoxPlot } from "./generics/GenericBoxPlot";
 import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
 import { WidgetProps } from "./Widget";
@@ -11,6 +12,7 @@ const { Option } = Select;
 const allGenericWidgets: { [key: string]: typeof React.Component } = {
     "Scatter Plot": GenericScatter,
     "Histogram": GenericHistogram,
+    "Box Plots": GenericBoxPlot,
 };
 
 export class GenericSelector extends React.Component<

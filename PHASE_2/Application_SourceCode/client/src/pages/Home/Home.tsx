@@ -84,9 +84,9 @@ export default class Home extends React.Component<IProps, IState> {
                     <Title level={3} style={{ color:"white", left: '4em' }}>Health and disease data you can trust.</Title>
                 </div>
                 <Carousel autoplay>
-                    <div className="img img1"></div>
                     <div className="img img2"></div>
                     <div className="img img3"></div>
+                    <div className="img img1"></div>
                 </Carousel>
 
                 

@@ -6,9 +6,6 @@ import DashboardHeader from '../../components/DashboardHeader';
 import DataStore from '../../datastore';
 import './dashboard.css';
 
-
-
-
 // extract styled components from import 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
