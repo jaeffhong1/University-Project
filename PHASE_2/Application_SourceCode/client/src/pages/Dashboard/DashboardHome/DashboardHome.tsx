@@ -176,7 +176,7 @@ export default class DashboardHome extends React.Component<Props, State> {
             return <p>Loading external sources, please wait</p>
 
         return (
-            <main className="main" style={{ height: "100%" }}>
+            <main className="main" style={{ height: "100%", border: '1px solid rgb(235, 237, 240)' }}>
                 <div id="mosaic" style={{ height: "100%" }}>
                     <Mosaic<string>
                         resize={{}}
@@ -192,6 +192,7 @@ export default class DashboardHome extends React.Component<Props, State> {
                             return <MosaicWindow<string>
                                 path={path}
                                 createNode={(id, path) => {
+                                    console.log("id:", id);
                                     const name = "window" + id.toString();
                                     titleMap[name] = name;
                                     return name;

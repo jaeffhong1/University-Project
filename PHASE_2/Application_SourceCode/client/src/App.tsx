@@ -143,22 +143,22 @@ export class App extends React.Component<IProps, IState> {
                                 <Menu.Item key="3"><Link to="/externalSources">External Sources</Link></Menu.Item>
                             </Menu>
                         </Header>
-
-                        <Content style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}>
+                        
+                        <Content style={{minHeight: '58em'}}>
                             <div className='content'>
                                 <Routes>
                                     <Route index element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="externalSources" element={<AllExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />} /> 
-                                    <Route path="externalSources/add" element={<ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />} />
+                                    <Route path="externalSources" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}><AllExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} /></div>} /> 
+                                    <Route path="externalSources/add" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><ExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} /></div>} />
                                         
-                                    <Route path="externalSources/add/onboard" element={<ExternalSourcesPageOnboard/>}/>
-                                    <Route path="externalSources/onboard" element={<AllExternalSourcesPageOnboard/>}/>
+                                    <Route path="externalSources/add/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><ExternalSourcesPageOnboard/></div>}/>
+                                    <Route path="externalSources/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><AllExternalSourcesPageOnboard/></div>}/>
                                     
-                                    <Route path="dashboard" element={<DashboardRoot datastore={this.state.datastore}/>}>
+                                    <Route path="dashboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><DashboardRoot datastore={this.state.datastore}/></div>}>
                                         <Route index element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                     </Route>
-                                    <Route path="dashboard/onboard" element={<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/>}/>
-                                    <Route path="*" element={<PageNotFound/>}/>
+                                    <Route path="dashboard/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/></div>}/>
+                                    <Route path="*" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><PageNotFound/></div>}/>
                                 </Routes>
                             </div>
                         </Content>
