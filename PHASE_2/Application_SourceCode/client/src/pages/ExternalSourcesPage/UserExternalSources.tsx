@@ -1,8 +1,10 @@
 import { PlusOutlined ,MinusOutlined } from '@ant-design/icons';
 import { Button, Space, Table } from "antd";
 import React from "react";
+import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
+
 export class UserExternalSourcesPage extends React.Component<{
     externalSources: TExternalSources | null,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
@@ -54,27 +56,37 @@ export class UserExternalSourcesPage extends React.Component<{
         ]
 
 
-        return <div style={{padding: '12px'}}>
-            {Object.values(this.props.externalSources).map(es => (
-                <>
-                    <h2>{es.name} <small><a href={es.url}>{es.url}</a> <code style={{marginLeft: 12}}>root='{es.root}'</code></small></h2>
+        return <div style={{padding: '0.5em'}}>
+            {Object.values(this.props.externalSources).map((es, index) => (
+                <div key={index}>
+                    <h2>
+                        {es.name} 
+                        <small>
+                            <a href={es.url}>{es.url}</a> 
+                            <code style={{marginLeft: 12}}>root='{es.root}'</code>
+                        </small>
+                    </h2>
                     
-                    <Table dataSource={es.fields} columns={[
+                    <Table dataSource={es.fields} pagination={false} columns={[
                         { key: 'name', dataIndex: 'name', title: "Name" },
                         { key: 'type', dataIndex: 'type', title: "Type" },
                         { key: 'description', dataIndex: 'description', title: "Description" },
                     ]} />
-                </>
+                </div>
             ))}
 
             <Space size={[50,100]} wrap>
-                <Button size="large" className="addAPI" onClick={this.handleAddApi}>
-                    Add an API
-                    <PlusOutlined style={{color: "blue"}} className="plusIcon"/>
+                <Button size="large" className="addAPI" key="0">
+                    
+                    <Link to="/externalSources/add">
+                        Add an API
+                        <PlusOutlined style={{color: "blue"}} className="plusIcon"/>
+                    </Link>
+                    
                 </Button>
 
                 {dataSource.map((data:any, index:any) => (
-                    <Button size="large" className="DifferentAPI" onClick={this.removeApi.bind(this, data.name, dataSource[index])} key={index}>{data.name} <MinusOutlined className="plusIcon"/> </Button>
+                    <Button size="large" className="DifferentAPI" onClick={this.removeApi.bind(this, data.name, dataSource[index])} key={index+1}>{data.name} <MinusOutlined className="plusIcon"/> </Button>
                 ))}
             </Space>
         </div>

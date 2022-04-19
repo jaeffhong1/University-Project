@@ -7,7 +7,7 @@
 import { Layout, Menu, Typography } from 'antd';
 import 'antd/dist/antd.css';
 // react
-import React from 'react';
+import React, { JSXElementConstructor } from 'react';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import './App.css'; // custom styles
 // import datastore
@@ -131,6 +131,7 @@ export class App extends React.Component<IProps, IState> {
         // the datastore object will call this function to tell the app to update state
         // this will automatically update the prop "datastore" given to any children who will need to check for updates themselves
         this.setState({});
+        console.log("APP UOPDATED STATE FROM DATASTROE");
     }
 
     setExternalSources(externalSources: TExternalSources) {
@@ -139,6 +140,14 @@ export class App extends React.Component<IProps, IState> {
 
     setUserExternalSources(userExternalSources: TExternalSources) {
         this.setState({ userExternalSources })
+    }
+
+    spacedContent(content: JSX.Element) {
+        return (
+            <div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}>
+                {content}
+            </div>
+        )
     }
 
     render() {
@@ -151,7 +160,8 @@ export class App extends React.Component<IProps, IState> {
                             <Menu theme="dark" mode="horizontal">
                                 <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                                 <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-                                <Menu.Item key="3"><Link to="/externalSources">External Sources</Link></Menu.Item>
+                                <Menu.Item key="3"><Link to="/externalSources/">Marketplace</Link></Menu.Item>
+                                <Menu.Item key="4"><Link to="/externalSources/user">User Sources</Link></Menu.Item>
                             </Menu>
                         </Header>
                         
@@ -159,17 +169,18 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route index element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="externalSources" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em'}}><AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} /></div>} /> 
-                                    <Route path="externalSources/add" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><ExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} /></div>} />
+                                    <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />)} /> 
+                                    <Route path="externalSources/add" element={this.spacedContent(<ExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />)} />
+                                    <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage externalSources={this.state.externalSources} setExternalSources={this.setExternalSources.bind(this)} />)} />
                                         
-                                    <Route path="externalSources/add/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><ExternalSourcesPageOnboard/></div>}/>
-                                    <Route path="externalSources/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><AllExternalSourcesPageOnboard/></div>}/>
+                                    <Route path="externalSources/add/onboard" element={this.spacedContent(<ExternalSourcesPageOnboard/>)}/>
+                                    <Route path="externalSources/onboard" element={this.spacedContent(<AllExternalSourcesPageOnboard/>)}/>
                                     
-                                    <Route path="dashboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><DashboardRoot datastore={this.state.datastore}/></div>}>
+                                    <Route path="dashboard" element={this.spacedContent(<DashboardRoot datastore={this.state.datastore}/>)}>
                                         <Route index element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
                                     </Route>
-                                    <Route path="dashboard/onboard" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/></div>}/>
-                                    <Route path="*" element={<div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}><PageNotFound/></div>}/>
+                                    <Route path="dashboard/onboard" element={this.spacedContent(<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/>)}/>
+                                    <Route path="*" element={this.spacedContent(<PageNotFound/>)}/>
                                 </Routes>
                             </div>
                         </Content>

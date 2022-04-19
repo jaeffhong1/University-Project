@@ -56,22 +56,30 @@ export class AllExternalSourcesPage extends React.Component<{
         ]
 
 
-        return <div style={{padding: '12px'}}>
-            {Object.values(this.props.externalSources).map(es => (
-                <>
+        return <div style={{padding: '0.5em'}}>
+            {Object.values(this.props.externalSources).map((es, index) => (
+                <div key={index}>
                     <h2>{es.name} <small><a href={es.url}>{es.url}</a> <code style={{marginLeft: 12}}>root='{es.root}'</code></small></h2>
                     
-                    <Table dataSource={es.fields} columns={[
+                    <Table dataSource={es.fields} pagination={false} columns={[
                         { key: 'name', dataIndex: 'name', title: "Name" },
                         { key: 'type', dataIndex: 'type', title: "Type" },
                         { key: 'description', dataIndex: 'description', title: "Description" },
                     ]} />
-                </>
+                </div>
             ))}
 
             <Space size={[50,100]} wrap>
                 {dataSource.map((data:any, index:any) => (
-                    <Button size="large" className="DifferentAPI" onClick={this.addApi.bind(this, data.name, dataSource[index])} key={index}>{data.name} <PlusOutlined className="plusIcon"/> </Button>
+                    <Button 
+                        size="large" 
+                        className="DifferentAPI" 
+                        onClick={this.addApi.bind(this, data.name, dataSource[index])} 
+                        key={index}
+                    >
+                        {data.name}&nbsp;
+                        <PlusOutlined className="plusIcon"/> 
+                    </Button>
                 ))}
             </Space>
         </div>

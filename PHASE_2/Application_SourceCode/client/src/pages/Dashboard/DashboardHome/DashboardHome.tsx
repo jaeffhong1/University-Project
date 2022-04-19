@@ -146,6 +146,7 @@ export default class DashboardHome extends React.Component<Props, State> {
             this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
             this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
         ) {
+            console.log("DASHBOARD HOME UPDATED FROM DATASTORE");
             // get the data source, times and reports
             const sourcePromise: Promise<TSource> = fetchSource(
                 this.props.datastore.GetDataSource(),

@@ -2,15 +2,16 @@ import { useState } from "react";
 import { TReactComponent, TSource } from "../DashboardHome";
 import { TExternalSources } from "../sources/ExternalSource";
 import WidgetSelector from "./WidgetSelector";
+import Datastore from "../../../../datastore";
 
 interface Props {
     mosaic: {
         id: string;
         titleMap: Record<string, string>;
-    };
-    source: TSource | null;
-    externalSources: TExternalSources;
-    allWidgets: { [key: string]: TReactComponent };
+    },
+    source: TSource | null,
+    externalSources: TExternalSources,
+    allWidgets: { [key: string]: TReactComponent },
 }
 
 export interface WidgetProps {
