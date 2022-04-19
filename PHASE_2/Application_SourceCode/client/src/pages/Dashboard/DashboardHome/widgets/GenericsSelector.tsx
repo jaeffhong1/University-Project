@@ -1,4 +1,4 @@
-import { Button, Select } from "antd";
+import { Button, Input, Select } from "antd";
 import React from "react";
 import CacheSystem from "../CacheSystem";
 import { TExternalSourceFieldType, TExternalSources } from "../sources/ExternalSource";
@@ -163,6 +163,27 @@ export class GenericSelector extends React.Component<
                             </Option>
                         ))}
                     </Select>
+                )}
+                {this.state.externalSourceName !== null && this.props.externalSources[this.state.externalSourceName].params !== [] && (
+                    <div>
+                    <p
+                        style={{margin: 8}}>
+                        Parameters
+                    </p>
+                        {this.props.externalSources[
+                            this.state.externalSourceName
+                        ].params.map((params) => (
+                            <Input
+                                style={{ width: "100%", margin: 8 }}
+                                className="GenericParams"
+                                //@ts-ignore
+                                size="default"
+                                placeholder={"Param Type: " + params.type}
+                                addonAfter={"Examples: " + params.description} 
+                                addonBefore={params.name}
+                            />
+                        ))}
+                    </div>
                 )}
                 {this.state.fields.length > 0 && (
                     <Select
