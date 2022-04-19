@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TReactComponent, TSource } from "../DashboardHome";
-import { TExternalSources } from "../sources/ExternalSource";
+import { TExternalSources, IExternalSource } from "../sources/ExternalSource";
 import WidgetSelector from "./WidgetSelector";
 import Datastore from "../../../../datastore";
 
@@ -11,6 +11,7 @@ interface Props {
     },
     source: TSource | null,
     externalSources: TExternalSources,
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void,
     allWidgets: { [key: string]: TReactComponent },
 }
 
@@ -18,6 +19,7 @@ export interface WidgetProps {
     allWidgets: { [key: string]: TReactComponent };
     source: TSource;
     externalSources: TExternalSources;
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void;
 }
 
 export default function Widget(props: Props): JSX.Element {
@@ -41,6 +43,7 @@ export default function Widget(props: Props): JSX.Element {
             <T
                 source={props.source}
                 externalSources={props.externalSources}
+                setExternalSources={props.setExternalSources}
                 allWidgets={props.allWidgets}
             />
         );

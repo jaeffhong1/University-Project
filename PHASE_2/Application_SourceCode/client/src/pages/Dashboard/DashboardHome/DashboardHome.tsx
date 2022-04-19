@@ -8,7 +8,7 @@ import 'react-mosaic-component/react-mosaic-component.css';
 // data
 import DataStore from '../../../datastore';
 import SourceAdaptorEpiWatch from "./sources/epiwatch";
-import { TExternalSources } from "./sources/ExternalSource";
+import { TExternalSources, IExternalSource } from "./sources/ExternalSource";
 import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 // widgets
 //import SourceSelector from "./SourceSelectors";
@@ -117,6 +117,7 @@ const titleMap: Record<string, string> = {
 interface Props {
     datastore: DataStore;
     externalSources: TExternalSources | null;
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void;
 }
 interface State {
     source: TSource | null;
@@ -209,6 +210,7 @@ export default class DashboardHome extends React.Component<Props, State> {
                                     mosaic={{ titleMap, id }}
                                     allWidgets={allWidgets}
                                     externalSources={this.props.externalSources}
+                                    setExternalSources={this.props.setExternalSources}
                                 />
                             </MosaicWindow>
                         }}

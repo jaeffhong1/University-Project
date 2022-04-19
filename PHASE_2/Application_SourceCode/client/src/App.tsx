@@ -174,9 +174,9 @@ export class App extends React.Component<IProps, IState> {
                                     <Route path="externalSources/onboard" element={this.spacedContent(<AllExternalSourcesPageOnboard/>)}/>
                                     
                                     <Route path="dashboard" element={this.spacedContent(<DashboardRoot datastore={this.state.datastore}/>)}>
-                                        <Route index element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.externalSources}/>} />
+                                        <Route index element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)}/>} />
                                     </Route>
-                                    <Route path="dashboard/onboard" element={this.spacedContent(<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources}/>)}/>
+                                    <Route path="dashboard/onboard" element={this.spacedContent(<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)}/>)}/>
                                     <Route path="*" element={this.spacedContent(<PageNotFound/>)}/>
                                 </Routes>
                             </div>

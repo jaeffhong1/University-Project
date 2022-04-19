@@ -1,7 +1,7 @@
 import { Button, Select } from "antd";
 import React from "react";
 import CacheSystem from "../CacheSystem";
-import { TExternalSourceFieldType } from "../sources/ExternalSource";
+import { TExternalSourceFieldType, TExternalSources } from "../sources/ExternalSource";
 import { GenericBoxPlot } from "./generics/GenericBoxPlot";
 import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
@@ -32,6 +32,27 @@ export class GenericSelector extends React.Component<
             generic: null,
             axes: null,
         };
+
+        let userData:any = localStorage.getItem('userExternalSources');
+        let new_es: TExternalSources = {};
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
+
+        for (let data of userData) {
+            let key_object:any = {};
+            key_object["name"] = data["name"]
+            key_object["url"] = data["url"]
+            key_object["root"] = data["root"]
+            key_object["fields"] = data["fields"]
+            key_object["params"] = data["params"]
+            new_es[data["name"]] = key_object;
+        }
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+        userData = localStorage.getItem('userExternalSources');
+        this.props.setExternalSources(new_es);
     }
 
     handleNameChange(value: string) {

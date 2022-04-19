@@ -7,7 +7,7 @@ import DashboardHeader from '../../components/DashboardHeader';
 import DataStore from '../../datastore';
 import './dashboard.css';
 import DashboardHome from './DashboardHome/DashboardHome';
-import { TExternalSources } from './DashboardHome/sources/ExternalSource';
+import { TExternalSources, IExternalSource } from './DashboardHome/sources/ExternalSource';
 
 
 
@@ -18,6 +18,7 @@ const { Content, Sider } = Layout;
 interface IProps {
     datastore: DataStore
     externalSources: TExternalSources | null;
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void;
 }
 
 interface IState {
@@ -141,7 +142,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
 
                     <Content>
                         <DashboardHeader datastore={this.props.datastore} />
-                        <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources} />
+                        <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources} setExternalSources={this.props.setExternalSources}/>
                     </Content>
                 </Layout>
             </main>
