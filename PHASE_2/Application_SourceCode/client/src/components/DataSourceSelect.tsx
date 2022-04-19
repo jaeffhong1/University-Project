@@ -1,11 +1,11 @@
-import React  from 'react';
-
-import { Menu, Dropdown, Button, message, Tooltip, Checkbox, Modal } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
-
+import { Button, Checkbox, Dropdown, Menu, Modal, Tooltip } from 'antd';
+import React from 'react';
+import DataStore from '../datastore';
 import './DataSourceSelect.css';
 
-import DataStore from '../datastore';
+
+
 
 interface IProps {
     datastore: DataStore,

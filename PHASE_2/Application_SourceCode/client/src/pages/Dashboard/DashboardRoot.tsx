@@ -1,7 +1,6 @@
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import DashboardHeader from '../../components/DashboardHeader';
 import DataStore from '../../datastore';
 import './dashboard.css';
