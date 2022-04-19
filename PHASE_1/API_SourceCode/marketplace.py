@@ -247,6 +247,7 @@ def get_api():
     for row in result:
         api = {}
         apiID, name, url, root = row
+        api["name"] = name
         api["api_id"] = apiID
         api["url"] = url
         api["root"] = root
