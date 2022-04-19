@@ -17,7 +17,30 @@ export class AllExternalSourcesPage extends React.Component<{
             message.info("API already in your external sources!");
             return;
         }
-        this.props.setExternalSources({...this.props.userExternalSources, [name]: es})
+
+
+        let userData:any = localStorage.getItem('userExternalSources');
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
+        userData.push(es);
+        
+        let new_es: TExternalSources = {};
+        for (let data of userData) {
+            let key_object:any = {};
+            key_object["name"] = data["name"]
+            key_object["url"] = data["url"]
+            key_object["root"] = data["root"]
+            key_object["fields"] = data["fields"]
+            key_object["params"] = data["params"]
+            new_es[data["name"]] = key_object;
+        }
+
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+
+        this.props.setExternalSources(new_es);
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {

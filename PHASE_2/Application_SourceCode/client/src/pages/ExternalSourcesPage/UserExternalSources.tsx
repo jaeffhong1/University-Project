@@ -15,13 +15,14 @@ export class UserExternalSourcesPage extends React.Component<{
 
     removeApi(name: string, object: IExternalSource) {
         let es: IExternalSource;
-        let new_es: TExternalSources = {...this.props.externalSources};
-        delete new_es[name];
-        this.props.setExternalSources(new_es);
-
+        let new_es: TExternalSources = {};
 
         let userData:any = localStorage.getItem('userExternalSources');
-        userData = JSON.parse(userData);
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
 
         let i = 0;
         while (i < userData.length) {
@@ -31,7 +32,20 @@ export class UserExternalSourcesPage extends React.Component<{
             }
             i += 1;
         }
+
+
+        for (let data of userData) {
+            let key_object:any = {};
+            key_object["name"] = data["name"]
+            key_object["url"] = data["url"]
+            key_object["root"] = data["root"]
+            key_object["fields"] = data["fields"]
+            key_object["params"] = data["params"]
+            new_es[data["name"]] = key_object;
+        }
         localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+        userData = localStorage.getItem('userExternalSources');
+        this.props.setExternalSources(new_es);
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -96,14 +110,6 @@ export class UserExternalSourcesPage extends React.Component<{
                 dataSource.push(userExternal);
             }
         }
-        
-        const columns = [
-            { key: 'name', dataIndex: 'name', title: "API Name" },
-            { key: 'url', dataIndex: 'url', title: "URL" },
-            { key: 'root', dataIndex: 'root', title: "Root" },
-            { key: 'fields', dataIndex: 'fields', title: "Fields" },
-        ]
-
 
         return <div style={{padding: '0.5em'}}>
             {Object.values(dataSource).map((es:any, index:any) => (
