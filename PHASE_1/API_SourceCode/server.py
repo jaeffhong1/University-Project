@@ -611,8 +611,8 @@ def convert_geo_tup(geo_tuple):
     location_info = {}
     location_info["geoid"] = geo_tuple[0]
     location_info["name"] = geo_tuple[1]
-    location_info["lat"] = geo_tuple[2]
-    location_info["lng"] = geo_tuple[3]
+    location_info["lat"] = float(geo_tuple[2])
+    location_info["long"] = float(geo_tuple[3])
     return location_info
 
 
