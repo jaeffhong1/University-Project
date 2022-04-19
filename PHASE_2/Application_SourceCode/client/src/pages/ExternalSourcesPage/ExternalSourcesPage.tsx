@@ -3,6 +3,7 @@ import React from "react";
 import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './ExternalSourcesPage.css'
 import { DownOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import CacheSystem from '../../pages/Dashboard/DashboardHome/CacheSystem';
 
 function validateExternalSource(externalSource: any): string | null {
     if (!('url' in externalSource))
@@ -12,9 +13,12 @@ function validateExternalSource(externalSource: any): string | null {
 }
 
 export class ExternalSourcesPage extends React.Component<{
+    userExternalSources: TExternalSources | null,
     externalSources: TExternalSources | null,
+    setUserExternalSources: (s: {[name: string]: IExternalSource}) => void,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
+    
 
     static fieldState: {name: string, description: string, type: TExternalSourceFieldType}[] = []
     static paramState: {name: string, description: string, type: TExternalSourceFieldType}[] = []
@@ -36,7 +40,50 @@ export class ExternalSourcesPage extends React.Component<{
             return
         }
 
-        this.props.setExternalSources({...this.props.externalSources, [values.name]: es})
+        this.props.setExternalSources({...this.props.externalSources, [values.name]: es});
+        this.props.setUserExternalSources({...this.props.userExternalSources, [values.name]: es});
+
+        let new_params_list:any = [];
+        let parameters:any = "";
+        for (parameters of ExternalSourcesPage.paramState) {
+            let new_param:any = {};
+            new_param["name"] = parameters["name"];
+            new_param["type"] = parameters["type"];
+            String(new_param["type"]);
+            new_param["description"] = parameters["description"];
+            new_params_list.push(new_param);
+        }
+
+        let new_fields_list:any = [];
+        let the_fields:any = "";
+        for (the_fields of ExternalSourcesPage.fieldState) {
+            let new_field:any = {};
+            new_field["name"] = the_fields["name"];
+            new_field["type"] = the_fields["type"];
+            String(new_field["type"]);
+            new_field["description"] = the_fields["description"];
+            new_fields_list.push(new_field);
+        }
+
+        // [{"name": "test", "type": "string", "description": "test"}]
+
+        let add_link = "http://seng3011.duckdns.org/marketplace/api/add";
+        (async () => {
+        const response = await fetch(add_link, {method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                         body: `{
+                             "name": "${values.name}",
+                             "root": "${values.root}",
+                             "url": "${values.url}",
+                             "params": ${JSON.stringify(new_params_list)},
+                             "fields": ${JSON.stringify(new_fields_list)}
+                        }`,    
+        });
+        response.json().then(data=>{console.log(data)});
+        })();
         message.info("Your API has successfully been added")
     }
     
