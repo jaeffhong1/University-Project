@@ -51,8 +51,8 @@ export default class DashboardHeader extends React.Component<IProps, IState> {
     }
 
     handleCalendarChange = (dates: RangeValue<Moment>, dateStrings: [string, string], info: any) => {
-        console.log(dates);
-        console.log(dateStrings);
+        //console.log(dates);
+        //console.log(dateStrings);
         
         // update datastore
         this.props.datastore.SetStartTime(dateStrings[0]);

@@ -34,6 +34,7 @@ export default class DataStore {
 
     // send a message to "parent" to update itself if data in the datastore changes
     private updateParent(): void {
+        console.log("UPDATING DATASTORE");
         this.parent.datastoreUpdate();
     }
 

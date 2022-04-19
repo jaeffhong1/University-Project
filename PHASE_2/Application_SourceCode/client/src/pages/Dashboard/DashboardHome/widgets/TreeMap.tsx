@@ -90,7 +90,6 @@ export class TreeMap extends React.Component<WidgetProps, State> {
         let diseaseCounts: Map<string, number> = new Map<string, number>();
 
         for (let report of props.source.reports) {
-            console.log(report.diseases);
             for (let disease of report.diseases) {
                 let val: number | undefined = diseaseCounts.get(disease);
                 if (typeof val == "undefined") {
@@ -117,7 +116,6 @@ export class TreeMap extends React.Component<WidgetProps, State> {
             },
         ];
 
-        //console.log(data);
         return {
             data: data,
         };
@@ -127,7 +125,7 @@ export class TreeMap extends React.Component<WidgetProps, State> {
         let data: Data[];
         //data = hardcoded_data
         data = this.state.data;
-        console.log(data);
+        console.log("RERENDER");
 
         return (
             <React.Fragment>
