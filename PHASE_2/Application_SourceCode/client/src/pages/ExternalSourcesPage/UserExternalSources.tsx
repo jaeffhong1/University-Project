@@ -9,7 +9,6 @@ export class UserExternalSourcesPage extends React.Component<{
     externalSources: TExternalSources | null,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
-
     handleAddApi() {
         window.location.href = "/dashboard/external-sources";
     }
@@ -19,6 +18,20 @@ export class UserExternalSourcesPage extends React.Component<{
         let new_es: TExternalSources = {...this.props.externalSources};
         delete new_es[name];
         this.props.setExternalSources(new_es);
+
+
+        let userData:any = localStorage.getItem('userExternalSources');
+        userData = JSON.parse(userData);
+
+        let i = 0;
+        while (i < userData.length) {
+            if (userData[i]['name'] == name) {
+                userData.splice(i, 1);
+                i -= 1;
+            }
+            i += 1;
+        }
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -38,6 +51,8 @@ export class UserExternalSourcesPage extends React.Component<{
 
         const dataSource:any = []
         let i = 0;
+        const localLength = localStorage.length;
+        let local_i = localLength - 5;
         for (let es of Object.values(this.props.externalSources)) {
             dataSource.push({
                 key: '' + (i++),
@@ -48,6 +63,40 @@ export class UserExternalSourcesPage extends React.Component<{
                 params: es.params
             })
         }
+        let userData:any = localStorage.getItem('userExternalSources');
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
+        for (let data of dataSource) {
+            let alreadyIn = 0;
+            for (let externalData of userData) {
+                if (data['name'] == externalData['name']) {
+                    alreadyIn = 1;
+                    break;
+                }
+            }
+            if (!(alreadyIn)) {
+                userData.push(data);
+            }
+        }
+        
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+
+        for (let userExternal of userData) {
+            let alreadyIn = 0;
+            for (let data of dataSource) {
+                if (data['name'] == userExternal['name']) {
+                    alreadyIn = 1;
+                    break;
+                }
+            }
+            if (!(alreadyIn)) {
+                dataSource.push(userExternal);
+            }
+        }
+        
         const columns = [
             { key: 'name', dataIndex: 'name', title: "API Name" },
             { key: 'url', dataIndex: 'url', title: "URL" },
@@ -57,7 +106,7 @@ export class UserExternalSourcesPage extends React.Component<{
 
 
         return <div style={{padding: '0.5em'}}>
-            {Object.values(this.props.externalSources).map((es, index) => (
+            {Object.values(dataSource).map((es:any, index:any) => (
                 <div key={index}>
                     <h2>
                         {es.name} 

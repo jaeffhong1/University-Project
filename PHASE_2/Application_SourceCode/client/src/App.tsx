@@ -67,9 +67,6 @@ export class App extends React.Component<IProps, IState> {
                 throw new Error("fetching external sources failed")
             }
             const externalSources = JSON.parse(resp) as TExternalSources;
-            externalSources["NSW COVID LGA"]["name"] = "NSW COVID LGA";
-            externalSources["SA COVID"]["name"] = "SA COVID";
-            externalSources["covidtracking"]["name"] = "covidtracking";
             this.setState({externalSources: externalSources})
         })()
     }
