@@ -1,9 +1,8 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Space, Table } from "antd";
 import React from "react";
-import { IExternalSource, TExternalSources, TExternalSourceFieldType } from "../Dashboard/DashboardHome/sources/ExternalSource";
+import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
-import { UserExternalSourcesPage } from './UserExternalSources';
 export class AllExternalSourcesPage extends React.Component<{
     userExternalSources: TExternalSources | null,
     externalSources: TExternalSources | null,
@@ -36,10 +35,9 @@ export class AllExternalSourcesPage extends React.Component<{
             return <p>Loading external sources, please wait...</p>
 
         const dataSource:any = []
-        let i = 0;
         for (let es of Object.values(this.props.externalSources)) {
             dataSource.push({
-                key: '' + (i++),
+                key: es.name,
                 name: es.name,
                 url: es.url,
                 root: es.root,
@@ -57,11 +55,14 @@ export class AllExternalSourcesPage extends React.Component<{
 
 
         return <div style={{padding: '0.5em'}}>
-            {Object.values(this.props.externalSources).map((es, index) => (
-                <div key={index}>
+            {Object.values(this.props.externalSources).map((es) => (
+                <div key={es.name}>
                     <h2>{es.name} <small><a href={es.url}>{es.url}</a> <code style={{marginLeft: 12}}>root='{es.root}'</code></small></h2>
                     
-                    <Table dataSource={es.fields} pagination={false} columns={[
+                    <Table dataSource={es.fields.map(f => {
+                        // use all this as key to be as unique as possible
+                        return {key: f.name + f.type, ...f}
+                    })} pagination={false} columns={[
                         { key: 'name', dataIndex: 'name', title: "Name" },
                         { key: 'type', dataIndex: 'type', title: "Type" },
                         { key: 'description', dataIndex: 'description', title: "Description" },
