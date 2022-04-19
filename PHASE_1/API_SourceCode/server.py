@@ -462,8 +462,8 @@ def turn_who_location_to_id():
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
 
     # put date in the format they like
-    start_date = start_date[:len("YYYY-MM-DD")]
-    end_date = end_date[:len("YYYY-MM-DD")]
+    start_date = start_date[: len("YYYY-MM-DD")]
+    end_date = end_date[: len("YYYY-MM-DD")]
 
     api_url = "http://epidemicscraper-env.eba-t2stx6uv.us-east-1.elasticbeanstalk.com/"
     api_url_2 = (
@@ -527,7 +527,7 @@ def turn_who_location_to_id():
     return jsonify(all_reports)
 
 
-@app.route("/location/global", methods=["GET"])
+@app.route("/other-team/iheartteams", methods=["GET"])
 def turn_global_location_to_id():
 
     start_date = request.values.get("start_date")
@@ -539,7 +539,12 @@ def turn_global_location_to_id():
     if timezone is None:
         timezone = CIDRAP_TIMEZONE
 
-    check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+    # check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+    # start_date = start_date.replace("T", " ")
+    # end_date = end_date.replace("T", " ")
+    start_date = start_date.replace("xx", "00")
+    end_date = end_date.replace("xx", "00")
+
     api_url = "https://iheartteams.ts.r.appspot.com/"
     api_url_2 = (
         api_url
@@ -552,8 +557,10 @@ def turn_global_location_to_id():
         + "&location="
         + (location)
     )
+
     res = requests.get(api_url_2)
     response = json.loads(res.text)
+    print(response)
     all_reports = []
     for article in response:
         for report in article["reports"]:
