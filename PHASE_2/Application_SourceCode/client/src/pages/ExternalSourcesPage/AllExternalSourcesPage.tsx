@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Space, Table, Collapse, Typography, Descriptions, List } from "antd";
+import { Button, Collapse, Descriptions, message, Space, Table, Typography } from "antd";
 import React from "react";
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
@@ -8,8 +8,8 @@ const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
 export class AllExternalSourcesPage extends React.Component<{
-    userExternalSources: TExternalSources | null,
-    externalSources: TExternalSources | null,
+    userExternalSources: TExternalSources,
+    externalSources: TExternalSources,
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
 
@@ -21,29 +21,9 @@ export class AllExternalSourcesPage extends React.Component<{
             return;
         }
 
-
-        let userData:any = localStorage.getItem('userExternalSources');
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-        userData.push(es);
-        
-        let new_es: TExternalSources = {};
-        for (let data of userData) {
-            let key_object:any = {};
-            key_object["name"] = data["name"]
-            key_object["url"] = data["url"]
-            key_object["root"] = data["root"]
-            key_object["fields"] = data["fields"]
-            key_object["params"] = data["params"]
-            new_es[data["name"]] = key_object;
-        }
-
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
-
-        this.props.setExternalSources(new_es);
+        const newEs = {...this.props.userExternalSources, [object.name]: es}
+        this.props.setExternalSources(newEs);
+        message.info("Api Added!");
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -60,6 +40,8 @@ export class AllExternalSourcesPage extends React.Component<{
     render() {
         if (!this.props.externalSources)
             return <p>Loading external sources, please wait...</p>
+
+        // console.log('render', this.props.userExternalSources, this.props.externalSources)
 
         const dataSource:any = []
         for (let es of Object.values(this.props.externalSources)) {
@@ -82,13 +64,6 @@ export class AllExternalSourcesPage extends React.Component<{
 
         return (
             <div style={{padding: '0.5em'}}>
-                <Title level={3}>Your selected data sources</Title>
-                
-                <List>
-                    <List.Item key="0">
-                        <Button type='primary'>Add your own</Button>
-                    </List.Item>
-                </List>
                 <br />
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
 
@@ -113,13 +88,16 @@ export class AllExternalSourcesPage extends React.Component<{
                             header={
                                 <>
                                     <p>{es.name}</p>
-                                    <Button 
-                                        type='primary' 
-                                        style={{position: 'absolute', right: '1em'}}
-                                        onClick={this.addApi.bind(this, es.name, dataSource[index])} 
-                                    >
-                                        Add to collection
-                                    </Button>
+                                    <div onClick={(e => e.stopPropagation())}>
+                                        <Button 
+                                            type='primary' 
+                                            disabled={es.name in this.props.userExternalSources}
+                                            style={{position: 'absolute', right: '1em'}}
+                                            onClick={this.addApi.bind(this, es.name, dataSource[index])} 
+                                        >
+                                            Connect to dashboard
+                                        </Button>
+                                    </div>
                                 </>
                             } 
                             key={index}

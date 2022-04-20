@@ -1,51 +1,22 @@
-import { PlusOutlined ,MinusOutlined } from '@ant-design/icons';
-import { Button, Space, Table } from "antd";
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Collapse, Descriptions, List, Space, Table, Typography } from "antd";
 import React from "react";
 import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
 
+const { Panel } = Collapse;
+const { Title, Text } = Typography;
+
 export class UserExternalSourcesPage extends React.Component<{
-    externalSources: TExternalSources | null,
-    setExternalSources: (s: {[name: string]: IExternalSource}) => void
+    userExternalSources: TExternalSources,
+    setUserExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
-    handleAddApi() {
-        window.location.href = "/dashboard/external-sources";
-    }
 
     removeApi(name: string, object: IExternalSource) {
-        let es: IExternalSource;
-        let new_es: TExternalSources = {};
-
-        let userData:any = localStorage.getItem('userExternalSources');
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-
-        let i = 0;
-        while (i < userData.length) {
-            if (userData[i]['name'] == name) {
-                userData.splice(i, 1);
-                i -= 1;
-            }
-            i += 1;
-        }
-
-
-        for (let data of userData) {
-            let key_object:any = {};
-            key_object["name"] = data["name"]
-            key_object["url"] = data["url"]
-            key_object["root"] = data["root"]
-            key_object["fields"] = data["fields"]
-            key_object["params"] = data["params"]
-            new_es[data["name"]] = key_object;
-        }
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
-        userData = localStorage.getItem('userExternalSources');
-        this.props.setExternalSources(new_es);
+        const newEs = {...this.props.userExternalSources}
+        delete(newEs[name])
+        this.props.setUserExternalSources(newEs);
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -59,17 +30,16 @@ export class UserExternalSourcesPage extends React.Component<{
         return false;
     }
 
+
+
     render() {
-        if (!this.props.externalSources)
+        if (!this.props.userExternalSources)
             return <p>Loading external sources, please wait...</p>
 
         const dataSource:any = []
-        let i = 0;
-        const localLength = localStorage.length;
-        let local_i = localLength - 5;
-        for (let es of Object.values(this.props.externalSources)) {
+        for (let es of Object.values(this.props.userExternalSources)) {
             dataSource.push({
-                key: '' + (i++),
+                key: es.name,
                 name: es.name,
                 url: es.url,
                 root: es.root,
@@ -77,73 +47,81 @@ export class UserExternalSourcesPage extends React.Component<{
                 params: es.params
             })
         }
-        let userData:any = localStorage.getItem('userExternalSources');
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-        for (let data of dataSource) {
-            let alreadyIn = 0;
-            for (let externalData of userData) {
-                if (data['name'] == externalData['name']) {
-                    alreadyIn = 1;
-                    break;
-                }
-            }
-            if (!(alreadyIn)) {
-                userData.push(data);
-            }
-        }
-        
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
 
-        for (let userExternal of userData) {
-            let alreadyIn = 0;
-            for (let data of dataSource) {
-                if (data['name'] == userExternal['name']) {
-                    alreadyIn = 1;
-                    break;
-                }
-            }
-            if (!(alreadyIn)) {
-                dataSource.push(userExternal);
-            }
-        }
+        return (
+            <div style={{padding: '0.5em'}}>
+                <List>
+                    <List.Item key="0">
+                        <Button type='primary'><Link to="/externalSources/add">Add your own data source</Link></Button>
+                    </List.Item>
+                </List>
+                <Space size={[50,100]} wrap style={{display: 'none'}}>
 
-        return <div style={{padding: '0.5em'}}>
-            {Object.values(dataSource).map((es:any, index:any) => (
-                <div key={index}>
-                    <h2>
-                        {es.name} 
-                        <small>
-                            <a href={es.url}>{es.url}</a> 
-                            <code style={{marginLeft: 12}}>root='{es.root}'</code>
-                        </small>
-                    </h2>
-                    
-                    <Table dataSource={es.fields} pagination={false} columns={[
-                        { key: 'name', dataIndex: 'name', title: "Name" },
-                        { key: 'type', dataIndex: 'type', title: "Type" },
-                        { key: 'description', dataIndex: 'description', title: "Description" },
-                    ]} />
-                </div>
-            ))}
+                    {dataSource.map((data:any, index:any) => (
+                        <Button 
+                            size="large" 
+                            className="DifferentAPI" 
+                            
+                            key={index}
+                        >
+                            {data.name}&nbsp;
+                            <PlusOutlined className="plusIcon"/> 
+                        </Button>
+                    ))}
+                </Space>
+                <br />
+                <Title level={3}>Connected Sources</Title>
+                <Collapse>
+                    {dataSource.map((es:any, index:any) => (
+                        <Panel 
+                            style={{padding: 0}}
+                            header={
+                                <>
+                                    <p>{es.name}</p>
+                                    <div onClick={(e => e.stopPropagation())}>
+                                        <Button 
+                                            style={{ position: 'absolute', right: '1em'}}
+                                            onClick={this.removeApi.bind(this, es.name, dataSource[index])} 
+                                            danger
+                                        >
+                                            Disconnect from dashboard
+                                        </Button>
+                                    </div>
+                                </>
+                            } 
+                            key={index}
+                        >
+                            <div>
+                                <div style={{width: '80%', margin: 'auto'}}>
+                                    
+                                    
+                                </div>
+                            </div>
+                            <Descriptions bordered>
+                                <Descriptions.Item label="API Address" span={3}>
+                                    <a href={es.url}>{es.url}</a> 
+                                </Descriptions.Item>
+                                <Descriptions.Item label="API Root" span={3}>
+                                    <Text>{es.root}</Text>
+                                </Descriptions.Item>
 
-            <Space size={[50,100]} wrap>
-                <Button size="large" className="addAPI" key="0">
-                    
-                    <Link to="/externalSources/add">
-                        Add an API
-                        <PlusOutlined style={{color: "blue"}} className="plusIcon"/>
-                    </Link>
-                    
-                </Button>
-
-                {dataSource.map((data:any, index:any) => (
-                    <Button size="large" className="DifferentAPI" onClick={this.removeApi.bind(this, data.name, dataSource[index])} key={index+1}>{data.name} <MinusOutlined className="plusIcon"/> </Button>
-                ))}
-            </Space>
-        </div>
+                            </Descriptions>
+                            
+                            <Table 
+                                dataSource={es.fields.map((f:any) => {
+                                    // use all this as key to be as unique as possible
+                                    return {key: f.name + f.type, ...f}
+                                })} 
+                                pagination={false} columns={[
+                                    { key: 'name', dataIndex: 'name', title: "Name" },
+                                    { key: 'type', dataIndex: 'type', title: "Type" },
+                                    { key: 'description', dataIndex: 'description', title: "Description" },
+                                ]} 
+                            />
+                        </Panel>
+                    ))}
+                </Collapse>        
+            </div>
+        )
     }
 }
