@@ -7,23 +7,24 @@
 import { Layout, Menu, Typography } from 'antd';
 import 'antd/dist/antd.css';
 // react
-import React, { JSXElementConstructor } from 'react';
+import React from 'react';
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import './App.css'; // custom styles
 // import datastore
 import DataStore from "./datastore";
 import CacheSystem from './pages/Dashboard/DashboardHome/CacheSystem';
 import DashboardHome from './pages/Dashboard/DashboardHome/DashboardHome';
-import { IExternalSource, TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
+import { TExternalSources } from './pages/Dashboard/DashboardHome/sources/ExternalSource';
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
 import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExternalSourceOnboard';
-import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
 import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
+import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
 import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
 import { UserExternalSourcesPage } from './pages/ExternalSourcesPage/UserExternalSources';
 // import my pages
 import Home from './pages/Home/Home';
+import { Marketplace } from './pages/Marketplace/Marketplace';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
 
 // extract styled components
@@ -168,6 +169,7 @@ export class App extends React.Component<IProps, IState> {
                                     <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} /> 
                                     <Route path="externalSources/add" element={this.spacedContent(<ExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
                                     <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} />
+                                    <Route path="marketplace" element={this.spacedContent(<Marketplace userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
                                         
                                     <Route path="externalSources/add/onboard" element={this.spacedContent(<ExternalSourcesPageOnboard/>)}/>
                                     <Route path="externalSources/onboard" element={this.spacedContent(<AllExternalSourcesPageOnboard/>)}/>
