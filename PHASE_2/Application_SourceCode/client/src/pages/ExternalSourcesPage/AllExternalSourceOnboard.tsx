@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSourceFieldType } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import { DownOutlined, PlusOutlined, UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import { format } from "path";
-import './AllExternalSources.css'
+import './AllExternalSourceOnboard.css'
 import { Steps } from 'intro.js-react'
+
 
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -21,6 +22,7 @@ interface IState {
 }
 export default class AllExternalSourcesPageOnboard extends React.Component<IProps, IState> {
 
+    connectedSources = [];
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -99,14 +101,14 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
                 },
                 {
                     title: "",
-                    element: ".externalApiDemo",
-                    intro: "This newly added API will show up in your personal external sources. Good luck!"
+                    element: ".APItableConnected",
+                    intro: "Any newly added API will show up at the top of this page and can be removed by the remove source. Good luck!"
                 }
             ]
         }
     }
     handleAddApi() {
-        window.location.href = "/external-sourcesOnboard";
+        window.location.href = "/externalSources/add";
     }
 
     onExit = () => {
@@ -163,6 +165,58 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
                     </List.Item>
                 </List>
                 <br />
+                <Title level={3}>Connected Sources</Title>
+                <Collapse className="APItableConnected"> 
+                    {Object.values(allDataSources).map((es:any, index:any) => (
+                        <Panel 
+                            style={{padding: 0}}
+                            header={
+                                <div onClick={(e => e.stopPropagation())}>
+                                    <p>{es.name}</p>
+                                    <Button 
+                                        className="removeToCollection"
+                                        type='primary' 
+                                        style={{position: 'absolute', right: '1em'}}
+                                        danger
+                                    >
+                                        Disconnect the dashboard
+                                    </Button>
+                                    </div>
+                            } 
+                            key={index}
+                        >
+                            <div>
+                                <div style={{width: '80%', margin: 'auto'}}>
+                                    
+                                    
+                                </div>
+                            </div>
+                            <Descriptions bordered>
+                                <Descriptions.Item className="ApiUrl" label="API Address" span={3}>
+                                    <a className="ExampleUrl" href={es.url}>{es.url}</a> 
+                                </Descriptions.Item>
+                                <Descriptions.Item className="ApiRoot" label="API Root" span={3}>
+                                    <Text className="ExampleRoot">{es.root}</Text>
+                                </Descriptions.Item>
+
+                            </Descriptions>
+                            
+                            <Table 
+                                className="ApiTableInfo"
+                                dataSource={es.fields.map((f:any) => {
+                                    // use all this as key to be as unique as possible
+                                    return {key: f.name + f.type, ...f}
+                                })} 
+                                pagination={false} columns={[
+                                    { className:"name", key: 'name', dataIndex: 'name', title: "Name" },
+                                    { className:"type", key: 'type', dataIndex: 'type', title: "Type" },
+                                    { className:"description", key: 'description', dataIndex: 'description', title: "Description" },
+                                ]} 
+                            />
+                        </Panel>
+                    ))}
+                </Collapse>
+                <br />
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
 
                     {dataSource.map((data:any, index:any) => (
@@ -184,16 +238,17 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
                         <Panel 
                             style={{padding: 0}}
                             header={
-                                <>
+                                <div onClick={(e => e.stopPropagation())}>
                                     <p>{es.name}</p>
                                     <Button 
                                         className="addToCollection"
                                         type='primary' 
                                         style={{position: 'absolute', right: '1em'}}
+                                        disabled={true}
                                     >
-                                        Add to collection
+                                        Connect to dashboard
                                     </Button>
-                                </>
+                                </div>
                             } 
                             key={index}
                         >

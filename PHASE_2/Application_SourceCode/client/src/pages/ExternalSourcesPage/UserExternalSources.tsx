@@ -1,7 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Collapse, Descriptions, List, Space, Table, Typography } from "antd";
 import React from "react";
-import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
 
@@ -12,6 +11,9 @@ export class UserExternalSourcesPage extends React.Component<{
     userExternalSources: TExternalSources,
     setUserExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
+    handleAddApi() {
+        window.location.href = "/externalSources/add";
+    }
 
     removeApi(name: string, object: IExternalSource) {
         const newEs = {...this.props.userExternalSources}
@@ -50,11 +52,14 @@ export class UserExternalSourcesPage extends React.Component<{
 
         return (
             <div style={{padding: '0.5em'}}>
+                <Title level={3}>Your selected data sources</Title>
+                
                 <List>
                     <List.Item key="0">
-                        <Button type='primary'><Link to="/externalSources/add">Add your own data source</Link></Button>
+                        <Button onClick={this.handleAddApi} type='primary'>Add your own</Button>
                     </List.Item>
                 </List>
+                <br />
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
 
                     {dataSource.map((data:any, index:any) => (
@@ -80,11 +85,12 @@ export class UserExternalSourcesPage extends React.Component<{
                                     <p>{es.name}</p>
                                     <div onClick={(e => e.stopPropagation())}>
                                         <Button 
+                                            type='primary' 
                                             style={{ position: 'absolute', right: '1em'}}
                                             onClick={this.removeApi.bind(this, es.name, dataSource[index])} 
                                             danger
                                         >
-                                            Disconnect from dashboard
+                                            Disconnect the dashboard
                                         </Button>
                                     </div>
                                 </>
