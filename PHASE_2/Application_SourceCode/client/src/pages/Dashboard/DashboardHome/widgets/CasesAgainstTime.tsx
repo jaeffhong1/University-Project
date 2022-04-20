@@ -93,7 +93,7 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
         super(props);
         this.state = {
             data: null,
-            binWidth: "Day",
+            binWidth: "Week",
         };
     }
 

@@ -43,18 +43,16 @@ export default class SourceAdaptorIHeartTeams implements SourceAdaptor {
         }
         const reports: TReport[] = [];
         const obj = await resp.json();
-        for (let article of obj) {
-            for (let report of article.reports) {
-                if (report.locations.length > 1) {
-                    console.warn("i heart teams: got a report with more than one location!")
-                }
-                reports.push({
-                    diseases: report.diseases,
-                    event_date: parseDate(report.event_date),
-                    location: report.locations[0],
-                    syndromes: report.syndromes,
-                });
+        for (let report of obj) {
+            if (report.locations.length > 1) {
+                console.warn("i heart teams: got a report with more than one location!")
             }
+            reports.push({
+                diseases: report.diseases,
+                event_date: parseDate(report.event_date),
+                location: report.locations[0],
+                syndromes: report.syndromes,
+            });
         }
         return reports;
     }
