@@ -205,7 +205,10 @@ export default class DashboardHome extends React.Component<Props, State> {
                                 <Widget
                                     globalSource={this.state.source}
                                     sourceAdaptors={sourceAdaptors}
-                                    mosaic={{ titleMap, id }}
+                                    setTitle={(title: string) => {
+                                        titleMap[id] = title;
+                                        this.setState({}) // mosaic? what the heck
+                                    }}
                                     allWidgets={allWidgets}
                                     externalSources={this.props.externalSources}
                                     setExternalSources={this.props.setExternalSources}
