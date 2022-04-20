@@ -103,7 +103,7 @@ export class ExternalSourcesPage extends React.Component<{
                              "fields": ${JSON.stringify(new_fields_list)}
                         }`,    
         });
-        response.json().then(data=>{console.log(data)});
+        response.json().then(data=>{console.info(data)});
         })();
         message.info("Your API has successfully been added")
     }

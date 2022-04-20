@@ -125,7 +125,6 @@ export class TreeMap extends React.Component<WidgetProps, State> {
         let data: Data[];
         //data = hardcoded_data
         data = this.state.data;
-        console.log("RERENDER");
 
         return (
             <React.Fragment>
