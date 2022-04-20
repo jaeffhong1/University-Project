@@ -80,7 +80,7 @@ export default class Home extends React.Component<IProps, IState> {
         return (
             <main>
                 <div style={{padding: '5em', position: 'absolute', zIndex: '100'}}>
-                    <Title level={1} style={{ color:"white", left: '4em' }}>F0B5 Disease data dashboard</Title>
+                    <Title level={1} style={{ color:"white", left: '4em' }}>f0b5 Disease data dashboard</Title>
                     <Title level={3} style={{ color:"white", left: '4em' }}>Health and disease data you can trust.</Title>
                 </div>
                 <Carousel autoplay>
