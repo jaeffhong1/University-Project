@@ -23,7 +23,28 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
         super(props); 
     }
 
-    dataSources: string[] = ["f0b5", "Epiwatch", "IHeartTeams", "1234"];
+    dataSources: any[] = [
+        {
+            name: "f0b5",
+            url: "https://www.cidrap.umn.edu/",
+            description: "desc"
+        },
+        {
+            name: "Epiwatch",
+            url: "https://www.epiwatch.org/",
+            description: "desc"
+        },
+        {
+            name: "IHeartTeams",
+            url: "http://outbreaks.globalincidentmap.com/",
+            description: "desc"
+        },
+        {
+            name: "123",
+            url: "f0b5.com",
+            description: "desc"
+        }
+    ];
     
     state: IState = {
         selectedDataSource: this.props.datastore.GetDataSource(),
@@ -105,11 +126,15 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
     public render() {
         return (
             <div>
-                <Select value={this.state.selectedDataSource} style={{width: '10em'}} onChange={this.handleChange}>
+                <Select value={this.state.selectedDataSource} style={{width: '15em'}} onChange={this.handleChange}>
                     {
                         this.dataSources.map((value, index) => {
                             return (
-                                <Option value={value} key={index}>{value}</Option>
+                                <Option value={value.name} key={index}>
+                                    {value.name}
+                                    <br />
+                                    <small><a href={value.url}>{value.url}</a></small>
+                                </Option>
                             )
                         })
                     }
