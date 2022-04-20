@@ -65,9 +65,6 @@ export class AllExternalSourcesPage extends React.Component<{
         return (
             <div style={{padding: '0.5em'}}>
                 <br />
-                <Title level={3}>Global Marketplace</Title>
-                
-                <br />
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
 
                     {dataSource.map((data:any, index:any) => (
@@ -98,7 +95,7 @@ export class AllExternalSourcesPage extends React.Component<{
                                             style={{position: 'absolute', right: '1em'}}
                                             onClick={this.addApi.bind(this, es.name, dataSource[index])} 
                                         >
-                                            Add source
+                                            Connect to dashboard
                                         </Button>
                                     </div>
                                 </>

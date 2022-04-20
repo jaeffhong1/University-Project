@@ -53,14 +53,11 @@ export class UserExternalSourcesPage extends React.Component<{
 
         return (
             <div style={{padding: '0.5em'}}>
-                <Title level={3}>Your selected data sources</Title>
-                
                 <List>
                     <List.Item key="0">
-                        <Button onClick={this.handleAddApi} type='primary'>Add your own</Button>
+                        <Button onClick={this.handleAddApi} type='primary'>Add your own data source</Button>
                     </List.Item>
                 </List>
-                <br />
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
 
                     {dataSource.map((data:any, index:any) => (
@@ -90,7 +87,7 @@ export class UserExternalSourcesPage extends React.Component<{
                                             onClick={this.removeApi.bind(this, es.name, dataSource[index])} 
                                             danger
                                         >
-                                            Remove source
+                                            Disconnect from dashboard
                                         </Button>
                                     </div>
                                 </>
