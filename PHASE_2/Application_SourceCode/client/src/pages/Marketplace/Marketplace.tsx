@@ -15,7 +15,19 @@ interface Props {
 }
 interface State {}
 //<UserExternalSourcesPage userExternalSources={this.props.userExternalSources} setUserExternalSources={this.props.setUserExternalSources.bind(this)}/>
+
+
 export class Marketplace extends React.Component<Props, State> {
+    componentDidMount() {
+        let userData:any = localStorage.getItem('userExternalSources');
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));
+        this.props.setUserExternalSources(userData);
+    }
     render() {
         if (!this.props.userExternalSources)
             return <p>Loading external sources, please wait...</p>

@@ -114,7 +114,7 @@ export class UserExternalSourcesPage extends React.Component<{
                     ))}
                 </Space>
                 <br />
-                <Title level={3}>All owned data source</Title>
+                <Title level={3}>Connected Sources</Title>
                 <Collapse>
                     {dataSource.map((es:any, index:any) => (
                         <Panel 
@@ -125,10 +125,11 @@ export class UserExternalSourcesPage extends React.Component<{
                                     <div onClick={(e => e.stopPropagation())}>
                                         <Button 
                                             type='primary' 
-                                            style={{position: 'absolute', right: '1em'}}
+                                            style={{ position: 'absolute', right: '1em'}}
                                             onClick={this.removeApi.bind(this, es.name, dataSource[index])} 
+                                            danger
                                         >
-                                            Remove from collection
+                                            Remove source
                                         </Button>
                                     </div>
                                 </>
