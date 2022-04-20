@@ -13,11 +13,8 @@ import { IExternalSource, TExternalSources } from "../sources/ExternalSource";
 import WidgetSelector from "./WidgetSelector";
 
 interface Props {
-    mosaic: {
-        id: string
-        titleMap: Record<string, string>
-    }
     globalSource: TSource | null
+    setTitle: (title: string) => void;
     sourceAdaptors: { [key: string]: SourceAdaptor }
     externalSources: TExternalSources
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
@@ -67,7 +64,10 @@ export default class Widget extends React.Component<Props, State> {
         if (this.state.widgetName === 'select') {
             return (
                 <WidgetSelector
-                    setType={(type) => this.setState({ widgetName: type })}
+                    setType={(type) => {
+                        this.setState({ widgetName: type })
+                        this.props.setTitle(type)
+                    }}
                     allWidgets={this.props.allWidgets}
                 />
             )

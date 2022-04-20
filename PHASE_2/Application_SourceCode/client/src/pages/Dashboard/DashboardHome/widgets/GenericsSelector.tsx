@@ -164,15 +164,16 @@ export class GenericSelector extends React.Component<
                         ))}
                     </Select>
                 )}
-                {this.state.externalSourceName !== null && this.props.externalSources[this.state.externalSourceName].params !== [] && (
+                {this.state.externalSourceName !== null && this.props.externalSources[this.state.externalSourceName].params != null && this.props.externalSources[this.state.externalSourceName].params.length > 0 && (
                     <div>
-                    <p
-                        style={{margin: 8}}>
-                        Parameters
-                    </p>
+                        <p
+                            style={{margin: 8}}>
+                            Parameters
+                        </p>
                         {this.props.externalSources[
                             this.state.externalSourceName
                         ].params.map((params) => (
+                            
                             <Input
                                 style={{ width: "100%", margin: 8 }}
                                 className="GenericParams"

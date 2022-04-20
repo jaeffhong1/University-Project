@@ -491,7 +491,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                 onChange = {this.handleDateChange.bind(this, index)}
                                             />
                                             <Input
-                                                style={{ width: '50%' }}
+                                                style={{ width: '50.2%' }}
                                                 //@ts-ignore
                                                 size="default"
                                                 placeholder="Format: Y:M:D:t:m:s"
