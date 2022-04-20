@@ -126,6 +126,7 @@ interface State {
     source: TSource | null;
     mos: MosaicNode<string>;
     windowCount: number;
+    datastore: DataStore;
 }
 
 export default class DashboardHome extends React.Component<Props, State> {
@@ -140,17 +141,17 @@ export default class DashboardHome extends React.Component<Props, State> {
                 splitPercentage: 80,
             },
             windowCount: 2,
+            datastore: this.props.datastore
         }
     }
 
-    componentDidMount() {
+    componentDidUpdate() {
         if (
             this.state.source == null ||
             this.props.datastore.GetDataSource() != this.state.source.meta.dataSource ||
             this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
             this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
         ) {
-            console.log("DASHBOARD HOME UPDATED FROM DATASTORE");
             // get the data source, times and reports
             const sourcePromise: Promise<TSource> = fetchSource(
                 this.props.datastore.GetDataSource(),
@@ -161,14 +162,13 @@ export default class DashboardHome extends React.Component<Props, State> {
             );
             // set the source when we retrieve the values
             sourcePromise.then((value) => {
+
                 this.setState({
                     source: value
                 })
             });
         }
     }
-
-    
 
     render() {
 

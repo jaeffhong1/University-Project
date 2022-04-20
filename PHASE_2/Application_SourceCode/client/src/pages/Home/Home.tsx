@@ -27,7 +27,6 @@ export default class Home extends React.Component<IProps, IState> {
     componentDidUpdate(prevProps: IProps) {
         // check if we need to update our state from the datastore prop
         if(this.state.selectedDataSource !== this.props.datastore.GetDataSource()) {
-            console.log(prevProps.datastore.GetDataSource() + " --> " + this.props.datastore.GetDataSource())
             this.setState({selectedDataSource: this.props.datastore.GetDataSource()});
         }
     }

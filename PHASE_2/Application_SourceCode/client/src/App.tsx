@@ -69,6 +69,10 @@ export class App extends React.Component<IProps, IState> {
             const externalSources = JSON.parse(resp) as TExternalSources;
             this.setState({externalSources: externalSources})
         })()
+
+        console.log("-------APP-------");
+        this.setState({});
+        console.log("APP: ", this.state.datastore.GetDataSource())
     }
 
     state: IState = {
@@ -128,7 +132,6 @@ export class App extends React.Component<IProps, IState> {
         // the datastore object will call this function to tell the app to update state
         // this will automatically update the prop "datastore" given to any children who will need to check for updates themselves
         this.setState({});
-        console.log("APP UOPDATED STATE FROM DATASTROE");
     }
 
     setExternalSources(externalSources: TExternalSources) {
@@ -173,8 +176,18 @@ export class App extends React.Component<IProps, IState> {
                                     <Route path="externalSources/add/onboard" element={this.spacedContent(<ExternalSourcesPageOnboard/>)}/>
                                     <Route path="externalSources/onboard" element={this.spacedContent(<AllExternalSourcesPageOnboard/>)}/>
                                     
-                                    <Route path="dashboard" element={this.spacedContent(<DashboardRoot datastore={this.state.datastore}/>)}>
-                                        <Route index element={<DashboardHome datastore={this.state.datastore} externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)}/>} />
+                                    <Route
+                                        path="dashboard" 
+                                        element={
+                                            <div style={{marginLeft: '2em', marginRight: '2em', minHeight: '58em', paddingTop: '1em'}}>
+                                                <DashboardRoot 
+                                                    datastore={this.state.datastore} 
+                                                    externalSources={this.state.userExternalSources} 
+                                                    setExternalSources={this.setUserExternalSources.bind(this)} 
+                                                /> 
+                                            </div>
+                                        }
+                                    >
                                     </Route>
                                     <Route path="dashboard/onboard" element={this.spacedContent(<DashboardRootOnboard datastore={this.state.datastore} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)}/>)}/>
                                     <Route path="*" element={this.spacedContent(<PageNotFound/>)}/>

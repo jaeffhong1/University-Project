@@ -43,7 +43,10 @@ export default class DataStore {
     }
 
     public SetDataSource(dataSource: string): void {
+        console.log("CAHNGING DATASOUIRCE FROM: ", this.selectedDataSources[0], " TO ", dataSource);
         this.selectedDataSources[0] = dataSource;
+
+        
 
         // we should update the parent
         this.updateParent();

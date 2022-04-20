@@ -1,9 +1,11 @@
 import { Layout, Menu } from 'antd';
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useOutletContext } from 'react-router-dom';
 import DashboardHeader from '../../components/DashboardHeader';
 import DataStore from '../../datastore';
 import './dashboard.css';
+import DashboardHome from './DashboardHome/DashboardHome';
+import { TExternalSources, IExternalSource } from './DashboardHome/sources/ExternalSource';
 
 // extract styled components from import 
 const { SubMenu } = Menu;
@@ -11,8 +13,12 @@ const { Content, Sider } = Layout;
 
 interface IProps {
     datastore: DataStore
+    externalSources: TExternalSources | null;
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void;
 }
-interface IState {}
+interface IState {
+    datastore: DataStore
+}
 
 export default class DashboardRoot extends React.Component<IProps, IState> {
 
@@ -20,7 +26,9 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
         super(props);
     }
 
-    state: IState = {}
+    state: IState = {
+        datastore: this.props.datastore
+    }
 
     // get the currently selected keys
     //const location = useLocation();
@@ -34,6 +42,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
         return "";
     }
 
+
     public render() {
         return (
             <main className='main'>
@@ -44,7 +53,7 @@ export default class DashboardRoot extends React.Component<IProps, IState> {
                     <Content>
                         <DashboardHeader datastore={this.props.datastore} />
                         <div style={{ minHeight: 280 }}>
-                            <Outlet />
+                            <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources} setExternalSources={this.props.setExternalSources}></DashboardHome>
                         </div>
                     </Content>
                 </Layout>

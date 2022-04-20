@@ -80,6 +80,19 @@ export class AllExternalSourcesPage extends React.Component<{
             { key: 'fields', dataIndex: 'fields', title: "Fields" },
         ]
 
+        const userDataSource:any = [];
+        let i = 0;
+        /*for (let ues of Object.values(this.props.userExternalSources)) {
+            userDataSource.push({
+                key: '' + (i++),
+                name: ues.name,
+                url: ues.url,
+                root: ues.root,
+                fields: ues.fields,
+                params: ues.params
+            })
+        }*/
+
         return (
             <div style={{padding: '0.5em'}}>
                 <Title level={3}>Your selected data sources</Title>
