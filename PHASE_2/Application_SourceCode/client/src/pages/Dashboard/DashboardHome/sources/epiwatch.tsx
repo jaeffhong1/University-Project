@@ -1,5 +1,4 @@
-import { TReport } from "../DashboardHome";
-import { SourceAdaptor } from "../SourceSelectors";
+import { SourceAdaptor, TReport } from "../DashboardHome";
 
 export default class SourceAdaptorEpiWatch implements SourceAdaptor {
     async fetch(

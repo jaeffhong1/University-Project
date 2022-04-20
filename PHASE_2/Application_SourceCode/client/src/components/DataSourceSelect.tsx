@@ -23,7 +23,7 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
         super(props); 
     }
 
-    dataSources: string[] = ["f0b5", "Epiwatch"];//, "IHeartTeams", "1 group 2 group 3 group 4"];
+    dataSources: string[] = ["f0b5", "Epiwatch", "IHeartTeams", "1234"];
     
     state: IState = {
         selectedDataSource: this.props.datastore.GetDataSource(),
