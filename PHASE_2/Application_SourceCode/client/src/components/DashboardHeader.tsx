@@ -1,11 +1,9 @@
-import React from "react";
-import { PageHeader, Button, Input, DatePicker } from "antd";
-import { useLocation } from "react-router-dom";
-import { HistoryRouterProps } from "react-router-dom";
+import { Button, DatePicker, PageHeader } from "antd";
 import moment, { Moment } from 'moment';
-import { RangeValue } from 'rc-picker/lib/interface'
-import { DataSourceSelect } from "./DataSourceSelect";
+import { RangeValue } from 'rc-picker/lib/interface';
+import React from "react";
 import DataStore from "../datastore";
+import { DataSourceSelect } from "./DataSourceSelect";
 
 interface IProps {
     datastore: DataStore,

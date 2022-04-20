@@ -35,10 +35,13 @@ export type TSource = {
     meta: {
         start: Date;
         end: Date;
+        /* name of the source */
         dataSource: string;
     };
     reports: TReport[];
 };
+
+export type TSources = {[name: string]: TSource};
 
 export type TReactComponent =
     | typeof React.Component
@@ -48,10 +51,10 @@ const allWidgets: { [key: string]: TReactComponent } = {
     "Cases against time": CasesAgainstTime,
     "Count reports": CountReports,
     "Heat Map": HeatMap,
-    TreeMap: TreeMap,
+    "Tree Map": TreeMap,
     Twitter: Twitter,
     Tally: Tally,
-    GenericSelector: GenericSelector,
+    'Generic Selector': GenericSelector,
 };
 
 interface SourceAdaptor {
@@ -68,7 +71,7 @@ const sourceAdaptors: { [key: string]: SourceAdaptor } = {
     Epiwatch: new SourceAdaptorEpiWatch(),
 };
 
-async function fetchSource(
+export async function fetchSource(
     sourceName: string,
     startDate: string,
     endDate: string,
@@ -102,7 +105,7 @@ async function fetchSource(
     return source;
 }
 
-function dateToString(date: Date): string {
+export function dateToString(date: Date): string {
     return `${date.getUTCFullYear()}-${String(date.getUTCMonth()).padStart(
         2,
         "0"
@@ -206,7 +209,8 @@ export default class DashboardHome extends React.Component<Props, State> {
                                 title={titleMap[id]}
                             >
                                 <Widget
-                                    source={this.state.source}
+                                    globalSource={this.state.source}
+                                    sourceAdaptors={sourceAdaptors}
                                     mosaic={{ titleMap, id }}
                                     allWidgets={allWidgets}
                                     externalSources={this.props.externalSources}

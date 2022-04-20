@@ -447,7 +447,7 @@ def get_country_by_geoid():
     return jsonify(result)
 
 
-@app.route("/location/who", methods=["GET"])
+@app.route("/other-team/who", methods=["GET"])
 def turn_who_location_to_id():
 
     start_date = request.values.get("start_date")
@@ -460,6 +460,11 @@ def turn_who_location_to_id():
         timezone = CIDRAP_TIMEZONE
 
     check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+
+    # put date in the format they like
+    start_date = start_date[: len("YYYY-MM-DD")]
+    end_date = end_date[: len("YYYY-MM-DD")]
+
     api_url = "http://epidemicscraper-env.eba-t2stx6uv.us-east-1.elasticbeanstalk.com/"
     api_url_2 = (
         api_url
@@ -522,7 +527,7 @@ def turn_who_location_to_id():
     return jsonify(all_reports)
 
 
-@app.route("/location/global", methods=["GET"])
+@app.route("/other-team/iheartteams", methods=["GET"])
 def turn_global_location_to_id():
 
     start_date = request.values.get("start_date")
@@ -534,7 +539,12 @@ def turn_global_location_to_id():
     if timezone is None:
         timezone = CIDRAP_TIMEZONE
 
-    check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+    # check_filter_criteria(start_date, end_date, key_terms, location, timezone)
+    # start_date = start_date.replace("T", " ")
+    # end_date = end_date.replace("T", " ")
+    start_date = start_date.replace("xx", "00")
+    end_date = end_date.replace("xx", "00")
+
     api_url = "https://iheartteams.ts.r.appspot.com/"
     api_url_2 = (
         api_url
@@ -547,8 +557,10 @@ def turn_global_location_to_id():
         + "&location="
         + (location)
     )
+
     res = requests.get(api_url_2)
     response = json.loads(res.text)
+    print(response)
     all_reports = []
     for article in response:
         for report in article["reports"]:
@@ -599,8 +611,8 @@ def convert_geo_tup(geo_tuple):
     location_info = {}
     location_info["geoid"] = geo_tuple[0]
     location_info["name"] = geo_tuple[1]
-    location_info["lat"] = geo_tuple[2]
-    location_info["lng"] = geo_tuple[3]
+    location_info["lat"] = float(geo_tuple[2])
+    location_info["long"] = float(geo_tuple[3])
     return location_info
 
 
@@ -662,9 +674,9 @@ def convert_main_text_article(article):
 
 
 if __name__ == "__main__":
-    test_scrape()
-    scheduler = BackgroundScheduler()
-    scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
-    scheduler.start()
-    app.run(host="0.0.0.0", port=36042)
+    # test_scrape()
+    # scheduler = BackgroundScheduler()
+    # scrape_job = scheduler.add_job(test_scrape, "interval", hours=24)
+    # scheduler.start()
+    app.run(host="0.0.0.0", port=36042, debug=True)
     # app.run(host="0.0.0.0", port=36042, debug=True)
