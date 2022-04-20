@@ -8,7 +8,7 @@ import 'react-mosaic-component/react-mosaic-component.css';
 // data
 import DataStore from '../../../datastore';
 import SourceAdaptorEpiWatch from "./sources/epiwatch";
-import { TExternalSources, IExternalSource } from "./sources/ExternalSource";
+import { IExternalSource, TExternalSources } from "./sources/ExternalSource";
 import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
 import SourceAdaptorIHeartTeams from "./sources/iheartteams";
 // widgets
@@ -116,7 +116,6 @@ export function dateToString(date: Date): string {
 
 const titleMap: Record<string, string> = {
     window0: "Select a widget",
-    SourceSelector: "Source selector",
 };
 
 interface Props {
@@ -186,19 +185,14 @@ export default class DashboardHome extends React.Component<Props, State> {
             <main className="widgetWindow" style={{ height: "100%", border: '1px solid rgb(235, 237, 240)' }}>
                 <div id="mosaic" style={{ height: "100%" }}>
                     <Mosaic<string>
-                        resize={{}}
-                        // onRelease={(newNode: MosaicNode<string> | null) => {
-                        //     if (newNode !== null)
-                        //         // @ts-ignore
-                        //         setMos(newNode);
-                        // }}
                         renderTile={(id, path) => {
+                            console.log('rendering', id)
                             if (this.props.externalSources == null)
                                 throw new Error("null sources")
                                 
                             return <MosaicWindow<string>
                                 path={path}
-                                createNode={(id, path) => {
+                                createNode={() => {
                                     const name = "window" + this.state.windowCount.toString();
                                     this.setState({
                                         windowCount: this.state.windowCount + 1
@@ -211,17 +205,25 @@ export default class DashboardHome extends React.Component<Props, State> {
                                 <Widget
                                     globalSource={this.state.source}
                                     sourceAdaptors={sourceAdaptors}
-                                    mosaic={{ titleMap, id }}
+                                    setTitle={(title: string) => {
+                                        titleMap[id] = title;
+                                        this.setState({}) // mosaic? what the heck
+                                    }}
                                     allWidgets={allWidgets}
                                     externalSources={this.props.externalSources}
                                     setExternalSources={this.props.setExternalSources}
                                 />
                             </MosaicWindow>
                         }}
-                        initialValue={this.state.mos}
+                        // initialValue={this.state.mos}
+                        value={this.state.mos}
                         onRelease={(mos: MosaicNode<string> | null) => {
                             if (mos)
                                 this.setState({mos})
+                            if (mos == null) {
+                                console.log("set window 0")
+                                this.setState({mos: "window0"})
+                            }
                         }}
                     />
                 </div>
