@@ -1,8 +1,8 @@
+import { Collapse, Typography } from "antd";
 import React from "react";
-import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import { AllExternalSourcesPage } from '../../pages/ExternalSourcesPage/AllExternalSourcesPage';
 import { UserExternalSourcesPage } from '../../pages/ExternalSourcesPage/UserExternalSources';
-import { Button, message, Space, Table, Collapse, Typography, Descriptions, List } from "antd";
+import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -29,7 +29,7 @@ export class Marketplace extends React.Component<Props, State> {
         this.props.setUserExternalSources(userData);
     }
     render() {
-        if (!this.props.userExternalSources)
+        if (!this.props.userExternalSources || !this.props.externalSources)
             return <p>Loading external sources, please wait...</p>
 
 

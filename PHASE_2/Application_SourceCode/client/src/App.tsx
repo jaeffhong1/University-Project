@@ -18,10 +18,8 @@ import { TExternalSources } from './pages/Dashboard/DashboardHome/sources/Extern
 import DashboardRoot from './pages/Dashboard/DashboardRoot';
 import DashboardRootOnboard from './pages/Dashboard/DashboardRootOnboard';
 import AllExternalSourcesPageOnboard from './pages/ExternalSourcesPage/AllExternalSourceOnboard';
-import { AllExternalSourcesPage } from './pages/ExternalSourcesPage/AllExternalSourcesPage';
 import ExternalSourcesPageOnboard from './pages/ExternalSourcesPage/ExternalSourcesOnboard';
 import { ExternalSourcesPage } from './pages/ExternalSourcesPage/ExternalSourcesPage';
-import { UserExternalSourcesPage } from './pages/ExternalSourcesPage/UserExternalSources';
 // import my pages
 import Home from './pages/Home/Home';
 import { Marketplace } from './pages/Marketplace/Marketplace';
@@ -55,6 +53,8 @@ interface IState {
     userExternalSources: TExternalSources | null
 }
 
+const LOCAL_STORAGE_USER_EXTERNAL_SOURCES = 'userExternalSources'
+
 export class App extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props); 
@@ -70,6 +70,12 @@ export class App extends React.Component<IProps, IState> {
             const externalSources = JSON.parse(resp) as TExternalSources;
             this.setState({externalSources: externalSources})
         })()
+
+        let userData:any = localStorage.getItem(LOCAL_STORAGE_USER_EXTERNAL_SOURCES) || '{}';
+        userData = JSON.parse(userData)
+        this.setState({
+            userExternalSources: userData,
+        })
     }
 
     state: IState = {
@@ -137,6 +143,7 @@ export class App extends React.Component<IProps, IState> {
     }
 
     setUserExternalSources(userExternalSources: TExternalSources) {
+        localStorage.setItem(LOCAL_STORAGE_USER_EXTERNAL_SOURCES, JSON.stringify(userExternalSources))
         this.setState({ userExternalSources })
     }
 
@@ -166,9 +173,9 @@ export class App extends React.Component<IProps, IState> {
                             <div className='content'>
                                 <Routes>
                                     <Route index element={<Home datastore={this.state.datastore}/>} />
-                                    <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} /> 
+                                    {/* <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} />  */}
                                     <Route path="externalSources/add" element={this.spacedContent(<ExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
-                                    <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} />)} />
+                                    {/* <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} />)} /> */}
                                     <Route path="marketplace" element={this.spacedContent(<Marketplace userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
                                         
                                     <Route path="externalSources/add/onboard" element={this.spacedContent(<ExternalSourcesPageOnboard/>)}/>

@@ -1,7 +1,6 @@
-import { PlusOutlined ,MinusOutlined } from '@ant-design/icons';
-import { Button, message, Space, Table, Collapse, Typography, Descriptions, List } from "antd";
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Collapse, Descriptions, List, Space, Table, Typography } from "antd";
 import React from "react";
-import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
 
@@ -9,7 +8,7 @@ const { Panel } = Collapse;
 const { Title, Text } = Typography;
 
 export class UserExternalSourcesPage extends React.Component<{
-    userExternalSources: TExternalSources | null,
+    userExternalSources: TExternalSources,
     setUserExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
     handleAddApi() {
@@ -17,38 +16,9 @@ export class UserExternalSourcesPage extends React.Component<{
     }
 
     removeApi(name: string, object: IExternalSource) {
-        let es: IExternalSource;
-        let new_es: TExternalSources = {};
-
-        let userData:any = localStorage.getItem('userExternalSources');
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-
-        let i = 0;
-        while (i < userData.length) {
-            if (userData[i]['name'] == name) {
-                userData.splice(i, 1);
-                i -= 1;
-            }
-            i += 1;
-        }
-
-
-        for (let data of userData) {
-            let key_object:any = {};
-            key_object["name"] = data["name"]
-            key_object["url"] = data["url"]
-            key_object["root"] = data["root"]
-            key_object["fields"] = data["fields"]
-            key_object["params"] = data["params"]
-            new_es[data["name"]] = key_object;
-        }
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
-        userData = localStorage.getItem('userExternalSources');
-        this.props.setUserExternalSources(new_es);
+        const newEs = {...this.props.userExternalSources}
+        delete(newEs[name])
+        this.props.setUserExternalSources(newEs);
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -63,16 +33,7 @@ export class UserExternalSourcesPage extends React.Component<{
     }
 
 
-    componentDidMount() {
-        let userData:any = localStorage.getItem('userExternalSources');
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-        this.props.setUserExternalSources(userData);
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));
-    }
+
     render() {
         if (!this.props.userExternalSources)
             return <p>Loading external sources, please wait...</p>
@@ -88,6 +49,7 @@ export class UserExternalSourcesPage extends React.Component<{
                 params: es.params
             })
         }
+        console.log('rendering', this.props.userExternalSources)
 
         return (
             <div style={{padding: '0.5em'}}>
