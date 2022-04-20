@@ -105,7 +105,7 @@ export default class Home extends React.Component<IProps, IState> {
                             <Col span={8}>
                                 <div className="verticallyCentreDiv" style={{}}>
                                     <Button type="primary" style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard">Your Dashboard</Link></Button><br/>
-                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard/onboard">Dashbourd guide</Link></Button><br/>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard/onboard">Dashbord guide</Link></Button><br/>
                                     <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/externalSources/onboard">External sources guide</Link></Button><br/>
                                     <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/externalSources/add/onboard">Adding external sources guide</Link></Button><br/>
                                 </div>
