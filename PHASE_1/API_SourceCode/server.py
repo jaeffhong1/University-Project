@@ -570,9 +570,11 @@ def turn_global_location_to_id():
 
     res = requests.get(api_url_2)
     response = json.loads(res.text)
+    if res.status_code == 404:
+        return jsonify([])
     if res.status_code != 200:
         current_app.logger.warning("error for ihearteams: %s", response)
-        return 400, json.dumps({"message": "invalid response from iheartteams"})
+        return json.dumps({"message": "invalid response from iheartteams"}), 400
 
     all_reports = []
     for article in response:

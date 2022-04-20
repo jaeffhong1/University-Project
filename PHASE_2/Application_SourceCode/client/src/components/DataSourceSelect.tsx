@@ -1,5 +1,4 @@
-import { InfoOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Dropdown, Menu, Modal, Tooltip, Select } from 'antd';
+import { Select } from 'antd';
 import React from 'react';
 import DataStore from '../datastore';
 import './DataSourceSelect.css';
@@ -39,11 +38,11 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
             url: "http://outbreaks.globalincidentmap.com/",
             description: "desc"
         },
-        {
-            name: "123",
-            url: "f0b5.com",
-            description: "desc"
-        }
+        // {
+        //     name: "123",
+        //     url: "f0b5.com",
+        //     description: "desc"
+        // }
     ];
     
     state: IState = {
