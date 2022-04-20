@@ -40,8 +40,29 @@ export class ExternalSourcesPage extends React.Component<{
             return
         }
 
+        let userData:any = localStorage.getItem('userExternalSources');
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
+        userData.push(es);
+        
+        let new_es: TExternalSources = {};
+        for (let data of userData) {
+            let key_object:any = {};
+            key_object["name"] = data["name"]
+            key_object["url"] = data["url"]
+            key_object["root"] = data["root"]
+            key_object["fields"] = data["fields"]
+            key_object["params"] = data["params"]
+            new_es[data["name"]] = key_object;
+        }
+
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+
         this.props.setExternalSources({...this.props.externalSources, [values.name]: es});
-        this.props.setUserExternalSources({...this.props.userExternalSources, [values.name]: es});
+        this.props.setUserExternalSources(new_es);
 
         let new_params_list:any = [];
         let parameters:any = "";
