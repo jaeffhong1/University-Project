@@ -105,26 +105,10 @@ export default class Home extends React.Component<IProps, IState> {
                             </Col>
                             <Col span={8}>
                                 <div className="verticallyCentreDiv" style={{}}>
-                                    <Button style={{marginRight: '0.5em'}}><Link to="/dashboard">Your Dashboard</Link></Button>
-                                    <Dropdown.Button 
-                                        type="primary"
-                                        onClick={this.handleGetStartedButtonClick} 
-                                        overlay={
-                                            <Menu onClick={this.handleGetStartedMenuClick}>
-                                                <Menu.Item key="1">
-                                                    <Link to="/dashboard/onboard">Dashboard guide</Link>
-                                                </Menu.Item>
-                                                <Menu.Item key="2">
-                                                    <Link to="/externalSources/onboard">External sources guide</Link>
-                                                </Menu.Item>
-                                                <Menu.Item key="3">
-                                                    <Link to="/externalSources/add/onboard">Adding external sources guide</Link>
-                                                </Menu.Item>
-                                            </Menu>
-                                        }
-                                    >
-                                        <Link to="/dashboard/onboard">Get started</Link>
-                                    </Dropdown.Button>
+                                    <Button type="primary" style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard">Your Dashboard</Link></Button>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard/onboard">Dashbourd guide</Link></Button>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/externalSources/onboard">External sources guide</Link></Button>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/externalSources/add/onboard">Adding external sources guide</Link></Button>
                                 </div>
                             </Col>
                         </Row>
