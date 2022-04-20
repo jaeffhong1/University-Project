@@ -105,12 +105,18 @@ export class GenericSelector extends React.Component<
                     const type = fields[field].type
                     if (type == "date") {
                         v = new Date(v)
-                    }
-                    if (type == "date-concatenated-number") {
+                    } else if (type == "date-concatenated-number") {
                         // date is number like: 20210307
                         const year = Math.floor(v / 1e4)
                         const month = Math.floor(v - year * 1e4) / 1e2
                         const day = v % 100;
+                        v = new Date(year, month, day)
+                    } else if (type === "date-/") {
+                        // format DD/MM/YYYY
+                        const [day, month, year] = v.split('/').map((x: string) => parseInt(x))
+                        v = new Date(year, month, day)
+                    } else if (type === "date-iso-8601") {
+                        const [year, month, day] = v.split('-')
                         v = new Date(year, month, day)
                     }
                     axesDict[field].push(v);
