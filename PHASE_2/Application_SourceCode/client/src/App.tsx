@@ -156,9 +156,9 @@ export class App extends React.Component<IProps, IState> {
                             <Text className="logo" style={{fontSize: '1.5em', fontFamily: 'Montserrat-Light-Alt1, sans-serif'}}>HEALTH DASHBOARD</Text>
                             <Menu theme="dark" mode="horizontal">
                                 <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
-                                <Menu.Item key="2"><Link to="/dashboard">Dashboard</Link></Menu.Item>
-                                <Menu.Item key="3"><Link to="/externalSources/">Marketplace</Link></Menu.Item>
-                                <Menu.Item key="4"><Link to="/externalSources/user">User Sources</Link></Menu.Item>
+                                <Menu.Item key="2"><Link className="userDashboard" to="/dashboard">Dashboard</Link></Menu.Item>
+                                <Menu.Item key="3"><Link className="ApiMarketPlace" to="/externalSources/">Marketplace</Link></Menu.Item>
+                                <Menu.Item key="4"><Link className="externalApiDemo" to="/externalSources/user">User Sources</Link></Menu.Item>
                             </Menu>
                         </Header>
                         
