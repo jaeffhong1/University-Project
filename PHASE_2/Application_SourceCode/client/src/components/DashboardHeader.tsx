@@ -1,4 +1,5 @@
-import { Button, DatePicker, PageHeader } from "antd";
+import { Label } from "@blueprintjs/core";
+import { DatePicker, PageHeader } from "antd";
 import moment, { Moment } from 'moment';
 import { RangeValue } from 'rc-picker/lib/interface';
 import React from "react";
@@ -68,6 +69,7 @@ export default class DashboardHeader extends React.Component<IProps, IState> {
                 title="Dashboard"
                 subTitle="Welcome to your dashboard"
                 extra={[
+                    <Label key="label" style={{margin: 0}}>Global source: </Label>,
                     <DatePicker.RangePicker 
                         className="date_picker"
                         key="1" 
