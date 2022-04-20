@@ -60,6 +60,7 @@ export class App extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
+        document.title = "Health Dashboard";
         (async () => {
             const resp = await CacheSystem.fetch("external-apis-000", 10, "http://seng3011.duckdns.org/marketplace/api/get")
             if (typeof resp !== "string") {
