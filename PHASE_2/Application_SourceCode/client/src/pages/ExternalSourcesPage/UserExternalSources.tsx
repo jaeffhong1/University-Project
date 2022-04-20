@@ -62,56 +62,31 @@ export class UserExternalSourcesPage extends React.Component<{
         return false;
     }
 
-    render() {
-        if (!this.props.userExternalSources)
-            return <p>Loading external sources, please wait...</p>
 
-        const dataSource:any = []
-        let i = 0;
-        const localLength = localStorage.length;
-        let local_i = localLength - 5;
-        for (let es of Object.values(this.props.userExternalSources)) {
-            dataSource.push({
-                key: '' + (i++),
-                name: es.name,
-                url: es.url,
-                root: es.root,
-                fields: es.fields,
-                params: es.params
-            })
-        }
+    componentDidMount() {
         let userData:any = localStorage.getItem('userExternalSources');
         if (userData == null) {
             userData = [];
         } else {
             userData = JSON.parse(userData);
         }
-        for (let data of dataSource) {
-            let alreadyIn = 0;
-            for (let externalData of userData) {
-                if (data['name'] == externalData['name']) {
-                    alreadyIn = 1;
-                    break;
-                }
-            }
-            if (!(alreadyIn)) {
-                userData.push(data);
-            }
-        }
-        
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+        this.props.setUserExternalSources(userData);
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));
+    }
+    render() {
+        if (!this.props.userExternalSources)
+            return <p>Loading external sources, please wait...</p>
 
-        for (let userExternal of userData) {
-            let alreadyIn = 0;
-            for (let data of dataSource) {
-                if (data['name'] == userExternal['name']) {
-                    alreadyIn = 1;
-                    break;
-                }
-            }
-            if (!(alreadyIn)) {
-                dataSource.push(userExternal);
-            }
+        const dataSource:any = []
+        for (let es of Object.values(this.props.userExternalSources)) {
+            dataSource.push({
+                key: es.name,
+                name: es.name,
+                url: es.url,
+                root: es.root,
+                fields: es.fields,
+                params: es.params
+            })
         }
 
         return (
