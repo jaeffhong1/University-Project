@@ -49,7 +49,6 @@ export class UserExternalSourcesPage extends React.Component<{
                 params: es.params
             })
         }
-        console.log('rendering', this.props.userExternalSources)
 
         return (
             <div style={{padding: '0.5em'}}>
@@ -91,7 +90,7 @@ export class UserExternalSourcesPage extends React.Component<{
                                             onClick={this.removeApi.bind(this, es.name, dataSource[index])} 
                                             danger
                                         >
-                                            Remove source
+                                            Disconnect the dashboard
                                         </Button>
                                     </div>
                                 </>

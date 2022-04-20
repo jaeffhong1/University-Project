@@ -18,16 +18,6 @@ interface State {}
 
 
 export class Marketplace extends React.Component<Props, State> {
-    componentDidMount() {
-        let userData:any = localStorage.getItem('userExternalSources');
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));
-        this.props.setUserExternalSources(userData);
-    }
     render() {
         if (!this.props.userExternalSources || !this.props.externalSources)
             return <p>Loading external sources, please wait...</p>

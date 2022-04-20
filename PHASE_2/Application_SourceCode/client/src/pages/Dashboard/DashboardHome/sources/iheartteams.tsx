@@ -46,7 +46,7 @@ export default class SourceAdaptorIHeartTeams implements SourceAdaptor {
         for (let article of obj) {
             for (let report of article.reports) {
                 if (report.locations.length > 1) {
-                    console.log("i heart teams: got a report with more than one location!")
+                    console.warn("i heart teams: got a report with more than one location!")
                 }
                 reports.push({
                     diseases: report.diseases,

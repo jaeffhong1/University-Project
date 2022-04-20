@@ -8,10 +8,6 @@ export default class SourceAdaptorEpiWatch implements SourceAdaptor {
         keyTerms: string
     ): Promise<TReport[]> {
         const name = `source-cache__epiwatch__04__full`;
-        // const item = localStorage.getItem(name)
-        // if (item !== null) {
-        //     return JSON.parse(item) // assume the right structure
-        // }
 
         console.group("fetch for", name);
         const url = "http://seng3011.duckdns.org/static/combinedData.json";
@@ -37,7 +33,6 @@ export default class SourceAdaptorEpiWatch implements SourceAdaptor {
                 }
             }
         }
-        // localStorage.setItem(name, reports)
         console.groupEnd();
         return reports;
     }

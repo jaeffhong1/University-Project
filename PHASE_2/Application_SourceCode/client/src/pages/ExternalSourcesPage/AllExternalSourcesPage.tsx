@@ -98,7 +98,7 @@ export class AllExternalSourcesPage extends React.Component<{
                                             style={{position: 'absolute', right: '1em'}}
                                             onClick={this.addApi.bind(this, es.name, dataSource[index])} 
                                         >
-                                            Add source
+                                            Connect to dashboard
                                         </Button>
                                     </div>
                                 </>

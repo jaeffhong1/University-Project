@@ -27,7 +27,6 @@ export default class Home extends React.Component<IProps, IState> {
     componentDidUpdate(prevProps: IProps) {
         // check if we need to update our state from the datastore prop
         if(this.state.selectedDataSource !== this.props.datastore.GetDataSource()) {
-            console.log(prevProps.datastore.GetDataSource() + " --> " + this.props.datastore.GetDataSource())
             this.setState({selectedDataSource: this.props.datastore.GetDataSource()});
         }
     }
@@ -80,7 +79,7 @@ export default class Home extends React.Component<IProps, IState> {
         return (
             <main>
                 <div style={{padding: '5em', position: 'absolute', zIndex: '100'}}>
-                    <Title level={1} style={{ color:"white", left: '4em' }}>F0B5 Disease data dashboard</Title>
+                    <Title level={1} style={{ color:"white", left: '4em' }}>f0b5 Disease data dashboard</Title>
                     <Title level={3} style={{ color:"white", left: '4em' }}>Health and disease data you can trust.</Title>
                 </div>
                 <Carousel autoplay>
@@ -105,26 +104,10 @@ export default class Home extends React.Component<IProps, IState> {
                             </Col>
                             <Col span={8}>
                                 <div className="verticallyCentreDiv" style={{}}>
-                                    <Button style={{marginRight: '0.5em'}}><Link to="/dashboard">Your Dashboard</Link></Button>
-                                    <Dropdown.Button 
-                                        type="primary"
-                                        onClick={this.handleGetStartedButtonClick} 
-                                        overlay={
-                                            <Menu onClick={this.handleGetStartedMenuClick}>
-                                                <Menu.Item key="1">
-                                                    <Link to="/dashboard/onboard">Dashboard guide</Link>
-                                                </Menu.Item>
-                                                <Menu.Item key="2">
-                                                    <Link to="/externalSources/onboard">External sources guide</Link>
-                                                </Menu.Item>
-                                                <Menu.Item key="3">
-                                                    <Link to="/externalSources/add/onboard">Adding external sources guide</Link>
-                                                </Menu.Item>
-                                            </Menu>
-                                        }
-                                    >
-                                        <Link to="/dashboard/onboard">Get started</Link>
-                                    </Dropdown.Button>
+                                    <Button type="primary" style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard">Your Dashboard</Link></Button><br/>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/dashboard/onboard">Dashbourd guide</Link></Button><br/>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/externalSources/onboard">External sources guide</Link></Button><br/>
+                                    <Button style={{marginRight: '0.5em', marginBottom: '0.25em'}}><Link to="/externalSources/add/onboard">Adding external sources guide</Link></Button><br/>
                                 </div>
                             </Col>
                         </Row>

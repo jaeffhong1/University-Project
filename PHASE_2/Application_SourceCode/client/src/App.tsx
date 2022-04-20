@@ -53,7 +53,7 @@ interface IState {
     userExternalSources: TExternalSources | null
 }
 
-const LOCAL_STORAGE_USER_EXTERNAL_SOURCES = 'userExternalSources'
+const LOCAL_STORAGE_USER_EXTERNAL_SOURCES = 'userExternalSources-v0.0.1'
 
 export class App extends React.Component<IProps, IState> {
     constructor(props: IProps) {
@@ -135,7 +135,6 @@ export class App extends React.Component<IProps, IState> {
         // the datastore object will call this function to tell the app to update state
         // this will automatically update the prop "datastore" given to any children who will need to check for updates themselves
         this.setState({});
-        console.log("APP UOPDATED STATE FROM DATASTROE");
     }
 
     setExternalSources(externalSources: TExternalSources) {

@@ -1,7 +1,7 @@
 import { Button, Input, Select } from "antd";
 import React from "react";
 import CacheSystem from "../CacheSystem";
-import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../sources/ExternalSource";
+import { IExternalSource, TExternalSourceFieldType } from "../sources/ExternalSource";
 import { GenericBoxPlot } from "./generics/GenericBoxPlot";
 import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
@@ -32,27 +32,6 @@ export class GenericSelector extends React.Component<
             generic: null,
             axes: null,
         };
-
-        let userData:any = localStorage.getItem('userExternalSources');
-        let new_es: TExternalSources = {};
-        if (userData == null) {
-            userData = [];
-        } else {
-            userData = JSON.parse(userData);
-        }
-
-        for (let data of userData) {
-            let key_object:any = {};
-            key_object["name"] = data["name"]
-            key_object["url"] = data["url"]
-            key_object["root"] = data["root"]
-            key_object["fields"] = data["fields"]
-            key_object["params"] = data["params"]
-            new_es[data["name"]] = key_object;
-        }
-        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
-        userData = localStorage.getItem('userExternalSources');
-        this.props.setExternalSources(new_es);
     }
 
     handleNameChange(value: string) {
@@ -105,12 +84,18 @@ export class GenericSelector extends React.Component<
                     const type = fields[field].type
                     if (type == "date") {
                         v = new Date(v)
-                    }
-                    if (type == "date-concatenated-number") {
+                    } else if (type == "date-concatenated-number") {
                         // date is number like: 20210307
                         const year = Math.floor(v / 1e4)
                         const month = Math.floor(v - year * 1e4) / 1e2
                         const day = v % 100;
+                        v = new Date(year, month, day)
+                    } else if (type === "date-/") {
+                        // format DD/MM/YYYY
+                        const [day, month, year] = v.split('/').map((x: string) => parseInt(x))
+                        v = new Date(year, month, day)
+                    } else if (type === "date-iso-8601") {
+                        const [year, month, day] = v.split('-')
                         v = new Date(year, month, day)
                     }
                     axesDict[field].push(v);

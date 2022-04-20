@@ -145,14 +145,12 @@ export default class DashboardHome extends React.Component<Props, State> {
     }
 
     componentDidUpdate() {
-        console.log('fetch sources if needed')
         if (
             this.state.source == null ||
             this.props.datastore.GetDataSource() != this.state.source.meta.dataSource ||
             this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
             this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
         ) {
-            console.log("fetching new source");
             // get the data source, times and reports
             const sourcePromise: Promise<TSource> = fetchSource(
                 this.props.datastore.GetDataSource(),
@@ -163,7 +161,6 @@ export default class DashboardHome extends React.Component<Props, State> {
             );
             // set the source when we retrieve the values
             sourcePromise.then((value) => {
-                console.log("========= source obtained")
                 this.setState({
                     source: value
                 })
@@ -185,7 +182,6 @@ export default class DashboardHome extends React.Component<Props, State> {
                 <div id="mosaic" style={{ height: "100%" }}>
                     <Mosaic<string>
                         renderTile={(id, path) => {
-                            console.log('rendering', id)
                             if (this.props.externalSources == null)
                                 throw new Error("null sources")
                                 
@@ -220,7 +216,6 @@ export default class DashboardHome extends React.Component<Props, State> {
                             if (mos)
                                 this.setState({mos})
                             if (mos == null) {
-                                console.log("set window 0")
                                 this.setState({mos: "window0"})
                             }
                         }}
