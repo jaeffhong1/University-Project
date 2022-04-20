@@ -47,7 +47,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                     intro: "Click this to select from a date range."
                 },
                 {
-                    element: ".ant-btn.ant-btn-default.ant-btn-icon-only.ant-dropdown-trigger",
+                    element: ".ant-select-selection-item",
                     intro: "Click this to select from a drop-down-list of data sources."
                 },
                 {
@@ -84,7 +84,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
 
     onExit = () => {
         this.setState(() => ({ stepsEnabled: false }));
-        window.location.href = "/";
+        //window.location.href = "/";
     };
 
     toggleSteps = () => {
