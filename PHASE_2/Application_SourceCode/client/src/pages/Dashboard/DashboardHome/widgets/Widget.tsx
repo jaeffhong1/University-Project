@@ -1,6 +1,4 @@
-import { Button, DatePicker, Input, Modal, Select } from 'antd'
-import moment from 'moment'
-import React from 'react'
+import React, { useState } from "react";
 import {
     dateToString,
     fetchSource,
@@ -8,10 +6,12 @@ import {
     TSource,
     TSources
 } from '../DashboardHome'
-import { TExternalSources } from '../sources/ExternalSource'
+import { TExternalSources, IExternalSource } from "../sources/ExternalSource";
+import WidgetSelector from "./WidgetSelector";
+import Datastore from "../../../../datastore";
 import { SourceAdaptor } from '../SourceSelectors'
-import WidgetSelector from './WidgetSelector'
-
+import { Button, DatePicker, Input, Modal, Select } from 'antd'
+import moment from 'moment'
 interface Props {
     mosaic: {
         id: string
@@ -20,6 +20,7 @@ interface Props {
     globalSource: TSource | null
     sourceAdaptors: { [key: string]: SourceAdaptor }
     externalSources: TExternalSources
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void
     allWidgets: { [key: string]: TReactComponent }
 }
 
@@ -27,6 +28,7 @@ export interface WidgetProps {
     allWidgets: { [key: string]: TReactComponent }
     source: TSource
     externalSources: TExternalSources
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }
 
 interface State {
@@ -207,6 +209,7 @@ export default class Widget extends React.Component<Props, State> {
                                 : this.state.source
                         }
                         externalSources={this.props.externalSources}
+                        setExternalSources={this.props.setExternalSources}
                         allWidgets={this.props.allWidgets}
                     />
                 </>

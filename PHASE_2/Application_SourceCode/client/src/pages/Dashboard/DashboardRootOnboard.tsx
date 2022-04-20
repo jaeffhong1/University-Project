@@ -7,7 +7,7 @@ import DashboardHeader from '../../components/DashboardHeader';
 import DataStore from '../../datastore';
 import './dashboard.css';
 import DashboardHome from './DashboardHome/DashboardHome';
-import { TExternalSources } from './DashboardHome/sources/ExternalSource';
+import { TExternalSources, IExternalSource } from './DashboardHome/sources/ExternalSource';
 
 
 
@@ -18,6 +18,7 @@ const { Content, Sider } = Layout;
 interface IProps {
     datastore: DataStore
     externalSources: TExternalSources | null;
+    setExternalSources: (s: {[name: string]: IExternalSource}) => void;
 }
 
 interface IState {
@@ -45,10 +46,6 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                     intro: "Click this to select from a date range"
                 },
                 {
-                    element: ".key_terms",
-                    intro: "Click this to search for key terms"
-                },
-                {
                     element: ".ant-btn.ant-btn-default.ant-btn-icon-only.ant-dropdown-trigger",
                     intro: "Click this to select from a drop-down-list of data sources"
                 },
@@ -58,11 +55,11 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                 },
                 {
                     element: ".widgetWindow",
-                    intro: "When you change the date range, key terms or data source, all the widgets will automatically update"
+                    intro: "When you change the date range or data source, all the widgets will automatically update"
                 },
                 {
                     element: ".mosaic-window-toolbar.draggable",
-                    intro: "These widgets are draggable by dragging your mouse on this part"
+                    intro: "These widgets are draggable by dragging your mouse on this section"
                 },
                 {
                     element: ".mosaic-default-control.bp4-button.bp4-minimal.split-button.bp4-icon-add-column-right",
@@ -70,7 +67,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
                 },
                 {
                     element: ".ant-row",
-                    intro: "There are currently 6 available widgets that can be created. Have fun."
+                    intro: "There are currently 7 available widgets that can be created. Have fun."
                 }
             ],
             hintsEnabled: false,
@@ -145,7 +142,7 @@ export default class DashboardRootOnboard extends React.Component<IProps, IState
 
                     <Content>
                         <DashboardHeader datastore={this.props.datastore} />
-                        <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources} />
+                        <DashboardHome datastore={this.props.datastore} externalSources={this.props.externalSources} setExternalSources={this.props.setExternalSources}/>
                     </Content>
                 </Layout>
             </main>

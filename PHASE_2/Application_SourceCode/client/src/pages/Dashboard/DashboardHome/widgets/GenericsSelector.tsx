@@ -1,7 +1,7 @@
-import { Button, Select } from "antd";
+import { Button, Input, Select } from "antd";
 import React from "react";
 import CacheSystem from "../CacheSystem";
-import { TExternalSourceFieldType } from "../sources/ExternalSource";
+import { TExternalSourceFieldType, TExternalSources } from "../sources/ExternalSource";
 import { GenericBoxPlot } from "./generics/GenericBoxPlot";
 import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
@@ -32,6 +32,27 @@ export class GenericSelector extends React.Component<
             generic: null,
             axes: null,
         };
+
+        let userData:any = localStorage.getItem('userExternalSources');
+        let new_es: TExternalSources = {};
+        if (userData == null) {
+            userData = [];
+        } else {
+            userData = JSON.parse(userData);
+        }
+
+        for (let data of userData) {
+            let key_object:any = {};
+            key_object["name"] = data["name"]
+            key_object["url"] = data["url"]
+            key_object["root"] = data["root"]
+            key_object["fields"] = data["fields"]
+            key_object["params"] = data["params"]
+            new_es[data["name"]] = key_object;
+        }
+        localStorage.setItem('userExternalSources', JSON.stringify(userData));  
+        userData = localStorage.getItem('userExternalSources');
+        this.props.setExternalSources(new_es);
     }
 
     handleNameChange(value: string) {
@@ -142,6 +163,27 @@ export class GenericSelector extends React.Component<
                             </Option>
                         ))}
                     </Select>
+                )}
+                {this.state.externalSourceName !== null && this.props.externalSources[this.state.externalSourceName].params !== [] && (
+                    <div>
+                    <p
+                        style={{margin: 8}}>
+                        Parameters
+                    </p>
+                        {this.props.externalSources[
+                            this.state.externalSourceName
+                        ].params.map((params) => (
+                            <Input
+                                style={{ width: "100%", margin: 8 }}
+                                className="GenericParams"
+                                //@ts-ignore
+                                size="default"
+                                placeholder={"Param Type: " + params.type}
+                                addonAfter={"Examples: " + params.description} 
+                                addonBefore={params.name}
+                            />
+                        ))}
+                    </div>
                 )}
                 {this.state.fields.length > 0 && (
                     <Select
