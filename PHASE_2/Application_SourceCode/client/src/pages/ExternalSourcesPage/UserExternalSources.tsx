@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Collapse, Descriptions, List, Space, Table, Typography } from "antd";
 import React from "react";
+import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
 
@@ -11,9 +12,6 @@ export class UserExternalSourcesPage extends React.Component<{
     userExternalSources: TExternalSources,
     setUserExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
-    handleAddApi() {
-        window.location.href = "/externalSources/add";
-    }
 
     removeApi(name: string, object: IExternalSource) {
         const newEs = {...this.props.userExternalSources}
@@ -54,7 +52,7 @@ export class UserExternalSourcesPage extends React.Component<{
             <div style={{padding: '0.5em'}}>
                 <List>
                     <List.Item key="0">
-                        <Button onClick={this.handleAddApi} type='primary'>Add your own data source</Button>
+                        <Button type='primary'><Link to="/externalSources/add">Add your own data source</Link></Button>
                     </List.Item>
                 </List>
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
