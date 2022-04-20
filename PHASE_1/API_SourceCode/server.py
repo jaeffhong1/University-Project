@@ -427,6 +427,16 @@ def report_filter_for_internal_use():
                     "country": "",
                     "continent": convert_geo_tup(location_hierarchy[1]),
                 }
+            else:
+                rel_location = {
+                    "location": {
+                        "geoid": location["geonames_id"],
+                        "lat": 0,
+                        "long": 0,
+                    },
+                    "country": "",
+                    "continent": "",
+                }
 
             relevant_locations.append(rel_location)
         report["locations"] = relevant_locations
@@ -560,7 +570,10 @@ def turn_global_location_to_id():
 
     res = requests.get(api_url_2)
     response = json.loads(res.text)
-    print(response)
+    if res.status_code != 200:
+        current_app.logger.warning("error for ihearteams: %s", response)
+        return 400, json.dumps({"message": "invalid response from iheartteams"})
+
     all_reports = []
     for article in response:
         for report in article["reports"]:

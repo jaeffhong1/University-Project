@@ -35,6 +35,8 @@ def find_hierarchy2(geoid):
     hierarchy_list.append(geoid)
     f_codes = ["ADM5", "ADM4", "ADM3", "ADM2", "ADM1", "PCLI"]
     line = get_id_line(geoid)
+    if line == -1:
+        return []
     countryCode = line[8]
     current_fcode = line[7]
     i = 0
