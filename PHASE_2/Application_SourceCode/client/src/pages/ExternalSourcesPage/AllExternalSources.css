@@ -7,3 +7,7 @@
     width: 200px;
     height: 130px;
 }
+
+.ant-collapse-content-box {
+    padding: 0 !important;
+}

@@ -1,8 +1,12 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Space, Table } from "antd";
+import { Button, message, Space, Table, Collapse, Typography, Descriptions, List } from "antd";
 import React from "react";
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
+
+const { Panel } = Collapse;
+const { Title, Text } = Typography;
+
 export class AllExternalSourcesPage extends React.Component<{
     userExternalSources: TExternalSources | null,
     externalSources: TExternalSources | null,
@@ -53,36 +57,81 @@ export class AllExternalSourcesPage extends React.Component<{
             { key: 'fields', dataIndex: 'fields', title: "Fields" },
         ]
 
+        return (
+            <div style={{padding: '0.5em'}}>
+                <Title level={3}>Your selected data sources</Title>
+                
+                <List>
+                    <List.Item key="0">
+                        <Button type='primary'>Add your own</Button>
+                    </List.Item>
+                </List>
+                <br />
+                <Space size={[50,100]} wrap style={{display: 'none'}}>
 
-        return <div style={{padding: '0.5em'}}>
-            {Object.values(this.props.externalSources).map((es) => (
-                <div key={es.name}>
-                    <h2>{es.name} <small><a href={es.url}>{es.url}</a> <code style={{marginLeft: 12}}>root='{es.root}'</code></small></h2>
-                    
-                    <Table dataSource={es.fields.map(f => {
-                        // use all this as key to be as unique as possible
-                        return {key: f.name + f.type, ...f}
-                    })} pagination={false} columns={[
-                        { key: 'name', dataIndex: 'name', title: "Name" },
-                        { key: 'type', dataIndex: 'type', title: "Type" },
-                        { key: 'description', dataIndex: 'description', title: "Description" },
-                    ]} />
-                </div>
-            ))}
+                    {dataSource.map((data:any, index:any) => (
+                        <Button 
+                            size="large" 
+                            className="DifferentAPI" 
+                            
+                            key={index}
+                        >
+                            {data.name}&nbsp;
+                            <PlusOutlined className="plusIcon"/> 
+                        </Button>
+                    ))}
+                </Space>
+                <br />
+                <Title level={3}>Use an existing data source</Title>
+                <Collapse>
+                    {Object.values(this.props.externalSources).map((es, index) => (
+                        <Panel 
+                            style={{padding: 0}}
+                            header={
+                                <>
+                                    <p>{es.name}</p>
+                                    <Button 
+                                        type='primary' 
+                                        style={{position: 'absolute', right: '1em'}}
+                                        onClick={this.addApi.bind(this, es.name, dataSource[index])} 
+                                    >
+                                        Add to collection
+                                    </Button>
+                                </>
+                            } 
+                            key={index}
+                        >
+                            <div>
+                                <div style={{width: '80%', margin: 'auto'}}>
+                                    
+                                    
+                                </div>
+                            </div>
+                            <Descriptions bordered>
+                                <Descriptions.Item label="API Address" span={3}>
+                                    <a href={es.url}>{es.url}</a> 
+                                </Descriptions.Item>
+                                <Descriptions.Item label="API Root" span={3}>
+                                    <Text>{es.root}</Text>
+                                </Descriptions.Item>
 
-            <Space size={[50,100]} wrap>
-                {dataSource.map((data:any, index:any) => (
-                    <Button 
-                        size="large" 
-                        className="DifferentAPI" 
-                        onClick={this.addApi.bind(this, data.name, dataSource[index])} 
-                        key={index}
-                    >
-                        {data.name}&nbsp;
-                        <PlusOutlined className="plusIcon"/> 
-                    </Button>
-                ))}
-            </Space>
-        </div>
+                            </Descriptions>
+                            
+                            <Table 
+                                dataSource={es.fields.map(f => {
+                                    // use all this as key to be as unique as possible
+                                    return {key: f.name + f.type, ...f}
+                                })} 
+                                pagination={false} columns={[
+                                    { key: 'name', dataIndex: 'name', title: "Name" },
+                                    { key: 'type', dataIndex: 'type', title: "Type" },
+                                    { key: 'description', dataIndex: 'description', title: "Description" },
+                                ]} 
+                            />
+                        </Panel>
+                    ))}
+                </Collapse>        
+            </div>
+        )
     }
 }
