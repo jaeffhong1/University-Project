@@ -44,6 +44,7 @@ export class AllExternalSourcesPage extends React.Component<{
         localStorage.setItem('userExternalSources', JSON.stringify(userData));  
 
         this.props.setExternalSources(new_es);
+        message.info("Api Added!");
     }
 
     containsObject(obj:IExternalSource, list:IExternalSource[]) {
@@ -82,13 +83,9 @@ export class AllExternalSourcesPage extends React.Component<{
 
         return (
             <div style={{padding: '0.5em'}}>
-                <Title level={3}>Your selected data sources</Title>
+                <br />
+                <Title level={3}>Global MarketPlace</Title>
                 
-                <List>
-                    <List.Item key="0">
-                        <Button type='primary'>Add your own</Button>
-                    </List.Item>
-                </List>
                 <br />
                 <Space size={[50,100]} wrap style={{display: 'none'}}>
 
@@ -113,13 +110,16 @@ export class AllExternalSourcesPage extends React.Component<{
                             header={
                                 <>
                                     <p>{es.name}</p>
-                                    <Button 
-                                        type='primary' 
-                                        style={{position: 'absolute', right: '1em'}}
-                                        onClick={this.addApi.bind(this, es.name, dataSource[index])} 
-                                    >
-                                        Add to collection
-                                    </Button>
+                                    <div onClick={(e => e.stopPropagation())}>
+                                        <Button 
+                                            type='primary' 
+                                            disabled={this.props.userExternalSources !== null && es.name in this.props.userExternalSources}
+                                            style={{position: 'absolute', right: '1em'}}
+                                            onClick={this.addApi.bind(this, es.name, dataSource[index])} 
+                                        >
+                                            Add to collection
+                                        </Button>
+                                    </div>
                                 </>
                             } 
                             key={index}

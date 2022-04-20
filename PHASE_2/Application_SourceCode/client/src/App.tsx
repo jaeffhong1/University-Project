@@ -158,8 +158,7 @@ export class App extends React.Component<IProps, IState> {
                             <Menu theme="dark" mode="horizontal">
                                 <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
                                 <Menu.Item key="2"><Link className="userDashboard" to="/dashboard">Dashboard</Link></Menu.Item>
-                                <Menu.Item key="3"><Link className="ApiMarketPlace" to="/externalSources/">Marketplace</Link></Menu.Item>
-                                <Menu.Item key="4"><Link className="externalApiDemo" to="/externalSources/user">User Sources</Link></Menu.Item>
+                                <Menu.Item key="3"><Link className="ApiMarketPlace" to="/marketplace">Marketplace</Link></Menu.Item>
                             </Menu>
                         </Header>
                         
@@ -169,7 +168,7 @@ export class App extends React.Component<IProps, IState> {
                                     <Route index element={<Home datastore={this.state.datastore}/>} />
                                     <Route path="externalSources" element={this.spacedContent(<AllExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} /> 
                                     <Route path="externalSources/add" element={this.spacedContent(<ExternalSourcesPage userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
-                                    <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage externalSources={this.state.userExternalSources} setExternalSources={this.setUserExternalSources.bind(this)} />)} />
+                                    <Route path="externalSources/user" element={this.spacedContent(<UserExternalSourcesPage userExternalSources={this.state.userExternalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} />)} />
                                     <Route path="marketplace" element={this.spacedContent(<Marketplace userExternalSources={this.state.userExternalSources} externalSources={this.state.externalSources} setUserExternalSources={this.setUserExternalSources.bind(this)} setExternalSources={this.setExternalSources.bind(this)} />)} />
                                         
                                     <Route path="externalSources/add/onboard" element={this.spacedContent(<ExternalSourcesPageOnboard/>)}/>
