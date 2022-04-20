@@ -38,8 +38,8 @@ export default function WidgetSelector(props: Props) {
     }, [ref?.current != null ? ref?.current['clientWidth'] : ref]);
 
     return (
-        <div ref={ref} style={{padding: '1em', paddingTop: '2em'}}>
-            <Row gutter={[16, { xs: 4, sm: 8, md: 16, lg: 32 }]}>
+        <div ref={ref} style={{padding: '1em', paddingTop: '2em', overflowY: 'auto'}}>
+            <Row gutter={[16, { xs: 4, sm: 8, md: 16, lg: 32 }]} style={{overflowY: 'auto'}}>
                 {
                     Object.keys(props.allWidgets).map((value, index) => {
                         return (

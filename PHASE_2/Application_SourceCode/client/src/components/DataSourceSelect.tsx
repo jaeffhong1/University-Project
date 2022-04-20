@@ -1,11 +1,10 @@
 import { InfoOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Dropdown, Menu, Modal, Tooltip } from 'antd';
+import { Button, Checkbox, Dropdown, Menu, Modal, Tooltip, Select } from 'antd';
 import React from 'react';
 import DataStore from '../datastore';
 import './DataSourceSelect.css';
 
-
-
+const { Option } = Select;
 
 interface IProps {
     datastore: DataStore,
@@ -16,6 +15,7 @@ interface IState {
    isModalVisible: boolean,
    modalTitle: string,
    modalDescription: string
+   isDropdownVisible: boolean,
 }
 
 export class DataSourceSelect extends React.Component<IProps, IState> {
@@ -29,17 +29,10 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
         selectedDataSource: this.props.datastore.GetDataSource(),
         isModalVisible: false,
         modalTitle: "",
-        modalDescription: ""
+        modalDescription: "",
+        isDropdownVisible: false,
     }
 
-    handleButtonClick(e: any): void {
-        //message.info('Select a datasource using the dropdown');
-    }
-
-    handleMenuClick(e: any): void {
-        //message.info('Click on menu item.');
-        //console.log('click', e);
-    }
 
     //const [dataSourceSelection, setDataSourceSelection] = useState(0);
     handleCheckboxChange(id: string): void {
@@ -102,47 +95,27 @@ export class DataSourceSelect extends React.Component<IProps, IState> {
         this.showModal();
     }
 
+    handleChange = (value: any, option: any) => {
+        // update the data store
+        this.props.datastore.SetDataSource(value);
+
+        // the datastore will force this component to update
+    }
+
     public render() {
         return (
-            <>
-                <Modal 
-                    title={this.state.modalTitle}
-                    visible={this.state.isModalVisible}
-                    onOk={this.handleOk}
-                    footer={[
-                        <Button key="ok" type="primary" onClick={this.handleOk}>
-                            Ok
-                        </Button>
-                    ]}
-                >
-                    <p>{this.state.modalDescription}</p>
-                </Modal>
-
-                <Dropdown.Button 
-                    onClick={this.handleButtonClick} 
-                    overlay={(
-                        <Menu onClick={this.handleMenuClick}>
-                            {
-                                this.dataSources.map((value, index) => {
-                                    return (
-                                        <Menu.Item key={index}>
-                                            <Checkbox onChange={() => this.handleCheckboxChange(value)} checked={this.state.selectedDataSource == value}>
-                                                <span style={{marginRight: '2em'}}>{value}</span>
-
-                                                <Tooltip title="Info">
-                                                    <Button style={{float: 'right', position: 'absolute', right: '0.4em'}} shape="circle" size="small" icon={<InfoOutlined />}  onClick={() => this.handleInfoClick(value)}/>
-                                                </Tooltip>
-                                            </Checkbox>
-                                        </Menu.Item>
-                                    )
-                                })
-                            }
-                        </Menu>
-                    )}
-                >
-                    Data Sources
-                </Dropdown.Button>
-            </>
+            <div>
+                <Select value={this.state.selectedDataSource} style={{width: '10em'}} onChange={this.handleChange}>
+                    {
+                        this.dataSources.map((value, index) => {
+                            return (
+                                <Option value={value} key={index}>{value}</Option>
+                            )
+                        })
+                    }
+                    
+                </Select>
+            </div>
         );
     }
 }

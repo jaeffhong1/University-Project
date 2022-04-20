@@ -145,7 +145,7 @@ export default class DashboardHome extends React.Component<Props, State> {
         }
     }
 
-    fetchSourcesIfNeeded() {
+    componentDidUpdate() {
         console.log('fetch sources if needed')
         if (
             this.state.source == null ||
@@ -173,11 +173,10 @@ export default class DashboardHome extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.fetchSourcesIfNeeded()
+        //this.fetchSourcesIfNeeded()
     }
 
     render() {
-        this.fetchSourcesIfNeeded()
 
         if (this.props.externalSources == null)
             return <p>Loading external sources, please wait</p>

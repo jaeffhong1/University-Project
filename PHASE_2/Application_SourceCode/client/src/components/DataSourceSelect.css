@@ -16,3 +16,6 @@
         display: inline !important; /* override the above hide for this button only */
     }
 }
+
+.ant-dropdown-trigger {
+}
