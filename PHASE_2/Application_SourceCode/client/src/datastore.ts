@@ -4,8 +4,8 @@ export default class DataStore {
 
     public static DataSourceDescription: Map<string, string> = new Map<string, string>([
         ["f0b5", "A description about f0b5."],
+        ["IHeartTeams", "I Heart Teams"],
         ["Epiwatch", "A description about EPIWATCH."],
-        //["IHeartTeams", "I Heart Teams"],
         //["1 group 2 group 3 group 4", "1 group 2 group 3 group 4 API"]
     ]);
 
@@ -15,10 +15,6 @@ export default class DataStore {
     private endTime: string;
 
     private parent: App;
-
-    // we can add these later:
-    //articles: TArticle[];
-    //reports: TReport[];
 
     constructor(parent: App) {
         // help calculate today's date

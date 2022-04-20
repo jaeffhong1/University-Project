@@ -10,6 +10,7 @@ import DataStore from '../../../datastore';
 import SourceAdaptorEpiWatch from "./sources/epiwatch";
 import { TExternalSources, IExternalSource } from "./sources/ExternalSource";
 import SourceAdaptorf0b5, { parseDate } from "./sources/f0b5";
+import SourceAdaptorIHeartTeams from "./sources/iheartteams";
 // widgets
 //import SourceSelector from "./SourceSelectors";
 import { CasesAgainstTime } from './widgets/CasesAgainstTime';
@@ -57,7 +58,7 @@ const allWidgets: { [key: string]: TReactComponent } = {
     'Generic Selector': GenericSelector,
 };
 
-interface SourceAdaptor {
+export interface SourceAdaptor {
     fetch: (
         start: string,
         end: string,
@@ -69,6 +70,7 @@ interface SourceAdaptor {
 const sourceAdaptors: { [key: string]: SourceAdaptor } = {
     f0b5: new SourceAdaptorf0b5(),
     Epiwatch: new SourceAdaptorEpiWatch(),
+    IHeartTeams: new SourceAdaptorIHeartTeams(),
 };
 
 export async function fetchSource(
@@ -143,14 +145,15 @@ export default class DashboardHome extends React.Component<Props, State> {
         }
     }
 
-    componentDidMount() {
+    fetchSourcesIfNeeded() {
+        console.log('fetch sources if needed')
         if (
             this.state.source == null ||
             this.props.datastore.GetDataSource() != this.state.source.meta.dataSource ||
             this.props.datastore.GetStartTime() != dateToString(this.state.source.meta.start) ||
             this.props.datastore.GetEndTime() != dateToString(this.state.source.meta.end)
         ) {
-            console.log("DASHBOARD HOME UPDATED FROM DATASTORE");
+            console.log("fetching new source");
             // get the data source, times and reports
             const sourcePromise: Promise<TSource> = fetchSource(
                 this.props.datastore.GetDataSource(),
@@ -161,6 +164,7 @@ export default class DashboardHome extends React.Component<Props, State> {
             );
             // set the source when we retrieve the values
             sourcePromise.then((value) => {
+                console.log("========= source obtained")
                 this.setState({
                     source: value
                 })
@@ -168,16 +172,12 @@ export default class DashboardHome extends React.Component<Props, State> {
         }
     }
 
-    
+    componentDidMount() {
+        this.fetchSourcesIfNeeded()
+    }
 
     render() {
-
-        const val: MosaicNode<string> = {
-            direction: 'row',
-            first: 'WidgetSelector',
-            second: 'HiddenWidget',
-            splitPercentage: 70
-        }
+        this.fetchSourcesIfNeeded()
 
         if (this.props.externalSources == null)
             return <p>Loading external sources, please wait</p>

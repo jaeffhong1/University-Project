@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import { Button, DatePicker, Input, Modal, Select } from 'antd';
+import moment from 'moment';
+import React from "react";
 import {
     dateToString,
     fetchSource,
+    SourceAdaptor,
     TReactComponent,
     TSource,
     TSources
-} from '../DashboardHome'
-import { TExternalSources, IExternalSource } from "../sources/ExternalSource";
+} from '../DashboardHome';
+import { IExternalSource, TExternalSources } from "../sources/ExternalSource";
 import WidgetSelector from "./WidgetSelector";
-import Datastore from "../../../../datastore";
-import { SourceAdaptor } from '../SourceSelectors'
-import { Button, DatePicker, Input, Modal, Select } from 'antd'
-import moment from 'moment'
+
 interface Props {
     mosaic: {
         id: string
