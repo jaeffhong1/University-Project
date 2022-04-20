@@ -1,6 +1,6 @@
 export type TExternalSourceFieldType = "string" | "number" | "date" | "boolean" | "date-concatenated-number";
 
-export interface IExternalSource {
+export type IExternalSource = {
     name: string,
     url: string;
     root: string,
