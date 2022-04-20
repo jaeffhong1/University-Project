@@ -88,6 +88,7 @@ export default class Widget extends React.Component<Props, State> {
                         onClick={() =>
                             this.setState({ selectingLocalSource: true })
                         }
+                        style={{marginBottom: 12}}
                     >
                         Select different source for this widget
                     </Button>}

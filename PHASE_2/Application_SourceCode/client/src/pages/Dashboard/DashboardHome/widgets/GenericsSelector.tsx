@@ -1,7 +1,7 @@
 import { Button, Input, Select } from "antd";
 import React from "react";
 import CacheSystem from "../CacheSystem";
-import { TExternalSourceFieldType, TExternalSources } from "../sources/ExternalSource";
+import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../sources/ExternalSource";
 import { GenericBoxPlot } from "./generics/GenericBoxPlot";
 import { GenericHistogram } from "./generics/GenericHistogram";
 import { GenericScatter } from "./generics/GenericScatter";
@@ -72,45 +72,52 @@ export class GenericSelector extends React.Component<
         this.setState({ generic: value, axes: null });
         (async () => {
             if (!this.state.externalSourceName) throw new Error("assertion");
-            const src =
+            const es =
                 this.props.externalSources[this.state.externalSourceName];
             const url = new URL(
                 "http://seng3011.duckdns.org:8086/front-end/forward"
             );
-            url.searchParams.append("url", src.url);
+            url.searchParams.append("url", es.url);
             const resp = await CacheSystem.fetch(url.toString() + "-01", 60 * 60, url.toString());
             if (typeof resp !== "string") {
                 alert("response != 200:" + (await resp.text()));
                 return;
             }
             let items = JSON.parse(resp)
-            if (src.root !== null && src.root != "") {
-                const parts = src.root.split('.')
+            if (es.root !== null && es.root != "") {
+                const parts = es.root.split('.')
                 for (let part of parts) {
                     items = items[part]
                 }
             }
             // FIXME: ensure items is in the right format
 
+            const fields: {[key: string]: IExternalSource['fields'][0]} = {}
+            for (let field of es.fields) {
+                fields[field.name] = field
+            }
+
             const axesDict: { [field: string]: any[] } = {};
             for (let item of items) {
                 for (let field of this.state.fields) {
                     if (!axesDict[field]) axesDict[field] = [];
                     let v = item[field];
-                    // @ts-ignore
-                    const type = src.fields.find(e => e.name == field).type
+                    const type = fields[field].type
+                    if (type == "date") {
+                        v = new Date(v)
+                    }
                     if (type == "date-concatenated-number") {
                         // date is number like: 20210307
                         const year = Math.floor(v / 1e4)
-                        const month = (v - year) / 1e2
+                        const month = Math.floor(v - year * 1e4) / 1e2
                         const day = v % 100;
-                        v = (new Date(year, month, day)).toDateString()
+                        v = new Date(year, month, day)
                     }
                     axesDict[field].push(v);
                 }
             }
 
-            const axes = [];
+            const axes: any[][] = [];
             for (let field of Object.values(axesDict)) {
                 axes.push(field);
             }
