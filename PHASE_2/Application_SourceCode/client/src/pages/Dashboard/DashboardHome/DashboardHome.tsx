@@ -50,7 +50,7 @@ export type TReactComponent =
 
 const allWidgets: { [key: string]: TReactComponent } = {
     "Cases against time": CasesAgainstTime,
-    "Count reports": CountReports,
+    // "Count reports": CountReports,
     "Heat Map": HeatMap,
     "Tree Map": TreeMap,
     Twitter: Twitter,
