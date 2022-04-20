@@ -89,7 +89,7 @@ export default class Widget extends React.Component<Props, State> {
                             this.setState({ selectingLocalSource: true })
                         }
                     >
-                        Select local state
+                        Select different source for this widget
                     </Button>}
                     <Modal
                         visible={this.state.selectingLocalSource}

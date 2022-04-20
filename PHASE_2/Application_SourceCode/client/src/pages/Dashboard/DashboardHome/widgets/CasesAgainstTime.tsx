@@ -1,3 +1,4 @@
+import { Select } from "antd";
 import { Data as PlotlyData } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
@@ -112,28 +113,15 @@ export class CasesAgainstTime extends React.Component<WidgetProps, State> {
 
         return (
             <React.Fragment>
-                <p>
-                    <select
-                        value={this.state.binWidth}
-                        onChange={(e) => {
-                            // @ts-ignore
-                            const binWidth: keyof typeof DURATION =
-                                e.target.value;
-                            this.setState({
-                                binWidth,
-                                data: makeData(this.props.source, binWidth)
-                                    .data,
-                            });
-                        }}
-                        style={{ margin: "0 8px" }}
-                    >
-                        {["Week", "Day"].map((k: string) => (
-                            <option key={k} value={k}>
-                                {k}
-                            </option>
-                        ))}
-                    </select>
-                </p>
+                <Select defaultValue="Week" style={{width: '20%', marginLeft: 12, marginBottom: 12}} onChange={(binWidth: keyof typeof DURATION) => {
+                    this.setState({
+                        binWidth: binWidth,
+                        data: makeData(this.props.source, binWidth).data
+                    })
+                }}>
+                    <Select.Option key="week" value="Week">Week</Select.Option>
+                    <Select.Option key="day" value="Day">Day</Select.Option>
+                </Select>
                 <Plot
                     data={this.state.data.plotdata}
                     layout={{
