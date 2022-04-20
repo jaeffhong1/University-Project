@@ -49,7 +49,6 @@ export class UserExternalSourcesPage extends React.Component<{
                 params: es.params
             })
         }
-        console.log('rendering', this.props.userExternalSources)
 
         return (
             <div style={{padding: '0.5em'}}>

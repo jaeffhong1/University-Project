@@ -53,7 +53,7 @@ interface IState {
     userExternalSources: TExternalSources | null
 }
 
-const LOCAL_STORAGE_USER_EXTERNAL_SOURCES = 'userExternalSources'
+const LOCAL_STORAGE_USER_EXTERNAL_SOURCES = 'userExternalSources-v0.0.1'
 
 export class App extends React.Component<IProps, IState> {
     constructor(props: IProps) {
