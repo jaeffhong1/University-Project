@@ -86,7 +86,6 @@ export class UserExternalSourcesPage extends React.Component<{
                                     <p>{es.name}</p>
                                     <div onClick={(e => e.stopPropagation())}>
                                         <Button 
-                                            type='primary' 
                                             style={{ position: 'absolute', right: '1em'}}
                                             onClick={this.removeApi.bind(this, es.name, dataSource[index])} 
                                             danger
