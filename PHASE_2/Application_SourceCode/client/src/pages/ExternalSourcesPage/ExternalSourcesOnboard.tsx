@@ -69,62 +69,62 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
                 {
                     title: "Parameters",
                     element: ".paramSelector",
-                    intro: "Here you can add in any parameters that the url would take in"
+                    intro: "Here you can add in any parameters that the url would take in."
                 },
                 {
                     title: 'Parameters <p></p> example.org?start_date=2020-01-01',
                     element: ".StringEntryParam",
-                    intro: 'For the given url above, you would input "start_date"'
+                    intro: 'For the given url above, you would input "start_date".'
                 },
                 {
                     title: 'Parameters <p></p> example.org?start_date=2020-01-01',
                     element: ".StringExampleEntryParam",
-                    intro: 'For the given url above, you would input examples of what the input would look like. For example, "2015-04-03,2010-05-05" <p></p> This is to allow other users to know what input they need to provide to use the API'
+                    intro: 'For the given url above, you would input examples of what the input would look like. For example, "2015-04-03,2010-05-05" <p></p> This is to allow other users to know what input they need to provide to use the API.'
                 },
                 {
                     title: 'Enter the root of the JSON <p></p>  {"data":[{"total_cases":8452}]}',
                     element: ".SourceRootStart",
-                    intro: 'For the given output above, you would input "data"'
+                    intro: 'For the given output above, you would input "data".'
                 },
                 {
                     title: "Fields",
                     element: ".AllFields",
-                    intro: "Currently we support strings, numbers, booleans and dates"
+                    intro: "Currently we support strings, numbers, booleans and dates."
                 },
                 {
                     title: 'String input <p></p> {"data":[{"location": "China"}]}',
                     element: ".StringEntry",
-                    intro: 'For the given output above, you would input "location"'
+                    intro: 'For the given output above, you would input "location".'
                 },
                 {
                     title: 'Number input <p></p> {"data":[{"total_cases": 25}]}',
                     element: ".NumberEntry",
-                    intro: 'For the given output above, you would input "total_cases"'
+                    intro: 'For the given output above, you would input "total_cases".'
                 },
                 {
                     title: 'Date input <p></p> {"data":[{"time": 2022-03-05}]}',
                     element: ".dateEntry",
-                    intro: 'For the given output above, you would input "time"'
+                    intro: 'For the given output above, you would input "time".'
                 },
                 {
                     title: 'Date Format input <p></p> {"data":[{"time": 2022-03-05}]}',
                     element: ".dateEntryFormat",
-                    intro: 'For the given output above, you would input "YYYY-MM-DD"<p></p> Y(year), M(month), D(day), t(hour), m(minutes), s(seconds)'
+                    intro: 'For the given output above, you would input "YYYY-MM-DD"<p></p> Y(year), M(month), D(day), t(hour), m(minutes), s(seconds).'
                 },
                 {
                     title: "Adding extra fields",
                     element: ".DropDown",
-                    intro: 'Using this dropdown menu, you may add extra fields'
+                    intro: 'Using this dropdown menu, you may add extra fields.'
                 },
                 {
                     title: "Removing fields",
                     element: ".boolButton",
-                    intro: 'Using this button, you may remove the field'
+                    intro: 'Using this button, you may remove the field.'
                 },
                 {
                     title: "Submitting",
                     element: ".SubmitButton",
-                    intro: 'When you are done, you may click this button to add in this API'
+                    intro: 'When you are done, you may click this button to add in this API.'
                 },
             ]
         }
@@ -549,7 +549,7 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
                                                 onChange = {this.handleDateChange.bind(this, index)}
                                             />
                                             <Input
-                                                style={{ width: '50%' }}
+                                                style={{ width: '50.2%' }}
                                                 className="dateEntryFormat"
                                                 //@ts-ignore
                                                 size="default"

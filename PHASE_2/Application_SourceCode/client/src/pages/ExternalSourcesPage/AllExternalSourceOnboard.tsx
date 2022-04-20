@@ -1,4 +1,4 @@
-import { Button, Form, Table, Input, Dropdown, Menu, Checkbox, Tooltip, Space, Layout } from "antd";
+import { Button, message, Space, Table, Collapse, Typography, Descriptions, List } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, {useState} from "react";
 import { Link } from 'react-router-dom';
@@ -8,15 +8,16 @@ import { format } from "path";
 import './AllExternalSources.css'
 import { Steps } from 'intro.js-react'
 
-const { SubMenu } = Menu;
-const { Content, Sider } = Layout;
+const { Panel } = Collapse;
+const { Title, Text } = Typography;
+
 interface IProps {
 }
 
 interface IState {
     stepsEnabled: boolean,
     initialStep: number,
-    steps: {element: string, intro: string}[]
+    steps: {title: string, element: string, intro: string}[]
 }
 export default class AllExternalSourcesPageOnboard extends React.Component<IProps, IState> {
 
@@ -27,26 +28,80 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
             initialStep: 0,
             steps: [
                 {
-                    element: ".ExternalSourcesMarket",
-                    intro: "Click here to access other API's"
+                    title: "",
+                    element: ".ApiMarketPlace",
+                    intro: "Click here to access the API Marketplace."
                 },
                 {
+                    title: "",
                     element: ".APItable",
-                    intro: "This will list the information related to the other API's in the marketplace"
+                    intro: "Here is an example of an API added by another user. Clicking the arrow will expand it's contents."
                 },
                 {
-                    element: ".ant-table-row.ant-table-row-level-0",
-                    intro: "This example API uses the example.org URL and has fields containing a string with root \"data\""
+                    title: "",
+                    element: ".ApiUrl",
+                    intro: "This row will contain the URL the API uses to return its data."
                 },
                 {
-                    element: ".DifferentAPI",
-                    intro: "To add this API click on this button"
+                    title: "",
+                    element: ".ExampleUrl",
+                    intro: "This example API uses 'example.org' for its URL."
                 },
                 {
-                    element: ".addAPI",
-                    intro: "Lets have a go adding our own API"
+                    title: "",
+                    element: ".ApiRoot",
+                    intro: "This row will contain the root of the data the API returns."
                 },
-                
+                {
+                    title: "",
+                    element: ".ExampleRoot",
+                    intro: "This example API uses 'data' for its root."
+                },
+                {
+                    title: "",
+                    element: ".ApiTableInfo",
+                    intro: "This section shows the different fields of the data that the API returns."
+                },
+                {
+                    title: "",
+                    element: ".name",
+                    intro: "This column displays the name of the field."
+                },
+                {
+                    title: "",
+                    element: ".type",
+                    intro: "This column displays the type of the field."
+                },
+                {
+                    title: "",
+                    element: ".description",
+                    intro: "This column displays the description of the field."
+                },
+                {
+                    title: "",
+                    element: ".ApiTableInfo",
+                    intro: "This example API contains a field '{stringOne: hello}' which is of type String."
+                },
+                {
+                    title: "{data: [{ stringOne: example }, { stringOne: example2 }]}",
+                    element: ".APItable",
+                    intro: "Overall, this 'example.org' API will return a JSON array that will look something like above."
+                },
+                {
+                    title: "",
+                    element: ".addToCollection",
+                    intro: "To add this API to your collection, simply click this button."
+                },
+                {
+                    title: "",
+                    element: ".addOwnButton",
+                    intro: "To add your own API, simply click this button."
+                },
+                {
+                    title: "",
+                    element: ".externalApiDemo",
+                    intro: "This newly added API will show up in your personal external sources. Good luck!"
+                }
             ]
         }
     }
@@ -56,6 +111,7 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
 
     onExit = () => {
         this.setState(() => ({ stepsEnabled: false }));
+        window.location.href = "/";
     };
 
     toggleSteps = () => {
@@ -63,84 +119,116 @@ export default class AllExternalSourcesPageOnboard extends React.Component<IProp
     };
 
     render() {
-
-        const dataSource = []
+        const dataSource:any = []
         const allDataSources:any = []
 
         var fieldTypes: TExternalSourceFieldType = "string"; 
-        const newField = {'name': 'example', 'type': fieldTypes, 'description': 'examplle'};
-        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data", "params":[]}
+        var paramTypes: TExternalSourceFieldType = "date"; 
+        const newField = {'name': 'stringOne', 'type': fieldTypes, 'description': 'example'};
+        const newParam = {'name': 'paramDate', 'type': paramTypes, 'description': 'paramExample'};
+        const example:IExternalSource = {"name":"ExampleAPI","url":"example.org","fields":[newField],"root":"data", "params":[newParam]}
 
         const newData = {key: '0', json: JSON.stringify(example)}
         dataSource.push(newData)
 
         allDataSources.push(example);
+
         const columns = [
-            { key: 'json', dataIndex: 'json', title: "JSON" },
+            { key: 'name', dataIndex: 'name', title: "API Name" },
+            { key: 'url', dataIndex: 'url', title: "URL" },
+            { key: 'root', dataIndex: 'root', title: "Root" },
+            { key: 'fields', dataIndex: 'fields', title: "Fields" },
         ]
 
-        const types = ['date', 'string', 'number']
-        return <div style={{padding: '12px'}}>
-            <Steps
-                enabled={this.state.stepsEnabled}
-                steps={this.state.steps}
-                initialStep={this.state.initialStep}
-                options={{
-                    showProgress: true,
-                    disableInteraction: false,
-                    showBullets: false,
-                    exitOnOverlayClick: false,
-                    doneLabel: "Finish"
-                }}
-                onExit={this.onExit}
-            />
-            <Layout className="site-layout-background" style={{ padding: 0, background: 'white' }}>
-                <Sider className="site-layout-background" width={200}>
-                    <Menu
-                        openKeys={["sub4"]}
-                        className="allStuff"
-                        mode="inline"
-                        style={{height: '100%'}}
-                        selectedKeys={['DashboardHome']}//[this.getCurrentPage()]}
-                    >
-                        <Menu.Item className="Dashboard" key="dashboard" style={{marginTop: 0}}><Link to="/dashboard">Dashboard Brief</Link></Menu.Item>
-                        <Menu.Item className="ExternalSourcesMarket" key="external-sources"><Link to="/dashboard/all-external-sources">External Sources</Link></Menu.Item>
-                        <SubMenu key="sub1" icon={<UserOutlined />} title="Disease Cases">
-                            <Menu.Item key="diseases"><Link to="/dashboard/disease-cases/diseases">Diseases</Link></Menu.Item>
-                            <Menu.Item key="syndromes">Syndromes</Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub2" icon={<LaptopOutlined />} title="Countries">
-                            <Menu.Item key="4">Current disease cases</Menu.Item>
-                            <Menu.Item key="5">Case timeline</Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub3" icon={<NotificationOutlined />} title="Another Field">
-                            <Menu.Item key="6">option9</Menu.Item>
-                            <Menu.Item key="7">option10</Menu.Item>
-                            <Menu.Item key="8">option11</Menu.Item>
-                            <Menu.Item key="9">option12</Menu.Item>
-                        </SubMenu>
-                        <SubMenu className="MarketPlace" key="sub4" icon={<LaptopOutlined />} title="MarketPlace">
-                            <Menu.Item className="MarketUpload" key="upload"><Link to="/dashboard/market-place/upload">Upload Dashboards</Link></Menu.Item>
-                            <Menu.Item className="MarketBrowse" key="browse"><Link to="/dashboard/market-place/browse">Browse Dashboards</Link></Menu.Item>
-                        </SubMenu>
-                    </Menu>
-                </Sider>
+        return (
+            <div style={{padding: '0.5em'}}>
+                <Steps
+                    enabled={this.state.stepsEnabled}
+                    steps={this.state.steps}
+                    initialStep={this.state.initialStep}
+                    options={{
+                        showProgress: true,
+                        disableInteraction: false,
+                        showBullets: false,
+                        exitOnOverlayClick: false,
+                        doneLabel: "Finish"
+                    }}
+                    onExit={this.onExit}
+                />
+                <Title level={3}>Your selected data sources</Title>
+                
+                <List>
+                    <List.Item key="0">
+                        <Button className="addOwnButton" type='primary'>Add your own</Button>
+                    </List.Item>
+                </List>
+                <br />
+                <Space size={[50,100]} wrap style={{display: 'none'}}>
 
-                <div style={{padding: '12px'}}>
-                    <Table className="APItable" dataSource={dataSource} columns={columns} />
-
-                    <Space size={[50,100]} wrap>
-                        <Button size="large" className="addAPI" onClick={this.handleAddApi}>
-                            Add an API
-                            <PlusOutlined style={{color: "blue"}} className="plusIcon"/>
+                    {dataSource.map((data:any, index:any) => (
+                        <Button 
+                            size="large" 
+                            className="DifferentAPI" 
+                            
+                            key={index}
+                        >
+                            {data.name}&nbsp;
+                            <PlusOutlined className="plusIcon"/> 
                         </Button>
+                    ))}
+                </Space>
+                <br />
+                <Title level={3}>Use an existing data source</Title>
+                <Collapse className="APItable" defaultActiveKey={['0']}> 
+                    {Object.values(allDataSources).map((es:any, index:any) => (
+                        <Panel 
+                            style={{padding: 0}}
+                            header={
+                                <>
+                                    <p>{es.name}</p>
+                                    <Button 
+                                        className="addToCollection"
+                                        type='primary' 
+                                        style={{position: 'absolute', right: '1em'}}
+                                    >
+                                        Add to collection
+                                    </Button>
+                                </>
+                            } 
+                            key={index}
+                        >
+                            <div>
+                                <div style={{width: '80%', margin: 'auto'}}>
+                                    
+                                    
+                                </div>
+                            </div>
+                            <Descriptions bordered>
+                                <Descriptions.Item className="ApiUrl" label="API Address" span={3}>
+                                    <a className="ExampleUrl" href={es.url}>{es.url}</a> 
+                                </Descriptions.Item>
+                                <Descriptions.Item className="ApiRoot" label="API Root" span={3}>
+                                    <Text className="ExampleRoot">{es.root}</Text>
+                                </Descriptions.Item>
 
-                        {allDataSources.map((data:any, index:any) => (
-                            <Button size="large" className="DifferentAPI" key={index}>{data.name} <PlusOutlined className="plusIcon"/> </Button>
-                        ))}
-                    </Space>
-                </div>
-            </Layout>
-        </div>
+                            </Descriptions>
+                            
+                            <Table 
+                                className="ApiTableInfo"
+                                dataSource={es.fields.map((f:any) => {
+                                    // use all this as key to be as unique as possible
+                                    return {key: f.name + f.type, ...f}
+                                })} 
+                                pagination={false} columns={[
+                                    { className:"name", key: 'name', dataIndex: 'name', title: "Name" },
+                                    { className:"type", key: 'type', dataIndex: 'type', title: "Type" },
+                                    { className:"description", key: 'description', dataIndex: 'description', title: "Description" },
+                                ]} 
+                            />
+                        </Panel>
+                    ))}
+                </Collapse>        
+            </div>
+        )
     }
 }
