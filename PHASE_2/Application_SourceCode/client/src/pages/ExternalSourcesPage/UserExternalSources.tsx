@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Collapse, Descriptions, List, Space, Table, Typography } from "antd";
 import React from "react";
+import { Link } from 'react-router-dom';
 import { IExternalSource, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './AllExternalSources.css';
 
@@ -56,7 +57,7 @@ export class UserExternalSourcesPage extends React.Component<{
                 
                 <List>
                     <List.Item key="0">
-                        <Button onClick={this.handleAddApi} type='primary'>Add your own</Button>
+                        <Button type='primary'><Link to="/externalSources/add">Add your own data source</Link></Button>
                     </List.Item>
                 </List>
                 <br />
