@@ -52,6 +52,12 @@
     top: 1em;
 }
 
+.AutofillButton {
+    position: relative;
+    left: 30%;
+    top: 1em;
+}
+
 .ApiStructure {
     position: relative;
     left:30%;
