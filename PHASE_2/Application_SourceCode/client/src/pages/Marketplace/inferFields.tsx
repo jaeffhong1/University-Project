@@ -1,6 +1,8 @@
 const ErrNotListRepeatingObject = 'ErrNotListOfRepeatingObject'
 
 function isObject(element: any): boolean {
+    if (element == null || element == undefined)
+        return false
     return element.constructor.name === 'Object'
 }
 
@@ -61,7 +63,7 @@ function findListOfRepeatingObjects(data: any) {
         // [path, object]
         [[], data],
     ]
-    const possibilities = [
+    const possibilities: [string[], any][] = [
         // [path, object]
     ]
 
@@ -73,8 +75,6 @@ function findListOfRepeatingObjects(data: any) {
                 possibilities.push([[...path, key], obj[key]])
             } else if (isObject(obj[key])) {
                 q.push([[...path, key], obj[key]])
-            } else {
-                console.log(key, 'fail')
             }
         }
     }
@@ -85,9 +85,12 @@ function findListOfRepeatingObjects(data: any) {
         console.warn(
             'more than one list of repeating objects, choosing the longest list',
         )
-        let longest = []
+        // FIXME: for covid-19 sa we want a specific field
+        const match = possibilities.find(p => p[0].includes('laboratory_daily'))
+        if (match) return match
+        let longest: any[] = [null, []]
         for (let list of Object.values(possibilities)) {
-            if (list.length > longest.length) {
+            if (list[1].length > longest[1].length) {
                 longest = list
             }
         }
@@ -99,32 +102,39 @@ function findListOfRepeatingObjects(data: any) {
 const regexes = {
     dateISO8601: /^\d{4}-\d{1,2}-\d{1,2}$/,
     dateSlash: /^\d{1,2}\/\d{1,2}\/\d{4}$/,
+    date: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/
 }
 
 function matchDate(data: any[], fieldName: string) {
     const dateFormats = {
-        iso8601: true, // YYYY-MM-DD
-        slash: true, // DD/MM/YYYY or MM/DD/YYYY
-        numberDate: true, // YYYYMMDD, as a number
+        'date-iso-8601': true, // YYYY-MM-DD
+        'date-/': true, // DD/MM/YYYY or MM/DD/YYYY
+        'date-concatenated-number': true, // YYYYMMDD, as a number
+        'date': true, // 2021-03-07T24:00:00Z
     }
     const slashHigherThan12 = { first: false, second: false }
 
     for (let i = 0; i < min(10, data.length); i++) {
         if (typeof data[i][fieldName] === 'number') {
-            dateFormats.iso8601 = false
-            dateFormats.slash = false
-            if (data[i][fieldName] < 19000000 || data[i][fieldName] > 30000000)
-                dateFormats.numberDate = false
+            dateFormats['date-iso-8601'] = false
+            dateFormats['date-/'] = false
+            dateFormats['date'] = false
+            if (data[i][fieldName] < 19000000 || data[i][fieldName] > 30000000 || !fieldName.includes('date'))
+                dateFormats['date-concatenated-number'] = false
             continue
         }
-        dateFormats.numberDate = false
+        dateFormats['date-concatenated-number'] = false
 
         if (!regexes.dateISO8601.test(data[i][fieldName])) {
-            dateFormats.iso8601 = false
+            dateFormats['date-iso-8601'] = false
+        }
+
+        if (!regexes.date.test(data[i][fieldName])) {
+            dateFormats['date'] = false;
         }
 
         if (!regexes.dateSlash.test(data[i][fieldName])) {
-            dateFormats.slash = false
+            dateFormats['date-/'] = false
         } else {
             const [first, second, third] = data[i][fieldName].split('/')
             if (parseInt(first) > 12) slashHigherThan12.first = true
@@ -148,7 +158,7 @@ function matchDate(data: any[], fieldName: string) {
     }
     if (keyTrue === null) return null // nothing matched
 
-    if (keyTrue === 'slash') {
+    if (keyTrue === 'date-/') {
         if (!slashHigherThan12.first && !slashHigherThan12.second) {
             console.warn(
                 'cannot tell between MM/DD/YYYY and DD/MM/YYYY, assuming former',
