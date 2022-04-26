@@ -3,6 +3,7 @@ import { Button, Dropdown, Form, Input, Menu, message } from "antd";
 import React from "react";
 import { IExternalSource, TExternalSourceFieldType, TExternalSources } from "../Dashboard/DashboardHome/sources/ExternalSource";
 import './ExternalSourcesPage.css';
+import { infer } from '../Marketplace/inferFields';
 
 function validateExternalSource(externalSource: any): string | null {
     if (!('url' in externalSource))
@@ -18,9 +19,12 @@ export class ExternalSourcesPage extends React.Component<{
     setExternalSources: (s: {[name: string]: IExternalSource}) => void
 }> {
     
-
+    formRef:any = React.createRef();
     static fieldState: {name: string, description: string, type: TExternalSourceFieldType}[] = []
     static paramState: {name: string, description: string, type: TExternalSourceFieldType}[] = []
+
+    static apiUrl: string = ""
+    static rootAutoFill: string = ""
 
     onFinish(values: {root: string, url: string, name: string}) {
         let es: IExternalSource;
@@ -139,6 +143,72 @@ export class ExternalSourcesPage extends React.Component<{
         this.setState({params: newParamsState});
     }
 
+    handleUrlChange(e: any) {
+        ExternalSourcesPage.apiUrl = e.target.value;
+        this.setState({url: ExternalSourcesPage.apiUrl});
+    }
+
+    UpdateForm = () => {
+        const [form] = Form.useForm();
+      
+        React.useEffect(() => {
+          form.setFieldsValue({
+            root: ExternalSourcesPage.rootAutoFill,
+          });
+        }, [])};
+    handleAutofill(e: any) {
+        //https://www.covid-19.sa.gov.au/__data/assets/file/0004/145849/covid_19_daily.json
+
+        (async () => {
+
+            const url = new URL("http://seng3011.duckdns.org:8086/front-end/forward");
+            url.searchParams.append("url", ExternalSourcesPage.apiUrl);
+            
+            const resp = await fetch(url.toString())
+
+            if (resp.status != 200) {
+                message.info("Invalid url")
+                return resp;
+            }
+            // @ts-ignore
+            const data = await resp.json()
+            let out
+            try {
+                out = infer(data)
+            } catch (e) {
+                console.error(`failed`)
+                throw e
+            }
+
+            ExternalSourcesPage.fieldState = [];
+            ExternalSourcesPage.rootAutoFill = out['root'];
+            this.setState({root: ExternalSourcesPage.rootAutoFill});
+
+            // @ts-ignore
+            this.formRef.current.setFieldsValue({
+                root: ExternalSourcesPage.rootAutoFill,
+            });
+            const newFieldsState = ExternalSourcesPage.fieldState;
+            let autoFields:any;
+            for (const[key, autoFields] of Object.entries(out['fields'])) {
+                let new_field:any = {};
+                new_field['name'] = autoFields['name']
+                new_field['type'] = autoFields['type']
+                if (autoFields['description'] == null) {
+                    new_field['description'] = "";
+                } else {
+                    new_field['description'] = autoFields['description'];
+                }
+                newFieldsState.push(new_field)
+            }
+            this.setState({fields: newFieldsState});
+
+        })()
+    }
+
+    componentDidMount() {
+        this.setState({root: ExternalSourcesPage.rootAutoFill});
+    }
 
     handleRemoveField(x: any, index: number) {
         const newFieldsState = ExternalSourcesPage.fieldState;
@@ -196,6 +266,8 @@ export class ExternalSourcesPage extends React.Component<{
             })
         }
 
+        const autoFillEnabled = ExternalSourcesPage.apiUrl.length > 0;
+
         const menu = (
             <Menu onClick={this.handleAddField.bind(this)}>
                 <Menu.Item key="1">
@@ -232,6 +304,7 @@ export class ExternalSourcesPage extends React.Component<{
 
         return <div style={{padding: '0.5em', width: '50%', margin: 'auto'}}>
             <Form
+                ref={this.formRef}
                 style={{marginTop: 24, height:'100%'}}
                 name="basic"
                 labelCol={{ span: 3 }}
@@ -266,8 +339,23 @@ export class ExternalSourcesPage extends React.Component<{
                         //@ts-ignore
                         size="default" 
                         placeholder="Input the url of the API" 
+                        onChange={this.handleUrlChange.bind(this)}
                     />
                 </Form.Item>
+
+                <Form.Item style={{ marginBottom: "0px" }}>
+                    <Button 
+                        //@ts-ignore
+                        size="default" 
+                        className="AutofillButton" 
+                        type="primary" 
+                        disabled={!autoFillEnabled}
+                        onClick={this.handleAutofill.bind(this)}
+                    >
+                    Autofill fields and root
+                    </Button>
+                </Form.Item>
+
                 <Form.Item
                     label="Information"
                 >
@@ -465,6 +553,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                 //@ts-ignore
                                                 size="default"
                                                 placeholder={x["type"]}
+                                                defaultValue={x["name"]}
                                                 onChange = {this.handleDateChange.bind(this, index)}
                                             />
                                             <Input
@@ -486,6 +575,99 @@ export class ExternalSourcesPage extends React.Component<{
                                             </Button>
                                         </Input.Group>
                                 )
+                            case "date-/":
+                                return (
+                                    <Input.Group key={index} style={{left: '0%'}} compact>
+                                        <Input
+                                            style={{ width: '40%' }}
+                                            className="dateEntry"
+                                            //@ts-ignore
+                                            size="default"
+                                            placeholder={x["type"]}
+                                            defaultValue={x["name"]}
+                                            onChange = {this.handleDateChange.bind(this, index)}
+                                        />
+                                        <Input
+                                            style={{ width: '50.2%' }}
+                                            //@ts-ignore
+                                            size="default"
+                                            placeholder="Format: Y:M:D:t:m:s"
+                                            onChange = {this.handleFormatChange.bind(this, index)}
+                                        />
+                                        <Button 
+                                            style={{ width: '10%' }}
+                                            //@ts-ignore
+                                            size="default" 
+                                            danger
+                                            onClick={this.handleRemoveField.bind(this, x, index)}
+                                            type="primary"
+                                        >
+                                            <MinusCircleOutlined />
+                                        </Button>
+                                    </Input.Group>
+                                )
+                            case "date-concatenated-number":
+                                return (
+                                    <Input.Group key={index} style={{left: '0%'}} compact>
+                                        <Input
+                                            style={{ width: '40%' }}
+                                            className="dateEntry"
+                                            //@ts-ignore
+                                            size="default"
+                                            placeholder={x["type"]}
+                                            defaultValue={x["name"]}
+                                            onChange = {this.handleDateChange.bind(this, index)}
+                                        />
+                                        <Input
+                                            style={{ width: '50.2%' }}
+                                            //@ts-ignore
+                                            size="default"
+                                            placeholder="Format: Y:M:D:t:m:s"
+                                            onChange = {this.handleFormatChange.bind(this, index)}
+                                        />
+                                        <Button 
+                                            style={{ width: '10%' }}
+                                            //@ts-ignore
+                                            size="default" 
+                                            danger
+                                            onClick={this.handleRemoveField.bind(this, x, index)}
+                                            type="primary"
+                                        >
+                                            <MinusCircleOutlined />
+                                        </Button>
+                                    </Input.Group>
+                                )
+                            case "date-iso-8601":
+                                return (
+                                    <Input.Group key={index} style={{left: '0%'}} compact>
+                                        <Input
+                                            style={{ width: '40%' }}
+                                            className="dateEntry"
+                                            //@ts-ignore
+                                            size="default"
+                                            placeholder={x["type"]}
+                                            defaultValue={x["name"]}
+                                            onChange = {this.handleDateChange.bind(this, index)}
+                                        />
+                                        <Input
+                                            style={{ width: '50.2%' }}
+                                            //@ts-ignore
+                                            size="default"
+                                            placeholder="Format: Y:M:D:t:m:s"
+                                            onChange = {this.handleFormatChange.bind(this, index)}
+                                        />
+                                        <Button 
+                                            style={{ width: '10%' }}
+                                            //@ts-ignore
+                                            size="default" 
+                                            danger
+                                            onClick={this.handleRemoveField.bind(this, x, index)}
+                                            type="primary"
+                                        >
+                                            <MinusCircleOutlined />
+                                        </Button>
+                                    </Input.Group>
+                                )
                             case "string":
                                 return (
                                         <Input.Group key={index} style={{left: '0%'}} compact>
@@ -494,6 +676,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                     //@ts-ignore
                                                     size="default"
                                                     placeholder={x["type"]}
+                                                    value={x["name"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             <Button 
@@ -517,6 +700,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                     //@ts-ignore
                                                     size="default"
                                                     placeholder={x["type"]}
+                                                    value={x["name"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             
@@ -541,6 +725,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                     //@ts-ignore
                                                     size="default"
                                                     placeholder={x["type"]}
+                                                    value={x["name"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             

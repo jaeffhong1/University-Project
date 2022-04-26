@@ -48,8 +48,14 @@
 
 .SubmitButton {
     position: relative;
-    left: 27%;
+    left: 24%;
     top: 1em;
+}
+
+.AutofillButton {
+    position: relative;
+    left: 120%;
+    top: -4em;
 }
 
 .ApiStructure {
