@@ -145,6 +145,7 @@ export class ExternalSourcesPage extends React.Component<{
 
     handleUrlChange(e: any) {
         ExternalSourcesPage.apiUrl = e.target.value;
+        this.setState({url: ExternalSourcesPage.apiUrl});
     }
 
     UpdateForm = () => {
@@ -157,13 +158,13 @@ export class ExternalSourcesPage extends React.Component<{
         }, [])};
     handleAutofill(e: any) {
         //https://www.covid-19.sa.gov.au/__data/assets/file/0004/145849/covid_19_daily.json
-        if (ExternalSourcesPage.apiUrl == "") {
-            message.info("Please enter an url")
-            return;
-        }
 
         (async () => {
-            const resp = await fetch(ExternalSourcesPage.apiUrl)
+
+            const url = new URL("http://seng3011.duckdns.org:8086/front-end/forward");
+            url.searchParams.append("url", ExternalSourcesPage.apiUrl);
+            
+            const resp = await fetch(url.toString())
 
             if (resp.status != 200) {
                 message.info("Invalid url")
@@ -265,6 +266,8 @@ export class ExternalSourcesPage extends React.Component<{
             })
         }
 
+        const autoFillEnabled = ExternalSourcesPage.apiUrl.length > 0;
+
         const menu = (
             <Menu onClick={this.handleAddField.bind(this)}>
                 <Menu.Item key="1">
@@ -336,9 +339,23 @@ export class ExternalSourcesPage extends React.Component<{
                         //@ts-ignore
                         size="default" 
                         placeholder="Input the url of the API" 
-                        onChange={this.handleUrlChange}
+                        onChange={this.handleUrlChange.bind(this)}
                     />
                 </Form.Item>
+
+                <Form.Item style={{ marginBottom: "0px" }}>
+                    <Button 
+                        //@ts-ignore
+                        size="default" 
+                        className="AutofillButton" 
+                        type="primary" 
+                        disabled={!autoFillEnabled}
+                        onClick={this.handleAutofill.bind(this)}
+                    >
+                    Autofill fields and root
+                    </Button>
+                </Form.Item>
+
                 <Form.Item
                     label="Information"
                 >
@@ -659,7 +676,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                     //@ts-ignore
                                                     size="default"
                                                     placeholder={x["type"]}
-                                                    defaultValue={x["name"]}
+                                                    value={x["name"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             <Button 
@@ -683,7 +700,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                     //@ts-ignore
                                                     size="default"
                                                     placeholder={x["type"]}
-                                                    defaultValue={x["name"]}
+                                                    value={x["name"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             
@@ -708,7 +725,7 @@ export class ExternalSourcesPage extends React.Component<{
                                                     //@ts-ignore
                                                     size="default"
                                                     placeholder={x["type"]}
-                                                    defaultValue={x["name"]}
+                                                    value={x["name"]}
                                                     onChange = {this.handleStringChange.bind(this, index)}
                                                 />
                                             
@@ -750,16 +767,6 @@ export class ExternalSourcesPage extends React.Component<{
                         htmlType="submit"
                     >
                     Submit
-                    </Button>
-
-                    <Button 
-                        //@ts-ignore
-                        size="default" 
-                        className="AutofillButton" 
-                        type="primary" 
-                        onClick={this.handleAutofill.bind(this)}
-                    >
-                    Autofill
                     </Button>
                 </Form.Item>
             </Form>
