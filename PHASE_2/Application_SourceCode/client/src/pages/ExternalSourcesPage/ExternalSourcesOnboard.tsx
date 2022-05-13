@@ -67,6 +67,11 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
                     intro: "Example: example.org"
                 },
                 {
+                    title: "Autofill",
+                    element: ".AutofillButton",
+                    intro: "Clicking this button will autofill the fields for the given URL."
+                },
+                {
                     title: "Parameters",
                     element: ".paramSelector",
                     intro: "Here you can add in any parameters that the url would take in."
@@ -344,6 +349,19 @@ export default class ExternalSourcesPageOnboard extends React.Component<IProps, 
                         placeholder="Input the url of the API" 
                     />
                 </Form.Item>
+
+                <Form.Item style={{ marginBottom: "0px" }}>
+                    <Button 
+                        //@ts-ignore
+                        size="default" 
+                        className="AutofillButton" 
+                        type="primary" 
+                        disabled={false}
+                    >
+                    Autofill fields and root
+                    </Button>
+                </Form.Item>
+
                 <Form.Item
                     label="Information"
                 >
